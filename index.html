@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéBinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --pw: 105px;
+            --ph: calc(var(--pw) * 88 / 63);
+            --gap: 9px;
+            --pp: 16px;
+            --sp: 12px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #08080f;
+            min-height: 100vh; color: #fff;
+            display: flex; overflow: hidden;
+        }
+
+        /* ══ SIDEBAR ══ */
+        .sidebar {
+            width: 220px; flex-shrink: 0;
+            background: #0c0c18;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column;
+        }
+        .sidebar-logo {
+            padding: 18px 16px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .logo-icon {
+            width: 28px; height: 28px;
+            background: linear-gradient(135deg, #5858ff, #9040ff);
+            border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+        }
+        .logo-text {
+            font-size: 14px; font-weight: 700; letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #c0c0ff, #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .sidebar-label {
+            font-size: 10px; font-weight: 600;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 14px 16px 6px;
+        }
+        .binder-list { flex: 1; overflow-y: auto; padding: 0 6px; }
+        .binder-list::-webkit-scrollbar { width: 3px; }
+        .binder-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+        .binder-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 10px; border-radius: 7px;
+            cursor: pointer; transition: background 0.12s;
+            margin-bottom: 1px; position: relative;
+        }
+        .binder-item:hover { background: rgba(255,255,255,0.05); }
+        .binder-item.active { background: rgba(88,88,255,0.12); }
+        .binder-item.active .b-name { color: #a0a0ff; }
+
+        .b-dot {
+            width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+            cursor: pointer; transition: transform 0.15s;
+        }
+        .b-dot:hover { transform: scale(1.3); }
+
+        .b-name {
+            font-size: 12.5px; font-weight: 500;
+            color: rgba(255,255,255,0.65);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            flex: 1; cursor: pointer;
+        }
+        .b-name:hover { color: rgba(255,255,255,0.9); }
+
+        .b-del {
+            opacity: 0; font-size: 14px; color: rgba(255,255,255,0.2);
+            background: none; border: none; cursor: pointer;
+            padding: 0 2px; transition: opacity 0.12s, color 0.12s;
+            line-height: 1; flex-shrink: 0;
+        }
+        .binder-item:hover .b-del { opacity: 1; }
+        .b-del:hover { color: #ff6060; }
+
+        .sidebar-add {
+            margin: 6px; padding: 8px;
+            border: 1px dashed rgba(255,255,255,0.09);
+            border-radius: 7px; text-align: center;
+            font-size: 11.5px; color: rgba(255,255,255,0.28);
+            cursor: pointer; transition: all 0.12s;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+        .sidebar-add:hover { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.03); }
+
+        .sidebar-footer {
+            padding: 10px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .avatar {
+            width: 28px; height: 28px;
+            background: linear-gradient(135deg, #3030aa, #6040cc);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); flex-shrink: 0;
+        }
+        .login-hint { font-size: 11px; color: rgba(255,255,255,0.3); }
+        .login-btn-sm {
+            margin-left: auto; font-size: 10px; padding: 4px 8px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 5px; color: rgba(255,255,255,0.45); cursor: pointer; transition: all 0.12s;
+        }
+        .login-btn-sm:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        /* ══ MAIN ══ */
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+        /* Topbar */
+        .topbar {
+            flex-shrink: 0; padding: 0 24px; height: 52px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .tb-title {
+            font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.88);
+            cursor: pointer; border-radius: 4px; padding: 2px 4px; margin: -2px -4px;
+            transition: background 0.12s;
+        }
+        .tb-title:hover { background: rgba(255,255,255,0.06); }
+        .tb-title:hover::after { content: ' ✏️'; font-size: 10px; cursor: text; }
+
+        .tb-badge {
+            font-size: 10px; font-weight: 600; padding: 3px 8px;
+            background: rgba(88,88,255,0.14); border: 1px solid rgba(88,88,255,0.28);
+            border-radius: 20px; color: #9090ff; letter-spacing: 0.02em;
+            cursor: pointer; transition: background 0.12s;
+            user-select: none;
+        }
+        .tb-badge:hover { background: rgba(88,88,255,0.24); }
+        .tb-badge:hover::after { content: ' ↻'; }
+
+        .tb-count { font-size: 11.5px; color: rgba(255,255,255,0.28); }
+
+        .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 7px; }
+        .sz-btn {
+            width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 5px; color: rgba(255,255,255,0.38); font-size: 14px;
+            cursor: pointer; transition: all 0.12s; user-select: none;
+        }
+        .sz-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .sz-btn:disabled { opacity: 0.18; cursor: default; pointer-events: none; }
+        .sz-lbl { font-size: 10px; color: rgba(255,255,255,0.2); min-width: 28px; text-align: center; user-select: none; }
+
+        /* Inline edit input */
+        .inline-edit {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px; color: #fff; outline: none;
+            font-family: inherit; font-size: inherit; font-weight: inherit;
+            padding: 2px 6px;
+        }
+
+        /* ══ STAGE ══ */
+        .stage {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 20px; padding: 20px; overflow: auto;
+        }
+
+        /* Binder perspective */
+        .binder-persp { perspective: 3000px; perspective-origin: 50% 50%; }
+
+        .binder-outer {
+            display: flex; position: relative;
+            border-radius: 8px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.06),
+                0 24px 55px rgba(0,0,0,0.9),
+                0 55px 110px rgba(0,0,0,0.6);
+        }
+
+        .zone { position: relative; flex-shrink: 0; }
+
+        .binder-page { padding: var(--pp); position: relative; }
+        .binder-page.left  { background: linear-gradient(155deg, #1d1d2a 0%, #131319 100%); }
+        .binder-page.right { background: linear-gradient(205deg, #1c1c28 0%, #111116 100%); }
+
+        .page-surface {
+            background: linear-gradient(145deg, #202030, #161620);
+            border-radius: 4px; padding: var(--sp);
+            overflow: visible;
+            box-shadow: inset 0 0 35px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .page-stack {
+            position: absolute; bottom: -2px; left: 6px; right: 6px;
+            height: 5px; background: #0a0a10; border-radius: 0 0 4px 4px;
+        }
+
+        .spine {
+            width: 18px; flex-shrink: 0;
+            background: linear-gradient(to right, #040408 0%, #141420 38%, #141420 62%, #040408 100%);
+            position: relative; z-index: 3;
+        }
+        .spine::after {
+            content: ''; position: absolute; inset: 0;
+            background: repeating-linear-gradient(180deg,
+                transparent 0, transparent 20px,
+                rgba(0,0,0,0.28) 20px, rgba(0,0,0,0.28) 21px);
+        }
+
+        /* ── Flippers (v1 mechanism) ── */
+        .flipper { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+        #flipper-R { transform-origin: left center; z-index: 4; }
+        #flipper-L { transform-origin: right center; z-index: 5; display: none; }
+
+        .flip-face {
+            backface-visibility: hidden; -webkit-backface-visibility: hidden;
+            position: absolute; inset: 0;
+        }
+        #flip-R-back { transform: rotateY(180deg); }
+        #flip-L-back { transform: rotateY(-180deg); }
+
+        .pg-shadow {
+            position: absolute; inset: 0; pointer-events: none; z-index: 6;
+            background: rgba(0,0,0,0); transition: background 0.05s;
+        }
+
+        /* Glow */
+        .binder-glow { position: relative; }
+        .binder-glow::before {
+            content: ''; position: absolute; inset: -50px;
+            background: radial-gradient(ellipse at center, rgba(70,70,190,0.07), transparent 68%);
+            pointer-events: none;
+        }
+
+        /* ── Pockets ── */
+        .pocket-grid {
+            display: grid;
+            grid-template-columns: repeat(3, var(--pw));
+            gap: var(--gap);
+        }
+        .pocket {
+            width: var(--pw); height: var(--ph);
+            background: rgba(210,228,255,0.025);
+            border: 1px solid rgba(210,228,255,0.11);
+            border-radius: 3px;
+            position: relative; cursor: pointer; overflow: hidden;
+            transition: background 0.14s, border-color 0.14s,
+                        transform 0.2s cubic-bezier(0.34,1.5,0.64,1),
+                        box-shadow 0.2s ease, z-index 0s;
+        }
+        .pocket::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 36%;
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.065) 0%, rgba(255,255,255,0.016) 55%, transparent 100%);
+            pointer-events: none; z-index: 3;
+        }
+        .pocket::after {
+            content: ''; position: absolute;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 28%; height: 3px;
+            background: rgba(255,255,255,0.055); border-radius: 0 0 3px 3px;
+            z-index: 4;
+        }
+        .pocket-glare {
+            position: absolute; top: 6%; left: 5%; width: 14%; height: 38%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+            pointer-events: none; z-index: 3;
+        }
+        .pocket-add {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.14s; z-index: 3;
+        }
+        .pocket-add-icon {
+            width: 28px; height: 28px;
+            border: 1.5px solid rgba(255,255,255,0.18); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.3); font-size: 16px; line-height: 1;
+        }
+        .pocket:hover { background: rgba(210,228,255,0.07); border-color: rgba(210,228,255,0.26); }
+        .pocket:hover .pocket-add { opacity: 1; }
+
+        /* ── Card image inside pocket ── */
+        .pocket-img {
+            position: absolute;
+            top: 6px; left: 2px; right: 2px; bottom: 0;
+            width: calc(100% - 4px); height: calc(100% - 6px);
+            object-fit: cover; border-radius: 2px 2px 1px 1px;
+            z-index: 1; display: block; pointer-events: none;
+        }
+
+        /* binder pocket effect when card is inside */
+        .pocket.has-card {
+            border-color: rgba(210,228,255,0.28);
+            /* inset depth shadow — pocket slot opening casts shadow onto card */
+            box-shadow:
+                inset 0 5px 10px rgba(0,0,0,0.55),
+                inset 1px 0  4px rgba(0,0,0,0.22),
+                inset -1px 0 4px rgba(0,0,0,0.22),
+                inset 0 -2px 4px rgba(0,0,0,0.15);
+        }
+        /* stronger top plastic sheen when card is present */
+        .pocket.has-card::before {
+            height: 45%;
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.18) 0%,
+                rgba(255,255,255,0.07) 25%,
+                rgba(255,255,255,0.02) 60%,
+                transparent 100%);
+        }
+        /* plastic edge highlight at top opening */
+        .pocket.has-card::after {
+            height: 5px;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0.04) 0%,
+                rgba(255,255,255,0.18) 40%,
+                rgba(255,255,255,0.12) 60%,
+                rgba(255,255,255,0.04) 100%);
+            width: 80%;
+        }
+
+        .pocket-remove {
+            position: absolute; top: 8px; right: 5px;
+            width: 18px; height: 18px;
+            background: rgba(0,0,0,0.72); border: none; border-radius: 50%;
+            color: rgba(255,255,255,0.88); font-size: 13px; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10;
+            opacity: 0; transition: opacity 0.12s;
+        }
+        .pocket.has-card:hover .pocket-remove { opacity: 1; }
+        .pocket.drag-over {
+            background: rgba(88,88,255,0.22) !important;
+            border-color: rgba(100,100,255,0.7) !important;
+            box-shadow: 0 0 0 2px rgba(88,88,255,0.35);
+        }
+        .pocket.has-card { cursor: zoom-in; }
+        .pocket.has-card:hover {
+            transform: scale(1.08);
+            z-index: 20;
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.65),
+                0 4px 10px rgba(0,0,0,0.4),
+                inset 0 5px 10px rgba(0,0,0,0.55),
+                inset 1px 0 4px rgba(0,0,0,0.22),
+                inset -1px 0 4px rgba(0,0,0,0.22);
+        }
+
+        /* ══ CARD MODAL ══ */
+        #card-modal {
+            display: none;
+            position: fixed; inset: 0; z-index: 1000;
+            align-items: center; justify-content: center;
+        }
+        #card-modal.open { display: flex; }
+        #card-modal-backdrop {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.82);
+            backdrop-filter: blur(6px);
+            opacity: 0; transition: opacity 220ms ease;
+        }
+        #card-modal.open #card-modal-backdrop { opacity: 1; }
+        #card-modal-img-wrap {
+            position: relative; z-index: 1;
+            transform: scale(0.82); opacity: 0;
+            transition: transform 260ms cubic-bezier(0.34,1.42,0.64,1), opacity 220ms ease;
+            display: flex; align-items: center; gap: 20px;
+        }
+        #card-modal.open #card-modal-img-wrap { transform: scale(1); opacity: 1; }
+
+        #card-modal-img-box {
+            position: relative;
+            z-index: 1;          /* nav 버튼(z-index:20)보다 낮아야 버튼이 클릭됨 */
+        }
+        #card-modal-img {
+            display: block;
+            max-width: min(380px, 78vw);
+            max-height: 84vh;
+            width: auto; height: auto;
+            border-radius: 10px;
+            transition: width 0.12s ease;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08),
+                0 30px 80px rgba(0,0,0,0.8),
+                0 8px 24px rgba(0,0,0,0.6);
+            user-select: none; pointer-events: none;
+        }
+        #card-modal-close {
+            position: absolute; top: -12px; right: -12px;
+            width: 28px; height: 28px;
+            background: rgba(30,30,40,0.95); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50%; color: rgba(255,255,255,0.7); font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.14s; z-index: 2;
+        }
+        #card-modal-close:hover { background: rgba(255,60,60,0.8); color: #fff; border-color: transparent; }
+
+        #card-modal-counter {
+            position: absolute; bottom: -26px; left: 50%; transform: translateX(-50%);
+            font-size: 11px; color: rgba(255,255,255,0.35); white-space: nowrap;
+            user-select: none;
+        }
+
+        .modal-nav {
+            width: 40px; height: 40px; flex-shrink: 0;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%; color: rgba(255,255,255,0.5); font-size: 20px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.14s; user-select: none;
+            position: relative; z-index: 20; /* 확대된 이미지 위에 항상 표시 */
+        }
+        .modal-nav:hover { background: rgba(255,255,255,0.14); color: #fff; }
+        .modal-nav:disabled { opacity: 0.15; cursor: default; pointer-events: none; }
+
+        /* ══ PAGE NAV ══ */
+        .page-nav { display: flex; align-items: center; gap: 14px; }
+        .nav-arrow {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50%; color: rgba(255,255,255,0.42); font-size: 18px;
+            cursor: pointer; transition: all 0.14s; user-select: none;
+        }
+        .nav-arrow:hover { background: rgba(255,255,255,0.09); color: #fff; border-color: rgba(255,255,255,0.16); }
+        .nav-arrow:disabled { opacity: 0.16; cursor: default; pointer-events: none; }
+
+        .dots-wrap { display: flex; align-items: center; gap: 6px; }
+        .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,0.13);
+            transition: all 0.18s; cursor: pointer;
+        }
+        .dot.active { width: 18px; border-radius: 3px; background: rgba(130,130,255,0.9); box-shadow: 0 0 7px rgba(100,100,255,0.55); }
+        .dot:hover:not(.active) { background: rgba(255,255,255,0.28); }
+
+        .pg-add-btn {
+            width: 22px; height: 22px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 5px; color: rgba(255,255,255,0.3); font-size: 13px;
+            cursor: pointer; transition: all 0.12s; user-select: none;
+        }
+        .pg-add-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.8); }
+        .pg-add-btn:disabled { opacity: 0.15; cursor: default; pointer-events: none; }
+
+        /* hidden color picker */
+        #color-picker { display: none; }
+    </style>
+</head>
+<body>
+<input type="color" id="color-picker">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🃏</div>
+        <span class="logo-text">PokéBinder</span>
+    </div>
+    <div class="sidebar-label">내 바인더</div>
+    <div class="binder-list" id="binder-list"></div>
+    <div class="sidebar-add" id="btn-add-binder">
+        <span style="font-size:13px;">＋</span> 새 바인더
+    </div>
+    <div class="sidebar-footer">
+        <div class="avatar">?</div>
+        <span class="login-hint">로그인하세요</span>
+        <button class="login-btn-sm">로그인</button>
+    </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+    <div class="topbar">
+        <span class="tb-title" id="tb-title"></span>
+        <span class="tb-badge" id="tb-badge" title="클릭해서 변경"></span>
+        <span class="tb-count" id="tb-count"></span>
+        <div class="topbar-right">
+            <button class="sz-btn" id="sz-dn">−</button>
+            <span class="sz-lbl" id="sz-lbl">100%</span>
+            <button class="sz-btn" id="sz-up">+</button>
+            <button class="sz-btn" id="sz-fit" title="화면에 맞춤" style="font-size:12px;">⊡</button>
+        </div>
+    </div>
+
+    <div class="stage">
+        <div class="binder-glow">
+            <div class="binder-persp">
+                <div class="binder-outer">
+                    <!-- LEFT ZONE -->
+                    <div class="zone" id="zone-L">
+                        <div id="left-bg" class="binder-page left">
+                            <div class="page-surface"><div class="pocket-grid" id="left-bg-grid"></div></div>
+                            <div class="page-stack"></div>
+                            <div class="pg-shadow" id="shadow-L"></div>
+                        </div>
+                        <div class="flipper" id="flipper-L">
+                            <div class="flip-face binder-page left" id="flip-L-front">
+                                <div class="page-surface"><div class="pocket-grid" id="flip-L-front-grid"></div></div>
+                            </div>
+                            <div class="flip-face binder-page right" id="flip-L-back">
+                                <div class="page-surface"><div class="pocket-grid" id="flip-L-back-grid"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SPINE -->
+                    <div class="spine"></div>
+                    <!-- RIGHT ZONE -->
+                    <div class="zone" id="zone-R">
+                        <div id="right-bg" class="binder-page right">
+                            <div class="page-surface"><div class="pocket-grid" id="right-bg-grid"></div></div>
+                            <div class="page-stack"></div>
+                            <div class="pg-shadow" id="shadow-R"></div>
+                        </div>
+                        <div class="flipper" id="flipper-R">
+                            <div class="flip-face binder-page right" id="flip-R-front">
+                                <div class="page-surface"><div class="pocket-grid" id="flip-R-front-grid"></div></div>
+                            </div>
+                            <div class="flip-face binder-page left" id="flip-R-back">
+                                <div class="page-surface"><div class="pocket-grid" id="flip-R-back-grid"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page nav -->
+        <div class="page-nav">
+            <button class="nav-arrow" id="btn-prev">&#8249;</button>
+            <div class="dots-wrap" id="dots"></div>
+            <button class="nav-arrow" id="btn-next">&#8250;</button>
+            <div style="width:1px;height:16px;background:rgba(255,255,255,0.08);margin:0 2px;"></div>
+            <button class="pg-add-btn" id="pg-remove" title="페이지 삭제">−</button>
+            <button class="pg-add-btn" id="pg-add" title="페이지 추가">＋</button>
+        </div>
+    </div>
+</div>
+
+<!-- Card Modal -->
+<div id="card-modal">
+    <div id="card-modal-backdrop"></div>
+    <div id="card-modal-img-wrap">
+        <button class="modal-nav" id="modal-prev">&#8249;</button>
+        <div id="card-modal-img-box">
+            <img id="card-modal-img" src="" alt="카드 확대">
+            <button id="card-modal-close">✕</button>
+            <div id="card-modal-counter"></div>
+        </div>
+        <button class="modal-nav" id="modal-next">&#8250;</button>
+    </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+let nextId = 4;
+const BINDERS = [
+    { id: 1, name: '스칼렛 & 바이올렛', color: '#6060ff', pages: 5, type: '9포켓' },
+    { id: 2, name: '소드 & 실드',       color: '#40b080', pages: 4, type: '9포켓' },
+    { id: 3, name: '탑로더 컬렉션',     color: '#e06040', pages: 3, type: '탑로더' },
+];
+let activeBinder = BINDERS[0];
+let page     = 1;
+let flipping = false;
+const DURATION = 650;
+
+/* ══════════════════════════════════════
+   SIZE
+══════════════════════════════════════ */
+const PW_STEPS  = [60, 72, 84, 96, 110, 125, 140, 158, 178, 200, 226];
+const SZ_LABELS = ['57%','69%','80%','91%','105%','119%','133%','150%','169%','190%','215%'];
+let szIdx = 4;
+
+function applySize() {
+    document.documentElement.style.setProperty('--pw', PW_STEPS[szIdx] + 'px');
+    document.getElementById('sz-lbl').textContent = SZ_LABELS[szIdx];
+    document.getElementById('sz-dn').disabled = szIdx === 0;
+    document.getElementById('sz-up').disabled = szIdx === PW_STEPS.length - 1;
+}
+document.getElementById('sz-up').addEventListener('click', () => { if (szIdx < PW_STEPS.length-1){ szIdx++; applySize(); }});
+document.getElementById('sz-dn').addEventListener('click', () => { if (szIdx > 0){ szIdx--; applySize(); }});
+
+/* ── auto-fit: fills the visible stage as large as possible ── */
+function autoFit() {
+    const stage   = document.querySelector('.stage');
+    const nav     = document.querySelector('.page-nav');
+    const gap     = 9, pp = 16, spine = 26;
+    const sw      = stage.clientWidth  - 40;                 // stage padding
+    const sh      = stage.clientHeight - (nav ? nav.offsetHeight + 28 : 80) - 40;
+    const pwW     = Math.floor((sw - 2*(2*gap + 2*pp) - spine) / 6);   // 6 pockets wide
+    const pwH     = Math.floor(sh * 63 / 88 - 2*pp);                    // height → pw
+    const fit     = Math.min(pwW, pwH, PW_STEPS[PW_STEPS.length - 1]);
+    const clamped = Math.max(PW_STEPS[0], fit);
+    document.documentElement.style.setProperty('--pw', clamped + 'px');
+    // snap label to nearest step
+    szIdx = PW_STEPS.reduce((b, v, i) => Math.abs(v - clamped) < Math.abs(PW_STEPS[b] - clamped) ? i : b, 0);
+    document.getElementById('sz-lbl').textContent = SZ_LABELS[szIdx];
+    document.getElementById('sz-dn').disabled = szIdx === 0;
+    document.getElementById('sz-up').disabled = szIdx === PW_STEPS.length - 1;
+}
+document.getElementById('sz-fit').addEventListener('click', autoFit);
+
+/* ══════════════════════════════════════
+   CARD DATA STORE
+══════════════════════════════════════ */
+const cardData = {};  // key: `${binderId}_${sp}_${side}` → Array(9) of dataURL|null
+
+function getCards(binderId, sp, side) {
+    const key = `${binderId}_${sp}_${side}`;
+    if (!cardData[key]) cardData[key] = Array(9).fill(null);
+    return cardData[key];
+}
+
+/* ══════════════════════════════════════
+   FILE INPUT
+══════════════════════════════════════ */
+const fileInput = document.createElement('input');
+fileInput.type = 'file'; fileInput.accept = 'image/*';
+fileInput.multiple = true; fileInput.style.display = 'none';
+document.body.appendChild(fileInput);
+let pendingSlot = null;
+
+function openFilePicker(binderId, sp, side, idx) {
+    pendingSlot = { binderId, sp, side, idx };
+    fileInput.value = '';
+    fileInput.click();
+}
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length && pendingSlot) {
+        loadImgMulti(fileInput.files, pendingSlot.binderId,
+                     pendingSlot.sp, pendingSlot.side, pendingSlot.idx);
+    }
+    pendingSlot = null;
+});
+
+/* 클릭한 슬롯부터 순서대로 채울 슬롯 목록 생성 */
+function buildSlots(startSp, startSide, startIdx, count) {
+    const slots = [];
+    let sp = startSp, side = startSide, idx = startIdx;
+    while (slots.length < count && sp <= activeBinder.pages) {
+        slots.push({ sp, side, idx });
+        if (++idx >= 9) {
+            idx = 0;
+            side = (side === 'L') ? 'R' : 'L';
+            if (side === 'L') sp++;
+        }
+    }
+    return slots;
+}
+
+/* 여러 파일을 순서대로 슬롯에 채움 */
+function loadImgMulti(files, binderId, sp, side, startIdx) {
+    const imgFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (!imgFiles.length) return;
+    const slots   = buildSlots(sp, side, startIdx, imgFiles.length);
+    let   loaded  = 0;
+    const total   = Math.min(imgFiles.length, slots.length);
+
+    imgFiles.slice(0, total).forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            getCards(binderId, slots[i].sp, slots[i].side)[slots[i].idx] = e.target.result;
+            if (++loaded === total) refreshSpread();
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+/* prevent browser from opening dropped images globally */
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop',     e => e.preventDefault());
+
+/* ══════════════════════════════════════
+   POCKET HTML
+══════════════════════════════════════ */
+function makePocket(binderId, sp, side, idx) {
+    const src = getCards(binderId, sp, side)[idx];
+    if (src) {
+        return `<div class="pocket has-card" data-sp="${sp}" data-side="${side}" data-idx="${idx}">
+            <img src="${src}" class="pocket-img" draggable="false">
+            <button class="pocket-remove" title="카드 제거">×</button>
+            <div class="pocket-glare"></div>
+        </div>`;
+    }
+    return `<div class="pocket" data-sp="${sp}" data-side="${side}" data-idx="${idx}">
+        <div class="pocket-glare"></div>
+        <div class="pocket-add"><div class="pocket-add-icon">+</div></div>
+    </div>`;
+}
+
+function fillPage(gridId, sp, side) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.innerHTML = Array.from({ length: 9 }, (_, i) =>
+        makePocket(activeBinder.id, sp, side, i)
+    ).join('');
+
+    grid.querySelectorAll('.pocket').forEach(pocket => {
+        const idx  = +pocket.dataset.idx;
+        const pSp  = +pocket.dataset.sp;
+        const pSide = pocket.dataset.side;
+
+        /* drag & drop */
+        pocket.addEventListener('dragover', e => {
+            e.preventDefault(); e.stopPropagation();
+            pocket.classList.add('drag-over');
+        });
+        pocket.addEventListener('dragleave', () => pocket.classList.remove('drag-over'));
+        pocket.addEventListener('drop', e => {
+            e.preventDefault(); e.stopPropagation();
+            pocket.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length)
+                loadImgMulti(files, activeBinder.id, pSp, pSide, idx);
+        });
+
+        /* + button → file picker */
+        const addBtn = pocket.querySelector('.pocket-add');
+        if (addBtn) addBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            openFilePicker(activeBinder.id, pSp, pSide, idx);
+        });
+
+        /* × remove */
+        const removeBtn = pocket.querySelector('.pocket-remove');
+        if (removeBtn) removeBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            getCards(activeBinder.id, pSp, pSide)[idx] = null;
+            refreshSpread();
+        });
+
+        /* left-click on card → zoom modal */
+        if (pocket.classList.contains('has-card')) {
+            pocket.addEventListener('click', e => {
+                if (e.target.closest('.pocket-remove')) return;
+                const src = getCards(activeBinder.id, pSp, pSide)[idx];
+                if (src) openCardModal(src, pSp, pSide, idx);
+            });
+        }
+    });
+}
+
+function refreshSpread() {
+    fillPage('left-bg-grid',      page, 'L');
+    fillPage('right-bg-grid',     page, 'R');
+    fillPage('flip-R-front-grid', page, 'R');
+    fillPage('flip-L-front-grid', page, 'L');
+}
+
+/* legacy shim — kept so nothing else breaks */
+function fill(id) { fillPage(id, page, 'L'); }
+
+/* ══════════════════════════════════════
+   INLINE EDIT  (generic)
+══════════════════════════════════════ */
+function inlineEdit(el, onSave) {
+    const original = el.textContent.trim();
+    const input = document.createElement('input');
+    input.className = 'inline-edit';
+    input.value = original;
+    input.style.width = Math.max(original.length * 9 + 20, 80) + 'px';
+    el.replaceWith(input);
+    input.focus(); input.select();
+
+    const save = () => {
+        const val = input.value.trim() || original;
+        el.textContent = val;
+        input.replaceWith(el);
+        onSave(val);
+    };
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter')  { e.preventDefault(); save(); }
+        if (e.key === 'Escape') { input.value = original; save(); }
+    });
+}
+
+/* ══════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════ */
+function renderSidebar() {
+    const list = document.getElementById('binder-list');
+    list.innerHTML = BINDERS.map(b => `
+        <div class="binder-item${b.id === activeBinder.id ? ' active' : ''}" data-id="${b.id}">
+            <div class="b-dot" style="background:${b.color};" data-id="${b.id}" title="색상 변경"></div>
+            <span class="b-name" data-id="${b.id}">${b.name}</span>
+            <button class="b-del" data-id="${b.id}" title="바인더 삭제">×</button>
+        </div>`).join('');
+
+    /* click row → switch */
+    list.querySelectorAll('.binder-item').forEach(el =>
+        el.addEventListener('click', e => {
+            if (e.target.classList.contains('b-dot') ||
+                e.target.classList.contains('b-del') ||
+                e.target.classList.contains('b-name')) return;
+            switchBinder(+el.dataset.id);
+        })
+    );
+
+    /* dblclick name → edit */
+    list.querySelectorAll('.b-name').forEach(el =>
+        el.addEventListener('dblclick', e => {
+            e.stopPropagation();
+            const b = BINDERS.find(x => x.id === +el.dataset.id);
+            inlineEdit(el, val => {
+                b.name = val;
+                if (activeBinder.id === b.id) updateTopbar();
+                renderSidebar();
+            });
+        })
+    );
+
+    /* click dot → color picker */
+    list.querySelectorAll('.b-dot').forEach(dot =>
+        dot.addEventListener('click', e => {
+            e.stopPropagation();
+            const b = BINDERS.find(x => x.id === +dot.dataset.id);
+            const picker = document.getElementById('color-picker');
+            picker.value = b.color;
+            picker.onchange = ev => {
+                b.color = ev.target.value;
+                renderSidebar();
+            };
+            picker.click();
+        })
+    );
+
+    /* delete */
+    list.querySelectorAll('.b-del').forEach(btn =>
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const id = +btn.dataset.id;
+            if (BINDERS.length <= 1) return;
+            const idx = BINDERS.findIndex(x => x.id === id);
+            BINDERS.splice(idx, 1);
+            if (activeBinder.id === id) {
+                activeBinder = BINDERS[Math.min(idx, BINDERS.length-1)];
+                page = 1;
+                updateTopbar();
+                renderDots();
+                updateUI();
+                initFill();
+            }
+            renderSidebar();
+        })
+    );
+}
+
+function switchBinder(id) {
+    const b = BINDERS.find(x => x.id === id);
+    if (!b || b.id === activeBinder.id) return;
+    activeBinder = b;
+    page = 1;
+    updateTopbar();
+    renderSidebar();
+    renderDots();
+    updateUI();
+    initFill();
+}
+
+/* ══════════════════════════════════════
+   TOPBAR
+══════════════════════════════════════ */
+const TYPES = ['9포켓', '12포켓', '탑로더'];
+
+function updateTopbar() {
+    document.getElementById('tb-title').textContent = activeBinder.name;
+    document.getElementById('tb-badge').textContent = activeBinder.type;
+    const total = activeBinder.pages * 18;
+    document.getElementById('tb-count').textContent = `0 / ${total} 카드`;
+}
+
+/* title dblclick → edit */
+document.getElementById('tb-title').addEventListener('dblclick', function() {
+    inlineEdit(this, val => {
+        activeBinder.name = val;
+        renderSidebar();
+    });
+});
+
+/* badge click → cycle type */
+document.getElementById('tb-badge').addEventListener('click', () => {
+    const idx = TYPES.indexOf(activeBinder.type);
+    activeBinder.type = TYPES[(idx + 1) % TYPES.length];
+    document.getElementById('tb-badge').textContent = activeBinder.type;
+    renderSidebar();
+});
+
+/* ══════════════════════════════════════
+   DOTS + PAGE MANAGEMENT
+══════════════════════════════════════ */
+function renderDots() {
+    const total = activeBinder.pages;
+    const container = document.getElementById('dots');
+    container.innerHTML = Array.from({length: total}, (_, i) =>
+        `<div class="dot${i+1===page?' active':''}" data-p="${i+1}"></div>`
+    ).join('');
+    container.querySelectorAll('.dot').forEach(d =>
+        d.addEventListener('click', () => {
+            const t = +d.dataset.p;
+            if (t !== page && !flipping) jumpTo(t);
+        })
+    );
+    document.getElementById('pg-remove').disabled = total <= 1;
+    document.getElementById('pg-add').disabled    = total >= 20;
+}
+
+document.getElementById('pg-add').addEventListener('click', () => {
+    if (activeBinder.pages >= 20) return;
+    activeBinder.pages++;
+    renderDots();
+    updateUI();
+});
+document.getElementById('pg-remove').addEventListener('click', () => {
+    if (activeBinder.pages <= 1) return;
+    if (page > activeBinder.pages - 1) {
+        page = activeBinder.pages - 1;
+        initFill();
+    }
+    activeBinder.pages--;
+    renderDots();
+    updateUI();
+});
+
+/* ══════════════════════════════════════
+   NEW BINDER
+══════════════════════════════════════ */
+document.getElementById('btn-add-binder').addEventListener('click', () => {
+    const colors = ['#6060ff','#40b080','#e06040','#e0a030','#60b0e0','#c060c0'];
+    const newB = {
+        id: nextId++,
+        name: '새 바인더',
+        color: colors[BINDERS.length % colors.length],
+        pages: 3,
+        type: '9포켓'
+    };
+    BINDERS.push(newB);
+    renderSidebar();
+    switchBinder(newB.id);
+
+    /* immediately edit the name in sidebar */
+    setTimeout(() => {
+        const nameEl = document.querySelector(`.b-name[data-id="${newB.id}"]`);
+        if (nameEl) nameEl.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    }, 50);
+});
+
+/* ══════════════════════════════════════
+   FLIP  (v1 mechanism)
+══════════════════════════════════════ */
+function shadowPulse(id) {
+    const el = document.getElementById(id);
+    const half = DURATION * 0.48;
+    el.style.transition = `background ${half}ms ease-in`;
+    el.style.background = 'rgba(0,0,0,0.22)';
+    setTimeout(() => {
+        el.style.transition = `background ${half * 0.8}ms ease-out`;
+        el.style.background = 'rgba(0,0,0,0)';
+    }, half);
+}
+
+function flipNext() {
+    if (flipping || page >= activeBinder.pages) return;
+    flipping = true;
+    const fR = document.getElementById('flipper-R');
+    fillPage('flip-R-back-grid', page + 1, 'L');
+    fillPage('right-bg-grid',    page + 1, 'R');
+    shadowPulse('shadow-L');
+
+    const t1 = Math.round(DURATION * 0.44); // 286ms — 0° → 90°
+    const t2 = DURATION - t1;               // 364ms — 90° → 180°
+
+    // Phase 1: 0° → 90° with slight page curl
+    fR.style.transition = `transform ${t1}ms cubic-bezier(0.4,0,0.55,0.6)`;
+    fR.style.transform  = 'rotateY(-90deg) skewY(2.5deg)';
+
+    setTimeout(() => {
+        // Phase 2: 90° → 180°, curl releases naturally
+        fR.style.transition = `transform ${t2}ms cubic-bezier(0.45,0.4,0.15,1)`;
+        fR.style.transform  = 'rotateY(-180deg)';
+
+        setTimeout(() => {
+            page++;
+            fillPage('left-bg-grid',      page, 'L');
+            fR.style.transition = 'none';
+            fR.style.transform  = 'rotateY(0deg)';
+            fillPage('flip-R-front-grid', page, 'R');
+            renderDots();
+            updateUI();
+            flipping = false;
+        }, t2 + 40);
+    }, t1);
+}
+
+function flipPrev() {
+    if (flipping || page <= 1) return;
+    flipping = true;
+    const fL = document.getElementById('flipper-L');
+    const fR = document.getElementById('flipper-R');
+    fillPage('flip-L-front-grid', page,     'L');
+    fillPage('flip-L-back-grid',  page - 1, 'R');
+    fillPage('left-bg-grid',      page - 1, 'L');
+    fR.style.zIndex = '1';
+    shadowPulse('shadow-R');
+    const t1 = Math.round(DURATION * 0.44);
+    const t2 = DURATION - t1;
+
+    fL.style.display    = 'block';
+    fL.style.transition = 'none';
+    fL.style.transform  = 'rotateY(0deg)';
+    fL.offsetHeight;
+
+    // Phase 1: 0° → 90° with slight page curl
+    fL.style.transition = `transform ${t1}ms cubic-bezier(0.4,0,0.55,0.6)`;
+    fL.style.transform  = 'rotateY(90deg) skewY(-2.5deg)';
+
+    setTimeout(() => {
+        // Phase 2: 90° → 180°, curl releases naturally
+        fL.style.transition = `transform ${t2}ms cubic-bezier(0.45,0.4,0.15,1)`;
+        fL.style.transform  = 'rotateY(180deg)';
+
+        setTimeout(() => {
+            page--;
+            fillPage('right-bg-grid',     page, 'R');
+            fillPage('flip-R-front-grid', page, 'R');
+            fR.style.zIndex    = '4';
+            fR.style.transition = 'none';
+            fR.style.transform  = 'rotateY(0deg)';
+            fL.style.display   = 'none';
+            fL.style.transform = 'rotateY(0deg)';
+            renderDots();
+            updateUI();
+            flipping = false;
+        }, t2 + 40);
+    }, t1);
+}
+
+function jumpTo(target) {
+    const dir = target > page ? 'next' : 'prev';
+    let remaining = Math.abs(target - page);
+    const step = () => {
+        if (remaining-- <= 0) return;
+        dir === 'next' ? flipNext() : flipPrev();
+        if (remaining > 0) setTimeout(step, DURATION + 60);
+    };
+    step();
+}
+
+/* ══════════════════════════════════════
+   UI
+══════════════════════════════════════ */
+function updateUI() {
+    document.getElementById('btn-prev').disabled = page <= 1;
+    document.getElementById('btn-next').disabled = page >= activeBinder.pages;
+}
+
+function initFill() {
+    fillPage('left-bg-grid',      page, 'L');
+    fillPage('right-bg-grid',     page, 'R');
+    fillPage('flip-R-front-grid', page, 'R');
+    fillPage('flip-L-front-grid', page, 'L');
+}
+
+document.getElementById('btn-prev').addEventListener('click', flipPrev);
+document.getElementById('btn-next').addEventListener('click', flipNext);
+document.addEventListener('keydown', e => {
+    if (modal.classList.contains('open')) {
+        if (e.key === 'Escape')     closeCardModal();
+        if (e.key === 'ArrowRight') { if (modalCardIdx < modalCardList.length - 1) showModalCard(modalCardIdx + 1); }
+        if (e.key === 'ArrowLeft')  { if (modalCardIdx > 0) showModalCard(modalCardIdx - 1); }
+        return;
+    }
+    if (e.key === 'ArrowRight') flipNext();
+    if (e.key === 'ArrowLeft')  flipPrev();
+});
+
+/* wheel: Ctrl+wheel → zoom (modal or binder), plain wheel → page flip */
+let wheelCooldown = false;
+document.addEventListener('wheel', e => {
+    e.preventDefault();
+
+    if (e.ctrlKey) {
+        if (modal.classList.contains('open')) {
+            // zoom card image in modal
+            setModalScale(modalScale + (e.deltaY < 0 ? 0.15 : -0.15));
+        } else {
+            // zoom binder size
+            if (e.deltaY < 0) { if (szIdx < PW_STEPS.length - 1) { szIdx++; applySize(); } }
+            else               { if (szIdx > 0)                   { szIdx--; applySize(); } }
+        }
+        return;
+    }
+
+    // page flip — throttle to one flip per animation cycle
+    if (wheelCooldown) return;
+    if (e.deltaY > 0) flipNext();
+    else              flipPrev();
+    wheelCooldown = true;
+    setTimeout(() => { wheelCooldown = false; }, DURATION + 80);
+}, { passive: false });
+
+/* ══════════════════════════════════════
+   BOOT
+══════════════════════════════════════ */
+applySize();
+updateTopbar();
+renderSidebar();
+renderDots();
+updateUI();
+initFill();
+
+/* ══════════════════════════════════════
+   CARD MODAL
+══════════════════════════════════════ */
+const modal         = document.getElementById('card-modal');
+const modalImg      = document.getElementById('card-modal-img');
+const modalClose    = document.getElementById('card-modal-close');
+const modalBackdrop = document.getElementById('card-modal-backdrop');
+const modalPrev     = document.getElementById('modal-prev');
+const modalNext     = document.getElementById('modal-next');
+const modalCounter  = document.getElementById('card-modal-counter');
+
+let modalCardList = [];  // flat list of all filled pockets in current binder
+let modalCardIdx  = 0;
+let modalScale    = 1;
+
+function buildCardList() {
+    const list = [];
+    for (let sp = 1; sp <= activeBinder.pages; sp++) {
+        for (const side of ['L', 'R']) {
+            getCards(activeBinder.id, sp, side).forEach((src, idx) => {
+                if (src) list.push({ sp, side, idx, src });
+            });
+        }
+    }
+    return list;
+}
+
+function setModalScale(s) {
+    const baseW = Math.min(380, window.innerWidth * 0.78);
+    const maxW  = window.innerWidth - 180; // 버튼(40px*2) + gap + 여백
+    modalScale  = Math.min(maxW / baseW, Math.max(0.3, s));
+    if (Math.abs(modalScale - 1) < 0.02) {
+        // 1배 근처면 CSS 기본값으로 리셋
+        modalImg.style.width    = '';
+        modalImg.style.maxWidth = '';
+        modalImg.style.maxHeight = '';
+    } else {
+        modalImg.style.width     = Math.round(baseW * modalScale) + 'px';
+        modalImg.style.maxWidth  = 'none';
+        modalImg.style.maxHeight = 'none';
+    }
+    modalImg.style.transform = 'none';
+}
+
+function showModalCard(pos) {
+    modalImg.style.opacity = '0';
+    setTimeout(() => {
+        modalImg.src = modalCardList[pos].src;
+        modalImg.style.opacity = '1';
+        modalCardIdx = pos;
+        modalCounter.textContent = `${pos + 1} / ${modalCardList.length}`;
+        modalPrev.disabled = pos === 0;
+        modalNext.disabled = pos === modalCardList.length - 1;
+    }, 80);
+}
+
+function openCardModal(src, sp, side, idx) {
+    modalCardList = buildCardList();
+    const pos = modalCardList.findIndex(c => c.sp === sp && c.side === side && c.idx === idx);
+    modalCardIdx = pos >= 0 ? pos : 0;
+    setModalScale(1);
+    modalImg.style.transition = 'opacity 0.1s ease, transform 0.15s ease';
+    modalImg.src = src;
+    modalImg.style.opacity = '1';
+    modalCounter.textContent = `${modalCardIdx + 1} / ${modalCardList.length}`;
+    modalPrev.disabled = modalCardIdx === 0;
+    modalNext.disabled = modalCardIdx === modalCardList.length - 1;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeCardModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    setModalScale(1);
+}
+
+modalClose.addEventListener('click', closeCardModal);
+modalBackdrop.addEventListener('click', closeCardModal);
+modalPrev.addEventListener('click', () => { if (modalCardIdx > 0) showModalCard(modalCardIdx - 1); });
+modalNext.addEventListener('click', () => { if (modalCardIdx < modalCardList.length - 1) showModalCard(modalCardIdx + 1); });
+</script>
+</body>
+</html>

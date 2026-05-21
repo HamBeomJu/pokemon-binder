@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéBinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --pw: 110px;
+            --ph: calc(var(--pw) * 88 / 63);
+            --gap: 10px;
+            --pp: 18px;
+            --sp: 14px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #07070f;
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ─── Binder ─── */
+        .binder-perspective {
+            perspective: 3000px;
+            perspective-origin: 50% 50%;
+        }
+
+        .binder-outer {
+            display: flex;
+            position: relative;
+            border-radius: 8px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.06),
+                0 25px 60px rgba(0,0,0,0.9),
+                0 60px 120px rgba(0,0,0,0.6);
+        }
+
+        /* ─── Zones ─── */
+        .zone { position: relative; flex-shrink: 0; }
+
+        /* ─── Binder pages ─── */
+        .binder-page {
+            padding: var(--pp);
+            position: relative;
+        }
+        .binder-page.left  { background: linear-gradient(155deg, #1d1d1d 0%, #131313 100%); }
+        .binder-page.right { background: linear-gradient(205deg, #1c1c1c 0%, #111111 100%); }
+
+        .page-surface {
+            background: linear-gradient(145deg, #202020, #161616);
+            border-radius: 4px;
+            padding: var(--sp);
+            box-shadow: inset 0 0 35px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+
+        .page-stack {
+            position: absolute;
+            bottom: -2px; left: 6px; right: 6px;
+            height: 5px; background: #0c0c0c;
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* ─── Spine ─── */
+        .spine {
+            width: 20px; flex-shrink: 0;
+            background: linear-gradient(to right, #040404, #181818 38%, #181818 62%, #040404);
+            position: relative; z-index: 3;
+        }
+        .spine::after {
+            content: ''; position: absolute; inset: 0;
+            background: repeating-linear-gradient(180deg,
+                transparent 0, transparent 20px,
+                rgba(0,0,0,0.28) 20px, rgba(0,0,0,0.28) 21px);
+        }
+
+        /* ─── Flippers ─── */
+        .flipper {
+            position: absolute; inset: 0;
+            transform-style: preserve-3d;
+        }
+        #flipper-R { transform-origin: left center;  z-index: 4; }
+        #flipper-L { transform-origin: right center; z-index: 5; display: none; }
+
+        .flip-face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            position: absolute; inset: 0;
+        }
+
+        /* back faces */
+        #flip-R-back { transform: rotateY(180deg); }
+        #flip-L-back { transform: rotateY(-180deg); }
+
+        /* ─── Page shadow overlay ─── */
+        .pg-shadow {
+            position: absolute; inset: 0;
+            pointer-events: none; z-index: 6;
+            background: rgba(0,0,0,0);
+            transition: background 0.05s;
+        }
+
+        /* ─── Pocket grid ─── */
+        .pocket-grid {
+            display: grid;
+            grid-template-columns: repeat(3, var(--pw));
+            gap: var(--gap);
+        }
+
+        /* ─── Pocket ─── */
+        .pocket {
+            width: var(--pw); height: var(--ph);
+            background: rgba(210,228,255,0.028);
+            border: 1px solid rgba(210,228,255,0.13);
+            border-radius: 3px;
+            position: relative; cursor: pointer; overflow: hidden;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .pocket::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 36%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.065) 0%, rgba(255,255,255,0.018) 55%, transparent 100%);
+            pointer-events: none; z-index: 2;
+        }
+        .pocket-glare {
+            position: absolute; top: 6%; left: 5%; width: 15%; height: 40%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.055), transparent);
+            pointer-events: none; z-index: 2;
+        }
+        .pocket-add {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.15s; z-index: 3;
+        }
+        .pocket-add-icon {
+            width: 30px; height: 30px;
+            border: 1.5px solid rgba(255,255,255,0.2); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.35); font-size: 18px;
+        }
+        .pocket:hover { background: rgba(210,228,255,0.075); border-color: rgba(210,228,255,0.3); }
+        .pocket:hover .pocket-add { opacity: 1; }
+
+        /* ─── Buttons ─── */
+        .nav-btn {
+            width: 38px; height: 38px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 22px;
+            cursor: pointer; transition: all 0.15s; user-select: none;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .nav-btn:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+
+        .size-btn {
+            width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 16px;
+            cursor: pointer; transition: all 0.15s; user-select: none;
+        }
+        .size-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+        .top-btn {
+            font-size: 13px; padding: 7px 15px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: rgba(255,255,255,0.75); cursor: pointer; transition: background 0.15s;
+        }
+        .top-btn:hover { background: rgba(255,255,255,0.12); }
+
+        /* ─── Glow ─── */
+        .binder-glow { position: relative; }
+        .binder-glow::before {
+            content: ''; position: absolute; inset: -50px;
+            background: radial-gradient(ellipse at center, rgba(70,70,190,0.08), transparent 68%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Nav ── -->
+    <nav style="border-bottom:1px solid rgba(255,255,255,0.06);" class="flex items-center justify-between px-8 py-4 flex-shrink-0">
+        <span style="font-size:1.05rem;font-weight:600;letter-spacing:-0.02em;">PokéBinder</span>
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5">
+                <button class="size-btn" id="sz-dn">−</button>
+                <span id="sz-lbl" style="font-size:11px;color:rgba(255,255,255,0.28);min-width:34px;text-align:center;">100%</span>
+                <button class="size-btn" id="sz-up">+</button>
+            </div>
+            <div style="width:1px;height:20px;background:rgba(255,255,255,0.08);"></div>
+            <button class="top-btn">+ 새 바인더</button>
+            <button class="top-btn">로그인</button>
+        </div>
+    </nav>
+
+    <!-- ── Title ── -->
+    <div class="px-8 py-4 flex-shrink-0">
+        <p style="font-size:11px;color:rgba(255,255,255,0.28);margin-bottom:3px;letter-spacing:0.04em;text-transform:uppercase;">내 바인더</p>
+        <h1 style="font-size:17px;font-weight:600;color:rgba(255,255,255,0.88);">스칼렛 &amp; 바이올렛</h1>
+    </div>
+
+    <!-- ── Main ── -->
+    <main class="flex-1 flex flex-col items-center justify-center gap-5 pb-8" style="overflow:auto;">
+
+        <div class="binder-glow">
+            <div class="binder-perspective">
+                <div class="binder-outer" id="binder-outer">
+
+                    <!-- LEFT ZONE -->
+                    <div class="zone" id="zone-L">
+                        <!-- background layer (reveals after flip) -->
+                        <div id="left-bg" class="binder-page left">
+                            <div class="page-surface">
+                                <div class="pocket-grid" id="left-bg-grid"></div>
+                            </div>
+                            <div class="page-stack"></div>
+                            <div class="pg-shadow" id="shadow-L"></div>
+                        </div>
+                        <!-- flipper for PREV: sweeps left→right -->
+                        <div class="flipper" id="flipper-L">
+                            <div class="flip-face binder-page left" id="flip-L-front">
+                                <div class="page-surface">
+                                    <div class="pocket-grid" id="flip-L-front-grid"></div>
+                                </div>
+                            </div>
+                            <div class="flip-face binder-page right" id="flip-L-back">
+                                <div class="page-surface">
+                                    <div class="pocket-grid" id="flip-L-back-grid"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SPINE -->
+                    <div class="spine"></div>
+
+                    <!-- RIGHT ZONE -->
+                    <div class="zone" id="zone-R">
+                        <!-- background layer (reveals after flip) -->
+                        <div id="right-bg" class="binder-page right">
+                            <div class="page-surface">
+                                <div class="pocket-grid" id="right-bg-grid"></div>
+                            </div>
+                            <div class="page-stack"></div>
+                            <div class="pg-shadow" id="shadow-R"></div>
+                        </div>
+                        <!-- flipper for NEXT: sweeps right→left -->
+                        <div class="flipper" id="flipper-R">
+                            <div class="flip-face binder-page right" id="flip-R-front">
+                                <div class="page-surface">
+                                    <div class="pocket-grid" id="flip-R-front-grid"></div>
+                                </div>
+                            </div>
+                            <div class="flip-face binder-page left" id="flip-R-back">
+                                <div class="page-surface">
+                                    <div class="pocket-grid" id="flip-R-back-grid"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Page nav -->
+        <div style="display:flex;align-items:center;gap:14px;">
+            <button class="nav-btn" id="btn-prev">&#8249;</button>
+            <span id="pg-lbl" style="font-size:13px;color:rgba(255,255,255,0.28);min-width:70px;text-align:center;user-select:none;"></span>
+            <button class="nav-btn" id="btn-next">&#8250;</button>
+        </div>
+
+    </main>
+
+    <script>
+    /* ─────────────────────────────────────
+       Config
+    ───────────────────────────────────── */
+    const TOTAL    = 5;
+    const DURATION = 650; // ms — flip speed
+
+    let page     = 1;
+    let flipping = false;
+
+    /* ─────────────────────────────────────
+       Size control
+    ───────────────────────────────────── */
+    const PW_STEPS  = [80, 95, 110, 128, 148, 170];
+    const SZ_LABELS = ['73%','86%','100%','116%','135%','155%'];
+    let szIdx = 2;
+
+    function setSize() {
+        document.documentElement.style.setProperty('--pw', PW_STEPS[szIdx] + 'px');
+        document.getElementById('sz-lbl').textContent = SZ_LABELS[szIdx];
+        document.getElementById('sz-dn').disabled = szIdx === 0;
+        document.getElementById('sz-up').disabled = szIdx === PW_STEPS.length - 1;
+    }
+
+    document.getElementById('sz-up').addEventListener('click', () => { if (szIdx < PW_STEPS.length-1){ szIdx++; setSize(); } });
+    document.getElementById('sz-dn').addEventListener('click', () => { if (szIdx > 0){ szIdx--; setSize(); } });
+
+    /* ─────────────────────────────────────
+       Pocket HTML
+    ───────────────────────────────────── */
+    const POCKET = `<div class="pocket">
+        <div class="pocket-glare"></div>
+        <div class="pocket-add"><div class="pocket-add-icon">+</div></div>
+    </div>`;
+
+    function fill(id) { document.getElementById(id).innerHTML = POCKET.repeat(9); }
+
+    /* ─────────────────────────────────────
+       Shadow helper
+    ───────────────────────────────────── */
+    function shadowPulse(id, dur) {
+        const el = document.getElementById(id);
+        const half = dur * 0.48;
+        el.style.transition = `background ${half}ms ease-in`;
+        el.style.background  = 'rgba(0,0,0,0.22)';
+        setTimeout(() => {
+            el.style.transition = `background ${half * 0.8}ms ease-out`;
+            el.style.background  = 'rgba(0,0,0,0)';
+        }, half);
+    }
+
+    /* ─────────────────────────────────────
+       UI update
+    ───────────────────────────────────── */
+    function updateUI() {
+        document.getElementById('pg-lbl').textContent = `${page} / ${TOTAL}`;
+        document.getElementById('btn-prev').disabled  = page <= 1;
+        document.getElementById('btn-next').disabled  = page >= TOTAL;
+    }
+
+    /* ─────────────────────────────────────
+       Initial render
+    ───────────────────────────────────── */
+    function initRender() {
+        fill('left-bg-grid');
+        fill('right-bg-grid');
+        fill('flip-R-front-grid');
+        fill('flip-L-front-grid');
+        updateUI();
+    }
+
+    /* ─────────────────────────────────────
+       NEXT  (right page flips to left)
+    ───────────────────────────────────── */
+    function flipNext() {
+        if (flipping || page >= TOTAL) return;
+        flipping = true;
+
+        const fR = document.getElementById('flipper-R');
+
+        // 1. Load next-spread's left content onto back face
+        fill('flip-R-back-grid');
+
+        // 2. Pre-load new right content behind the flipper (invisible now)
+        fill('right-bg-grid');
+
+        // 3. Shadow on left page as flipper sweeps over it
+        shadowPulse('shadow-L', DURATION);
+
+        // 4. Animate flipper-R: 0° → -180°  (right → left)
+        fR.style.transition = `transform ${DURATION}ms cubic-bezier(0.645,0.045,0.355,1.000)`;
+        fR.style.transform  = 'rotateY(-180deg)';
+
+        setTimeout(() => {
+            page++;
+
+            // 5. Update static left page to new left content
+            fill('left-bg-grid');
+
+            // 6. Reset flipper-R instantly (no transition), refresh its front face
+            fR.style.transition = 'none';
+            fR.style.transform  = 'rotateY(0deg)';
+            fill('flip-R-front-grid');
+
+            updateUI();
+            flipping = false;
+        }, DURATION + 40);
+    }
+
+    /* ─────────────────────────────────────
+       PREV  (left page flips to right)
+    ───────────────────────────────────── */
+    function flipPrev() {
+        if (flipping || page <= 1) return;
+        flipping = true;
+
+        const fL = document.getElementById('flipper-L');
+        const fR = document.getElementById('flipper-R');
+
+        // 1. Load current left content onto flipper-L front (it will sweep over right side)
+        fill('flip-L-front-grid');
+
+        // 2. Load prev-spread's right content onto flipper-L back face
+        fill('flip-L-back-grid');
+
+        // 3. Pre-load prev left content under flipper-L (invisible now)
+        fill('left-bg-grid');
+
+        // 4. Temporarily lower flipper-R so flipper-L can sweep on top
+        fR.style.zIndex = '1';
+
+        // 5. Shadow on right page
+        shadowPulse('shadow-R', DURATION);
+
+        // 6. Show flipper-L, ensure it starts at 0° (no transition)
+        fL.style.display    = 'block';
+        fL.style.transition = 'none';
+        fL.style.transform  = 'rotateY(0deg)';
+
+        // Force reflow so the reset is applied before we start the animation
+        fL.offsetHeight; // eslint-disable-line no-unused-expressions
+
+        // 7. Animate flipper-L: 0° → +180°  (left → right)
+        fL.style.transition = `transform ${DURATION}ms cubic-bezier(0.645,0.045,0.355,1.000)`;
+        fL.style.transform  = 'rotateY(180deg)';
+
+        setTimeout(() => {
+            page--;
+
+            // 8. Update right bg + flipper-R front with prev right content
+            fill('right-bg-grid');
+            fill('flip-R-front-grid');
+
+            // 9. Reset flipper-R z-index & transform
+            fR.style.zIndex     = '4';
+            fR.style.transition = 'none';
+            fR.style.transform  = 'rotateY(0deg)';
+
+            // 10. Hide flipper-L
+            fL.style.display   = 'none';
+            fL.style.transform = 'rotateY(0deg)';
+
+            updateUI();
+            flipping = false;
+        }, DURATION + 40);
+    }
+
+    /* ─────────────────────────────────────
+       Event listeners
+    ───────────────────────────────────── */
+    document.getElementById('btn-next').addEventListener('click', flipNext);
+    document.getElementById('btn-prev').addEventListener('click', flipPrev);
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') flipNext();
+        if (e.key === 'ArrowLeft')  flipPrev();
+    });
+
+    /* ─────────────────────────────────────
+       Boot
+    ───────────────────────────────────── */
+    setSize();
+    initRender();
+    </script>
+</body>
+</html>
