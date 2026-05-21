@@ -13,6 +13,12 @@
             --gap: 9px;
             --pp: 16px;
             --sp: 12px;
+            /* 12포켓: 4열이 3열과 같은 총 너비 유지 */
+            --pw12: calc((var(--pw) * 3 - var(--gap)) / 4);
+            --ph12: calc(var(--pw12) * 88 / 63);
+            /* 탑로더: 3×3이지만 포켓이 더 큰 카드용 (1.15× 크기) */
+            --pwTL: calc(var(--pw) * 1.15);
+            --phTL: calc(var(--pwTL) * 91 / 67);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -248,6 +254,30 @@
             grid-template-columns: repeat(3, var(--pw));
             gap: var(--gap);
         }
+        /* 12포켓 */
+        .pocket-grid.grid-12 {
+            grid-template-columns: repeat(4, var(--pw12));
+        }
+        .pocket-grid.grid-12 .pocket {
+            width: var(--pw12) !important;
+            height: var(--ph12) !important;
+        }
+        /* 탑로더 */
+        .pocket-grid.grid-tl {
+            grid-template-columns: repeat(3, var(--pwTL));
+        }
+        .pocket-grid.grid-tl .pocket {
+            width: var(--pwTL) !important;
+            height: var(--phTL) !important;
+            border-width: 2px;
+            border-color: rgba(210,228,255,0.18);
+            border-radius: 5px;
+            background: rgba(210,228,255,0.04);
+        }
+        .pocket-grid.grid-tl .pocket::after {
+            width: 40%; height: 5px;
+            background: rgba(255,255,255,0.07);
+        }
         .pocket {
             width: var(--pw); height: var(--ph);
             background: rgba(210,228,255,0.025);
@@ -354,6 +384,85 @@
                 inset 0 5px 10px rgba(0,0,0,0.55),
                 inset 1px 0 4px rgba(0,0,0,0.22),
                 inset -1px 0 4px rgba(0,0,0,0.22);
+        }
+
+        /* ══ POCKET ADD MENU ══ */
+        .pocket-menu {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 6px; opacity: 0; transition: opacity 0.14s; z-index: 3;
+        }
+        .pocket:hover .pocket-menu { opacity: 1; }
+        .pocket-menu-btn {
+            display: flex; align-items: center; gap: 5px;
+            padding: 4px 9px; border-radius: 12px;
+            background: rgba(10,10,20,0.82); border: 1px solid rgba(255,255,255,0.13);
+            color: rgba(255,255,255,0.75); font-size: 10.5px; cursor: pointer;
+            transition: all 0.12s; white-space: nowrap; user-select: none;
+        }
+        .pocket-menu-btn:hover { background: rgba(88,88,255,0.4); border-color: rgba(120,120,255,0.5); color: #fff; }
+
+        /* ══ TCG SEARCH MODAL ══ */
+        #tcg-modal {
+            display: none; position: fixed; inset: 0; z-index: 1100;
+            align-items: center; justify-content: center;
+        }
+        #tcg-modal.open { display: flex; }
+        #tcg-backdrop {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.78); backdrop-filter: blur(5px);
+        }
+        #tcg-box {
+            position: relative; z-index: 1;
+            background: #111120; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; width: min(680px, 95vw);
+            max-height: 85vh; display: flex; flex-direction: column;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+        }
+        #tcg-header {
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+        }
+        #tcg-search {
+            flex: 1; background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            padding: 8px 12px; color: #fff; font-size: 13px; outline: none;
+        }
+        #tcg-search:focus { border-color: rgba(100,100,255,0.5); }
+        #tcg-search-btn {
+            padding: 8px 14px; background: rgba(88,88,255,0.3);
+            border: 1px solid rgba(88,88,255,0.5); border-radius: 8px;
+            color: #fff; font-size: 12px; cursor: pointer; transition: all 0.12s;
+        }
+        #tcg-search-btn:hover { background: rgba(88,88,255,0.55); }
+        #tcg-close-btn {
+            width: 28px; height: 28px; flex-shrink: 0;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%; color: rgba(255,255,255,0.5); font-size: 14px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        #tcg-close-btn:hover { background: rgba(255,60,60,0.5); color: #fff; }
+        #tcg-status {
+            padding: 10px 18px; font-size: 12px;
+            color: rgba(255,255,255,0.35); flex-shrink: 0;
+        }
+        #tcg-results {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px; padding: 12px 18px 18px; overflow-y: auto;
+        }
+        .tcg-card {
+            border-radius: 7px; overflow: hidden; cursor: pointer;
+            border: 2px solid transparent; transition: all 0.14s;
+            aspect-ratio: 63 / 88;
+        }
+        .tcg-card:hover { border-color: rgba(100,100,255,0.7); transform: scale(1.04); }
+        .tcg-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .tcg-card-name {
+            font-size: 9px; text-align: center; padding: 3px 2px;
+            color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.4);
+            margin-top: -1px;
         }
 
         /* ══ CARD MODAL ══ */
@@ -546,6 +655,20 @@
     </div>
 </div>
 
+<!-- TCG Search Modal -->
+<div id="tcg-modal">
+    <div id="tcg-backdrop"></div>
+    <div id="tcg-box">
+        <div id="tcg-header">
+            <input id="tcg-search" type="text" placeholder="포켓몬 이름으로 검색... (예: Pikachu, Charizard)">
+            <button id="tcg-search-btn">검색</button>
+            <button id="tcg-close-btn">✕</button>
+        </div>
+        <div id="tcg-status">포켓몬 이름을 검색해보세요</div>
+        <div id="tcg-results"></div>
+    </div>
+</div>
+
 <!-- Card Modal -->
 <div id="card-modal">
     <div id="card-modal-backdrop"></div>
@@ -645,12 +768,19 @@ fileInput.addEventListener('change', () => {
 });
 
 /* 클릭한 슬롯부터 순서대로 채울 슬롯 목록 생성 */
+function getBinderConfig(type) {
+    if (type === '12포켓') return { cols: 4, count: 12, gridClass: 'grid-12' };
+    if (type === '탑로더') return { cols: 3, count: 9,  gridClass: 'grid-tl' };
+    return                        { cols: 3, count: 9,  gridClass: '' };
+}
+
 function buildSlots(startSp, startSide, startIdx, count) {
+    const cfg   = getBinderConfig(activeBinder.type);
     const slots = [];
     let sp = startSp, side = startSide, idx = startIdx;
     while (slots.length < count && sp <= activeBinder.pages) {
         slots.push({ sp, side, idx });
-        if (++idx >= 9) {
+        if (++idx >= cfg.count) {
             idx = 0;
             side = (side === 'L') ? 'R' : 'L';
             if (side === 'L') sp++;
@@ -695,14 +825,20 @@ function makePocket(binderId, sp, side, idx) {
     }
     return `<div class="pocket" data-sp="${sp}" data-side="${side}" data-idx="${idx}">
         <div class="pocket-glare"></div>
-        <div class="pocket-add"><div class="pocket-add-icon">+</div></div>
+        <div class="pocket-menu">
+            <button class="pocket-menu-btn pocket-upload-btn">📁 파일</button>
+            <button class="pocket-menu-btn pocket-search-btn">🔍 검색</button>
+        </div>
     </div>`;
 }
 
 function fillPage(gridId, sp, side) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
-    grid.innerHTML = Array.from({ length: 9 }, (_, i) =>
+    const cfg = getBinderConfig(activeBinder.type);
+    // 타입별 grid 클래스 적용
+    grid.className = 'pocket-grid' + (cfg.gridClass ? ' ' + cfg.gridClass : '');
+    grid.innerHTML = Array.from({ length: cfg.count }, (_, i) =>
         makePocket(activeBinder.id, sp, side, i)
     ).join('');
 
@@ -725,11 +861,17 @@ function fillPage(gridId, sp, side) {
                 loadImgMulti(files, activeBinder.id, pSp, pSide, idx);
         });
 
-        /* + button → file picker */
-        const addBtn = pocket.querySelector('.pocket-add');
-        if (addBtn) addBtn.addEventListener('click', e => {
+        /* 📁 파일 업로드 */
+        const uploadBtn = pocket.querySelector('.pocket-upload-btn');
+        if (uploadBtn) uploadBtn.addEventListener('click', e => {
             e.stopPropagation();
             openFilePicker(activeBinder.id, pSp, pSide, idx);
+        });
+        /* 🔍 TCG 검색 */
+        const searchBtn = pocket.querySelector('.pocket-search-btn');
+        if (searchBtn) searchBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            openTcgModal(activeBinder.id, pSp, pSide, idx);
         });
 
         /* × remove */
@@ -877,7 +1019,8 @@ const TYPES = ['9포켓', '12포켓', '탑로더'];
 function updateTopbar() {
     document.getElementById('tb-title').textContent = activeBinder.name;
     document.getElementById('tb-badge').textContent = activeBinder.type;
-    const total = activeBinder.pages * 18;
+    const cfg   = getBinderConfig(activeBinder.type);
+    const total = activeBinder.pages * cfg.count * 2;
     document.getElementById('tb-count').textContent = `0 / ${total} 카드`;
 }
 
@@ -1109,6 +1252,60 @@ document.addEventListener('wheel', e => {
     wheelCooldown = true;
     setTimeout(() => { wheelCooldown = false; }, DURATION + 80);
 }, { passive: false });
+
+/* ══════════════════════════════════════
+   TCG SEARCH
+══════════════════════════════════════ */
+const tcgModal   = document.getElementById('tcg-modal');
+const tcgSearch  = document.getElementById('tcg-search');
+const tcgResults = document.getElementById('tcg-results');
+const tcgStatus  = document.getElementById('tcg-status');
+let tcgTarget    = null; // { binderId, sp, side, idx }
+
+function openTcgModal(binderId, sp, side, idx) {
+    tcgTarget = { binderId, sp, side, idx };
+    tcgResults.innerHTML = '';
+    tcgStatus.textContent = '포켓몬 이름을 검색해보세요';
+    tcgSearch.value = '';
+    tcgModal.classList.add('open');
+    setTimeout(() => tcgSearch.focus(), 100);
+}
+function closeTcgModal() { tcgModal.classList.remove('open'); tcgTarget = null; }
+
+async function searchTcg(query) {
+    if (!query.trim()) return;
+    tcgStatus.textContent = '검색 중...';
+    tcgResults.innerHTML = '';
+    try {
+        const res  = await fetch(
+            `https://api.pokemontcg.io/v2/cards?q=name:"${encodeURIComponent(query)}"&pageSize=30&select=id,name,images`
+        );
+        const data = await res.json();
+        const cards = data.data || [];
+        if (!cards.length) { tcgStatus.textContent = '검색 결과 없음'; return; }
+        tcgStatus.textContent = `${cards.length}장 찾음 — 클릭해서 추가`;
+        tcgResults.innerHTML = cards.map(c => `
+            <div class="tcg-card" data-large="${c.images.large}" data-name="${c.name}">
+                <img src="${c.images.small}" loading="lazy" alt="${c.name}">
+            </div>`).join('');
+        tcgResults.querySelectorAll('.tcg-card').forEach(el => {
+            el.addEventListener('click', () => {
+                if (!tcgTarget) return;
+                const { binderId, sp, side, idx } = tcgTarget;
+                getCards(binderId, sp, side)[idx] = el.dataset.large;
+                refreshSpread();
+                closeTcgModal();
+            });
+        });
+    } catch(e) {
+        tcgStatus.textContent = '오류 발생. 잠시 후 다시 시도해주세요.';
+    }
+}
+
+document.getElementById('tcg-search-btn').addEventListener('click', () => searchTcg(tcgSearch.value));
+document.getElementById('tcg-close-btn').addEventListener('click', closeTcgModal);
+document.getElementById('tcg-backdrop').addEventListener('click', closeTcgModal);
+tcgSearch.addEventListener('keydown', e => { if (e.key === 'Enter') searchTcg(tcgSearch.value); });
 
 /* ══════════════════════════════════════
    BOOT
