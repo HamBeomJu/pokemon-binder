@@ -1485,25 +1485,66 @@ modalNext.addEventListener('click', () => { if (modalCardIdx < modalCardList.len
 ══════════════════════════════════════ */
 
 /* ── 사이드바 푸터 UI 업데이트 ── */
+function getDisplayName(user) {
+    return (user?.user_metadata?.display_name) || (user?.email?.split('@')[0]) || '?';
+}
+
 function updateAuthUI(user) {
     const footer = document.querySelector('.sidebar-footer');
     const avatar = footer.querySelector('.avatar');
     const hint   = footer.querySelector('.login-hint');
     const btn    = footer.querySelector('.login-btn-sm');
     if (user) {
-        const initials = (user.email || '?').slice(0, 2).toUpperCase();
-        avatar.textContent = initials;
+        const name = getDisplayName(user);
+        avatar.textContent = name.slice(0, 2).toUpperCase();
         avatar.title = user.email;
-        hint.textContent = user.email.split('@')[0];
-        hint.title = user.email;
+        hint.textContent = name;
+        hint.title = '더블클릭해서 닉네임 변경';
+        hint.style.cursor = 'pointer';
+        hint.ondblclick = () => editNickname(user, hint, avatar);
         btn.textContent = '로그아웃';
         btn.onclick = sbSignOut;
     } else {
         avatar.textContent = '?';
         hint.textContent = '로그인하세요';
+        hint.style.cursor = '';
+        hint.title = '';
+        hint.ondblclick = null;
         btn.textContent = '로그인';
         btn.onclick = () => openAuthModal();
     }
+}
+
+async function editNickname(user, hint, avatar) {
+    if (!sb || !sbUser) return;
+    const current = getDisplayName(user);
+    const input = document.createElement('input');
+    input.className = 'inline-edit';
+    input.value = current;
+    input.style.cssText = 'width:90px;font-size:11px;padding:2px 5px;';
+    hint.replaceWith(input);
+    input.focus(); input.select();
+
+    const save = async () => {
+        const val = input.value.trim() || current;
+        /* 원래 hint 복원 */
+        const newHint = document.createElement('span');
+        newHint.className = 'login-hint';
+        input.replaceWith(newHint);
+        /* Supabase에 저장 */
+        const { data, error } = await sb.auth.updateUser({ data: { display_name: val } });
+        if (!error && data?.user) {
+            sbUser = data.user;
+            updateAuthUI(sbUser);
+        } else {
+            updateAuthUI(sbUser);
+        }
+    };
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter')  { e.preventDefault(); save(); }
+        if (e.key === 'Escape') { input.value = current; save(); }
+    });
 }
 
 /* ── Auth 모달 ── */
