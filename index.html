@@ -215,7 +215,7 @@
         .spine {
             width: 18px; flex-shrink: 0;
             background: linear-gradient(to right, #040408 0%, #141420 38%, #141420 62%, #040408 100%);
-            position: relative; z-index: 3;
+            position: relative; z-index: 10;  /* 항상 flipper 위에 */
         }
         .spine::after {
             content: ''; position: absolute; inset: 0;
@@ -1214,13 +1214,18 @@ function flipNext() {
 
         setTimeout(() => {
             page++;
+            /* 콘텐츠 먼저 업데이트, 리셋은 opacity=0 상태로 */
             fillPage('left-bg-grid',      page, 'L');
-            fR.style.transition = 'none';
-            fR.style.transform  = 'rotateY(0deg)';
             fillPage('flip-R-front-grid', page, 'R');
-            renderDots();
-            updateUI();
-            flipping = false;
+            fR.style.transition = 'none';
+            fR.style.opacity    = '0';
+            fR.style.transform  = 'rotateY(0deg)';
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                fR.style.opacity = '1';
+                renderDots();
+                updateUI();
+                flipping = false;
+            }));
         }, t2 + 40);
     }, t1);
 }
@@ -1239,6 +1244,7 @@ function flipPrev() {
     const t2 = DURATION - t1;
 
     fL.style.display    = 'block';
+    fL.style.opacity    = '1';
     fL.style.transition = 'none';
     fL.style.transform  = 'rotateY(0deg)';
     fL.offsetHeight;
@@ -1256,14 +1262,20 @@ function flipPrev() {
             page--;
             fillPage('right-bg-grid',     page, 'R');
             fillPage('flip-R-front-grid', page, 'R');
-            fR.style.zIndex    = '4';
+            fR.style.zIndex     = '4';
             fR.style.transition = 'none';
             fR.style.transform  = 'rotateY(0deg)';
-            fL.style.display   = 'none';
-            fL.style.transform = 'rotateY(0deg)';
-            renderDots();
-            updateUI();
-            flipping = false;
+            /* fL 숨김도 opacity로 자연스럽게 */
+            fL.style.transition = 'none';
+            fL.style.opacity    = '0';
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                fL.style.display   = 'none';
+                fL.style.opacity   = '1';
+                fL.style.transform = 'rotateY(0deg)';
+                renderDots();
+                updateUI();
+                flipping = false;
+            }));
         }, t2 + 40);
     }, t1);
 }
