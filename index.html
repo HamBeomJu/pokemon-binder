@@ -6,6 +6,7 @@
     <title>PokéBinder</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --pw: 105px;
@@ -564,6 +565,47 @@
 
         /* hidden color picker */
         #color-picker { display: none; }
+
+        /* ══ AUTH MODAL ══ */
+        .auth-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.75);
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .auth-overlay.open { display: flex; }
+        .auth-box {
+            background: #13132a;
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 16px; padding: 30px 28px; width: 340px;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+        }
+        .auth-box h2 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+        .auth-box .auth-sub { font-size: 12px; color: rgba(255,255,255,0.3); margin-bottom: 20px; }
+        .auth-inp {
+            width: 100%; background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 8px; color: #fff; padding: 10px 13px;
+            font-size: 13px; margin-bottom: 10px; outline: none; font-family: inherit;
+        }
+        .auth-inp:focus { border-color: rgba(88,88,255,0.55); background: rgba(255,255,255,0.08); }
+        .auth-btn-main {
+            width: 100%; background: #5858ff; border: none;
+            border-radius: 8px; color: #fff; padding: 11px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: background 0.15s; margin-top: 4px;
+        }
+        .auth-btn-main:hover { background: #7070ff; }
+        .auth-btn-main:disabled { opacity: 0.5; cursor: default; }
+        .auth-err { color: #ff8080; font-size: 12px; margin-bottom: 8px; min-height: 16px; }
+        .auth-sep { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 16px 0; }
+        .auth-toggle { text-align: center; font-size: 12px; color: rgba(255,255,255,0.35); }
+        .auth-toggle a { color: #9090ff; cursor: pointer; text-decoration: underline; }
+        .auth-cancel { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 8px; color: rgba(255,255,255,0.4); padding: 9px; font-size: 12px; cursor: pointer; margin-top: 8px; transition: all 0.12s; }
+        .auth-cancel:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.7); }
+
+        /* 로그인된 사용자 이름 표시 */
+        .login-user { font-size: 11px; color: rgba(255,255,255,0.55); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px; }
     </style>
 </head>
 <body>
@@ -669,6 +711,21 @@
     </div>
 </div>
 
+<!-- Auth Modal -->
+<div class="auth-overlay" id="auth-overlay">
+    <div class="auth-box">
+        <h2 id="auth-title">로그인</h2>
+        <p class="auth-sub" id="auth-sub">Supabase 계정으로 데이터를 클라우드에 저장하세요</p>
+        <p class="auth-err" id="auth-err"></p>
+        <input class="auth-inp" id="auth-email" type="email" placeholder="이메일" autocomplete="email">
+        <input class="auth-inp" id="auth-pw" type="password" placeholder="비밀번호" autocomplete="current-password">
+        <button class="auth-btn-main" id="auth-submit">로그인</button>
+        <p class="auth-toggle" style="margin-top:12px">계정이 없으신가요? <a id="auth-mode-toggle">회원가입</a></p>
+        <hr class="auth-sep">
+        <button class="auth-cancel" id="auth-cancel">취소</button>
+    </div>
+</div>
+
 <!-- Card Modal -->
 <div id="card-modal">
     <div id="card-modal-backdrop"></div>
@@ -684,6 +741,21 @@
 </div>
 
 <script>
+/* ══════════════════════════════════════
+   SUPABASE 설정
+   👇 supabase.com 프로젝트 > Settings > API 에서 복사
+══════════════════════════════════════ */
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';       // https://xxxx.supabase.co
+const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';  // eyJhbGci...
+
+let sb = null;
+let sbUser = null;
+try {
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && typeof supabase !== 'undefined') {
+        sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+} catch(e) { console.warn('Supabase init failed:', e); }
+
 /* ══════════════════════════════════════
    DATA
 ══════════════════════════════════════ */
@@ -800,8 +872,11 @@ function loadImgMulti(files, binderId, sp, side, startIdx) {
     imgFiles.slice(0, total).forEach((file, i) => {
         const reader = new FileReader();
         reader.onload = e => {
-            getCards(binderId, slots[i].sp, slots[i].side)[slots[i].idx] = e.target.result;
+            const s = slots[i];
+            getCards(binderId, s.sp, s.side)[s.idx] = e.target.result;
             if (++loaded === total) refreshSpread();
+            /* Supabase 자동 저장 (비동기, non-blocking) */
+            if (typeof sbSaveCard === 'function') sbSaveCard(binderId, s.sp, s.side, s.idx, e.target.result);
         };
         reader.readAsDataURL(file);
     });
@@ -880,6 +955,8 @@ function fillPage(gridId, sp, side) {
             e.stopPropagation();
             getCards(activeBinder.id, pSp, pSide)[idx] = null;
             refreshSpread();
+            /* Supabase 카드 삭제 */
+            if (typeof sbDeleteCard === 'function') sbDeleteCard(activeBinder.id, pSp, pSide, idx);
         });
 
         /* left-click on card → zoom modal */
@@ -1091,6 +1168,8 @@ document.getElementById('btn-add-binder').addEventListener('click', () => {
     BINDERS.push(newB);
     renderSidebar();
     switchBinder(newB.id);
+    /* Supabase 저장 */
+    if (typeof sbSaveBinder === 'function') sbSaveBinder(newB);
 
     /* immediately edit the name in sidebar */
     setTimeout(() => {
@@ -1292,9 +1371,12 @@ async function searchTcg(query) {
             el.addEventListener('click', () => {
                 if (!tcgTarget) return;
                 const { binderId, sp, side, idx } = tcgTarget;
-                getCards(binderId, sp, side)[idx] = el.dataset.large;
+                const imgUrl = el.dataset.large;
+                getCards(binderId, sp, side)[idx] = imgUrl;
                 refreshSpread();
                 closeTcgModal();
+                /* Supabase 자동 저장 */
+                if (typeof sbSaveCard === 'function') sbSaveCard(binderId, sp, side, idx, imgUrl);
             });
         });
     } catch(e) {
@@ -1397,6 +1479,225 @@ modalClose.addEventListener('click', closeCardModal);
 modalBackdrop.addEventListener('click', closeCardModal);
 modalPrev.addEventListener('click', () => { if (modalCardIdx > 0) showModalCard(modalCardIdx - 1); });
 modalNext.addEventListener('click', () => { if (modalCardIdx < modalCardList.length - 1) showModalCard(modalCardIdx + 1); });
+
+/* ══════════════════════════════════════
+   SUPABASE AUTH & SYNC
+══════════════════════════════════════ */
+
+/* ── 사이드바 푸터 UI 업데이트 ── */
+function updateAuthUI(user) {
+    const footer = document.querySelector('.sidebar-footer');
+    const avatar = footer.querySelector('.avatar');
+    const hint   = footer.querySelector('.login-hint');
+    const btn    = footer.querySelector('.login-btn-sm');
+    if (user) {
+        const initials = (user.email || '?').slice(0, 2).toUpperCase();
+        avatar.textContent = initials;
+        avatar.title = user.email;
+        hint.textContent = user.email.split('@')[0];
+        hint.title = user.email;
+        btn.textContent = '로그아웃';
+        btn.onclick = sbSignOut;
+    } else {
+        avatar.textContent = '?';
+        hint.textContent = '로그인하세요';
+        btn.textContent = '로그인';
+        btn.onclick = () => openAuthModal();
+    }
+}
+
+/* ── Auth 모달 ── */
+let authMode = 'login'; // 'login' | 'signup'
+
+function openAuthModal() {
+    if (!sb) {
+        alert('Supabase가 설정되지 않았습니다.\nindex.html 상단의 SUPABASE_URL, SUPABASE_KEY를 입력해주세요.');
+        return;
+    }
+    document.getElementById('auth-err').textContent = '';
+    document.getElementById('auth-email').value = '';
+    document.getElementById('auth-pw').value = '';
+    authMode = 'login';
+    updateAuthModalMode();
+    document.getElementById('auth-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('auth-email').focus(), 100);
+}
+
+function updateAuthModalMode() {
+    document.getElementById('auth-title').textContent  = authMode === 'login' ? '로그인' : '회원가입';
+    document.getElementById('auth-sub').textContent    = authMode === 'login'
+        ? 'Supabase 계정으로 데이터를 클라우드에 저장하세요'
+        : '새 계정을 만들어 포켓몬 카드를 저장하세요';
+    document.getElementById('auth-submit').textContent = authMode === 'login' ? '로그인' : '회원가입';
+    document.getElementById('auth-mode-toggle').textContent = authMode === 'login' ? '회원가입' : '로그인';
+}
+
+document.getElementById('auth-mode-toggle').addEventListener('click', () => {
+    authMode = authMode === 'login' ? 'signup' : 'login';
+    updateAuthModalMode();
+    document.getElementById('auth-err').textContent = '';
+});
+
+document.getElementById('auth-cancel').addEventListener('click',  () => {
+    document.getElementById('auth-overlay').classList.remove('open');
+});
+
+document.getElementById('auth-submit').addEventListener('click', async () => {
+    const email = document.getElementById('auth-email').value.trim();
+    const pw    = document.getElementById('auth-pw').value;
+    const errEl = document.getElementById('auth-err');
+    const btn   = document.getElementById('auth-submit');
+    if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 입력해주세요.'; return; }
+    btn.disabled = true; btn.textContent = '처리 중...';
+    errEl.textContent = '';
+    try {
+        let res;
+        if (authMode === 'login') {
+            res = await sb.auth.signInWithPassword({ email, password: pw });
+        } else {
+            res = await sb.auth.signUp({ email, password: pw });
+        }
+        if (res.error) {
+            errEl.textContent = res.error.message;
+        } else {
+            document.getElementById('auth-overlay').classList.remove('open');
+            if (authMode === 'signup' && !res.data.session) {
+                alert('확인 이메일을 보냈습니다. 이메일을 확인한 후 로그인해주세요.');
+            }
+        }
+    } catch(e) {
+        errEl.textContent = e.message;
+    }
+    btn.disabled = false;
+    btn.textContent = authMode === 'login' ? '로그인' : '회원가입';
+});
+
+/* Enter 키 지원 */
+['auth-email','auth-pw'].forEach(id =>
+    document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('auth-submit').click();
+    })
+);
+
+/* ── 로그아웃 ── */
+async function sbSignOut() {
+    if (!sb) return;
+    await sb.auth.signOut();
+    sbUser = null;
+    updateAuthUI(null);
+    /* 로컬 기본 데이터로 초기화 */
+    BINDERS.length = 0;
+    BINDERS.push(
+        { id: 1, name: '스칼렛 & 바이올렛', color: '#6060ff', pages: 5, type: '9포켓' },
+        { id: 2, name: '소드 & 실드',       color: '#40b080', pages: 4, type: '9포켓' }
+    );
+    nextId = 3;
+    Object.keys(cardData).forEach(k => delete cardData[k]);
+    activeBinder = BINDERS[0];
+    page = 1;
+    updateTopbar(); renderDots(); updateUI(); renderSidebar(); initFill();
+}
+
+/* ── Supabase에서 데이터 불러오기 ── */
+async function loadFromSb(userId) {
+    if (!sb || !userId) return;
+    const { data: rows } = await sb.from('binders')
+        .select('*').eq('user_id', userId).order('sort_order');
+    if (rows && rows.length > 0) {
+        BINDERS.length = 0;
+        rows.forEach(r => BINDERS.push({ id: r.id, name: r.name, color: r.color, type: r.type, pages: r.pages }));
+        nextId = Math.max(...BINDERS.map(b => b.id)) + 1;
+        activeBinder = BINDERS[0];
+    }
+    /* 카드 불러오기 */
+    const binderIds = BINDERS.map(b => b.id);
+    if (binderIds.length > 0) {
+        const { data: cards } = await sb.from('cards').select('*').in('binder_id', binderIds);
+        Object.keys(cardData).forEach(k => delete cardData[k]);
+        if (cards) {
+            cards.forEach(c => {
+                const key = `${c.binder_id}_${c.sp}_${c.side}`;
+                if (!cardData[key]) cardData[key] = Array(9).fill(null);
+                cardData[key][c.slot] = c.image_url;
+            });
+        }
+    }
+    page = 1;
+    updateTopbar(); renderDots(); updateUI(); renderSidebar(); initFill();
+}
+
+/* ── 바인더 저장 ── */
+async function sbSaveBinder(b) {
+    if (!sb || !sbUser) return;
+    await sb.from('binders').upsert({
+        id: typeof b.id === 'number' && b.id < 1000 ? undefined : b.id,
+        user_id: sbUser.id, name: b.name, color: b.color,
+        type: b.type, pages: b.pages, sort_order: BINDERS.indexOf(b)
+    }, { onConflict: 'id' });
+}
+
+/* ── 카드 저장 (이미지 URL / data URL 모두 처리) ── */
+async function sbSaveCard(binderId, sp, side, slot, imageUrl) {
+    if (!sb || !sbUser || !imageUrl) return;
+    let url = imageUrl;
+    /* data URL이면 Supabase Storage에 업로드 */
+    if (imageUrl.startsWith('data:')) {
+        try {
+            const res = await fetch(imageUrl);
+            const blob = await res.blob();
+            const ext  = blob.type.split('/')[1] || 'jpg';
+            const path = `${sbUser.id}/${binderId}_${sp}_${side}_${slot}.${ext}`;
+            const { error } = await sb.storage.from('card-images').upload(path, blob, { upsert: true });
+            if (!error) {
+                const { data: pub } = sb.storage.from('card-images').getPublicUrl(path);
+                url = pub.publicUrl;
+                /* 메모리도 public URL로 교체 */
+                getCards(binderId, sp, side)[slot] = url;
+            }
+        } catch(e) { console.warn('Storage upload failed:', e); }
+    }
+    await sb.from('cards').upsert(
+        { binder_id: binderId, sp, side, slot, image_url: url },
+        { onConflict: 'binder_id,sp,side,slot' }
+    );
+}
+
+/* ── 카드 삭제 ── */
+async function sbDeleteCard(binderId, sp, side, slot) {
+    if (!sb || !sbUser) return;
+    await sb.from('cards').delete()
+        .eq('binder_id', binderId).eq('sp', sp).eq('side', side).eq('slot', slot);
+}
+
+/* ── Auth 상태 변경 감지 ── */
+(async () => {
+    updateAuthUI(null); // 초기 상태
+    if (!sb) return;
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user) {
+        sbUser = session.user;
+        updateAuthUI(sbUser);
+        await loadFromSb(sbUser.id);
+    }
+
+    sb.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+            sbUser = session.user;
+            updateAuthUI(sbUser);
+            await loadFromSb(sbUser.id);
+        } else if (event === 'SIGNED_OUT') {
+            sbUser = null;
+            updateAuthUI(null);
+        }
+    });
+})();
+
+/* ── 사이드바 로그인 버튼 초기 연결 ── */
+document.querySelector('.login-btn-sm').addEventListener('click', function() {
+    if (!sbUser) openAuthModal();
+});
+
 </script>
 </body>
 </html>
