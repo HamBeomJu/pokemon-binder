@@ -1878,6 +1878,7 @@ const EN_SERIES = [
     { code: 'pt',   label: 'PT',   sub: 'Platinum' },
 ];
 const JP_SERIES = [
+    { code: 'MEGA', label: 'MEGA', sub: 'MEGAシリーズ' },
     { code: 'SV', label: 'SV', sub: 'スカーレット&バイオレット' },
     { code: 'S',  label: 'SS', sub: 'ソード&シールド' },
     { code: 'SM', label: 'SM', sub: 'サン&ムーン' },
@@ -2120,6 +2121,8 @@ async function showKrCards(pack) {
 function getJpSymbolUrl(code, serie) {
     const krCdn = 'https://cards.image.pokemonkorea.co.kr/data/images/symbol/';
     const tcgIo = (id) => `https://images.pokemontcg.io/${id}/symbol.png`;
+
+    if (serie === 'MEGA') return null; // artofpkm covers all MEGA sets
 
     if (serie === 'SV' || serie === 'SS') return krCdn + code + '.png';
 
