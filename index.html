@@ -180,7 +180,8 @@
         .stage {
             flex: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            gap: 20px; padding: 20px; overflow: auto;
+            gap: 20px; padding: 20px;
+            overflow-x: hidden; overflow-y: auto; /* 탭 돌출로 인한 가로 스크롤 방지 */
         }
 
         /* Binder perspective */
@@ -193,9 +194,11 @@
                 0 0 0 1px rgba(255,255,255,0.06),
                 0 24px 55px rgba(0,0,0,0.9),
                 0 55px 110px rgba(0,0,0,0.6);
+            animation: binderInit 0.2s 0.08s both;
         }
+        @keyframes binderInit { from { opacity: 0; } to { opacity: 1; } }
 
-        .zone { position: relative; flex-shrink: 0; }
+        .zone { position: relative; flex-shrink: 0; overflow: hidden; }
 
         .binder-page { padding: var(--pp); position: relative; }
         .binder-page.left  { background: linear-gradient(155deg, #1d1d2a 0%, #131319 100%); }
@@ -404,133 +407,245 @@
         }
         .pocket-menu-btn:hover { background: rgba(88,88,255,0.4); border-color: rgba(120,120,255,0.5); color: #fff; }
 
-        /* ══ TCG SEARCH MODAL ══ */
-        #tcg-modal {
+        /* ══ CARD DB MODAL ══ */
+        #db-modal {
             display: none; position: fixed; inset: 0; z-index: 1100;
             align-items: center; justify-content: center;
         }
-        #tcg-modal.open { display: flex; }
-        #tcg-backdrop {
+        #db-modal.open { display: flex; }
+        #db-backdrop {
             position: absolute; inset: 0;
-            background: rgba(0,0,0,0.78); backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
         }
-        #tcg-box {
+        #db-box {
             position: relative; z-index: 1;
-            background: #111120; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px; width: min(680px, 95vw);
-            max-height: 85vh; display: flex; flex-direction: column;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+            background: #0e0e1c; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; width: min(980px, 96vw); height: 88vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.85); overflow: hidden;
         }
-        #tcg-header {
-            padding: 16px 18px 12px;
+        #db-header {
+            padding: 15px 20px 13px;
             border-bottom: 1px solid rgba(255,255,255,0.06);
-            display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+            display: flex; align-items: center; gap: 12px; flex-shrink: 0;
         }
-        #tcg-search {
-            flex: 1; background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
-            padding: 8px 12px; color: #fff; font-size: 13px; outline: none;
+        #db-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); flex-shrink: 0; }
+        #db-lang-tabs { display: flex; gap: 6px; }
+        .db-lang-btn {
+            padding: 4px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: all 0.13s; line-height: 1.5;
         }
-        #tcg-search:focus { border-color: rgba(100,100,255,0.5); }
-        #tcg-search-btn {
-            padding: 8px 14px; background: rgba(88,88,255,0.3);
-            border: 1px solid rgba(88,88,255,0.5); border-radius: 8px;
-            color: #fff; font-size: 12px; cursor: pointer; transition: all 0.12s;
-        }
-        #tcg-search-btn:hover { background: rgba(88,88,255,0.55); }
-        #tcg-close-btn {
-            width: 28px; height: 28px; flex-shrink: 0;
+        .db-lang-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.75); }
+        .db-lang-btn.active { background: rgba(88,88,255,0.35); border-color: rgba(110,110,255,0.6); color: #fff; }
+        #db-close {
+            margin-left: auto; width: 28px; height: 28px; flex-shrink: 0;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 50%; color: rgba(255,255,255,0.5); font-size: 14px;
             display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
-        #tcg-close-btn:hover { background: rgba(255,60,60,0.5); color: #fff; }
-        #tcg-status {
-            padding: 10px 18px; font-size: 12px;
-            color: rgba(255,255,255,0.35); flex-shrink: 0;
+        #db-close:hover { background: rgba(255,60,60,0.5); color: #fff; }
+        #db-series-row {
+            display: flex; gap: 6px; padding: 10px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0; flex-wrap: wrap; align-items: center;
         }
-        #tcg-results {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px; padding: 12px 18px 18px; overflow-y: auto;
+        .db-series-btn {
+            padding: 5px 13px; border-radius: 7px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.45); font-size: 11.5px; font-weight: 600;
+            cursor: pointer; transition: all 0.12s; white-space: nowrap;
         }
-        .tcg-card {
+        .db-series-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.75); }
+        .db-series-btn.active { background: rgba(88,88,255,0.3); border-color: rgba(100,100,255,0.5); color: #fff; }
+        #db-nav {
+            display: none; align-items: center; gap: 8px;
+            padding: 8px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
+        #db-nav.visible { display: flex; }
+        #db-back {
+            padding: 4px 11px; border-radius: 6px; font-size: 11.5px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.6); cursor: pointer; transition: all 0.12s; flex-shrink: 0;
+        }
+        #db-back:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        #db-nav-text { font-size: 11.5px; color: rgba(255,255,255,0.4); }
+        #db-status {
+            padding: 8px 20px 4px; font-size: 11.5px;
+            color: rgba(255,255,255,0.28); flex-shrink: 0;
+        }
+        #db-content { flex: 1; overflow-y: auto; padding: 12px 20px 20px; }
+        /* 팩 그리드 */
+        .db-pack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 10px; }
+        .db-pack-item {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.15s;
+            display: flex; flex-direction: column;
+        }
+        .db-pack-item:hover { border-color: rgba(88,88,255,0.5); transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.5); }
+        .db-pack-cover-wrap { position: relative; flex-shrink: 0; }
+        .db-pack-cover {
+            width: 100%; aspect-ratio: 16/9; object-fit: cover;
+            background: rgba(255,255,255,0.03); display: block;
+        }
+        .db-pack-cover-placeholder {
+            width: 100%; aspect-ratio: 16/9;
+            background: rgba(255,255,255,0.04);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+        }
+        .db-pack-symbol-badge {
+            position: absolute; bottom: 6px; right: 6px;
+            width: 34px; height: 34px;
+            background: rgba(0,0,0,0.72); border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.15);
+            padding: 4px; object-fit: contain;
+        }
+        .db-pack-info { padding: 9px 10px 10px; display: flex; flex-direction: column; gap: 3px; }
+        .db-pack-name { font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.9); line-height: 1.4; }
+        .db-pack-code { font-size: 9.5px; font-weight: 700; color: rgba(140,140,255,0.7); letter-spacing: 0.04em; }
+        .db-pack-meta { font-size: 10px; color: rgba(255,255,255,0.32); line-height: 1.5; }
+        /* 카드 그리드 */
+        .db-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .db-card-item {
             border-radius: 7px; overflow: hidden; cursor: pointer;
-            border: 2px solid transparent; transition: all 0.14s;
-            aspect-ratio: 63 / 88;
+            border: 2px solid transparent; transition: all 0.13s;
+            aspect-ratio: 63 / 88; background: rgba(255,255,255,0.04); position: relative;
         }
-        .tcg-card:hover { border-color: rgba(100,100,255,0.7); transform: scale(1.04); }
-        .tcg-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .tcg-card-name {
-            font-size: 9px; text-align: center; padding: 3px 2px;
-            color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.4);
-            margin-top: -1px;
+        .db-card-item:hover { border-color: rgba(100,100,255,0.6); transform: scale(1.04); }
+        .db-card-item img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            background: linear-gradient(110deg, #1a1a2e 30%, #23234a 50%, #1a1a2e 70%);
+            background-size: 200% 100%;
+            animation: db-shimmer 1.4s infinite;
         }
+        .db-card-item img[src] { animation: none; background: none; }
+        @keyframes db-shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        .db-card-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.75); font-size: 8.5px; color: rgba(255,255,255,0.85);
+            padding: 3px 4px; text-align: center; opacity: 0; transition: opacity 0.12s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .db-card-item:hover .db-card-label { opacity: 1; }
+        .db-card-rarity {
+            position: absolute; top: 5px; right: 5px;
+            font-size: 8px; font-weight: 700; letter-spacing: 0.04em;
+            background: rgba(0,0,0,0.72); border: 1px solid;
+            border-radius: 4px; padding: 1px 5px; line-height: 1.5;
+            opacity: 0; transition: opacity 0.12s;
+        }
+        .db-card-item:hover .db-card-rarity { opacity: 1; }
+        /* DB 카드 → 바인더에 추가 버튼 */
+        .db-add-btn {
+            position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+            background: rgba(60,180,100,0.85); border: 1px solid rgba(80,220,120,0.7);
+            color: #fff; border-radius: 5px; padding: 3px 10px;
+            font-size: 10px; font-weight: 700; cursor: pointer; font-family: inherit;
+            white-space: nowrap; opacity: 0; transition: opacity 0.12s;
+            pointer-events: none; z-index: 2;
+        }
+        .db-card-item:hover .db-add-btn { opacity: 1; pointer-events: auto; }
+        .db-add-btn:hover { background: rgba(60,220,100,0.95); }
+        /* 슬롯 선택 오버레이 */
+        #slot-pick-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
+            background: rgba(40,180,100,0.18); border-bottom: 2px solid rgba(80,220,120,0.6);
+            padding: 10px 20px; align-items: center; justify-content: center; gap: 14px;
+            font-size: 13px; color: #a0ffcc; font-weight: 600;
+        }
+        #slot-pick-overlay.show { display: flex; }
+        #slot-pick-cancel-btn {
+            background: rgba(255,80,80,0.22); border: 1px solid rgba(255,80,80,0.45);
+            color: #ff9090; border-radius: 6px; padding: 3px 12px;
+            font-size: 11px; cursor: pointer; font-family: inherit;
+        }
+        #slot-pick-cancel-btn:hover { background: rgba(255,80,80,0.45); color: #fff; }
+        body.slot-pick-mode .pocket:not(.has-card) {
+            outline: 2px dashed rgba(80,220,120,0.6); cursor: crosshair;
+        }
+        body.slot-pick-mode .pocket:not(.has-card):hover {
+            outline-color: rgba(80,255,140,1); background: rgba(60,200,100,0.12);
+        }
+        /* 사이드바 DB 버튼 */
+        .sidebar-db-btn {
+            margin: 0 6px 6px; padding: 9px 12px;
+            background: rgba(88,88,255,0.1); border: 1px solid rgba(88,88,255,0.22);
+            border-radius: 8px; color: rgba(180,180,255,0.65); font-size: 12px; font-weight: 500;
+            cursor: pointer; transition: all 0.13s; text-align: left;
+            display: flex; align-items: center; gap: 8px;
+            width: calc(100% - 12px); font-family: inherit;
+        }
+        .sidebar-db-btn:hover { background: rgba(88,88,255,0.22); border-color: rgba(88,88,255,0.45); color: #fff; }
 
         /* ══ CARD MODAL ══ */
         #card-modal {
             display: none;
-            position: fixed; inset: 0; z-index: 1000;
+            position: fixed; inset: 0; z-index: 1200; /* DB 모달(1100) 위에 */
             align-items: center; justify-content: center;
         }
         #card-modal.open { display: flex; }
         #card-modal-backdrop {
             position: absolute; inset: 0;
-            background: rgba(0,0,0,0.82);
-            backdrop-filter: blur(6px);
-            opacity: 0; transition: opacity 220ms ease;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(8px);
+            opacity: 0; transition: opacity 200ms ease;
         }
         #card-modal.open #card-modal-backdrop { opacity: 1; }
         #card-modal-img-wrap {
             position: relative; z-index: 1;
-            transform: scale(0.82); opacity: 0;
-            transition: transform 260ms cubic-bezier(0.34,1.42,0.64,1), opacity 220ms ease;
-            display: flex; align-items: center; gap: 20px;
+            transform: scale(0.88); opacity: 0;
+            transition: transform 240ms cubic-bezier(0.34,1.4,0.64,1), opacity 200ms ease;
+            display: flex; align-items: center; gap: 32px;
         }
         #card-modal.open #card-modal-img-wrap { transform: scale(1); opacity: 1; }
 
         #card-modal-img-box {
             position: relative;
-            z-index: 1;          /* nav 버튼(z-index:20)보다 낮아야 버튼이 클릭됨 */
+            z-index: 1;
         }
         #card-modal-img {
             display: block;
-            max-width: min(380px, 78vw);
-            max-height: 84vh;
+            max-width: min(440px, 75vw);
+            max-height: 86vh;
             width: auto; height: auto;
-            border-radius: 10px;
-            transition: width 0.12s ease;
+            border-radius: 12px;
+            transition: width 0.12s ease, opacity 0.1s ease;
             box-shadow:
-                0 0 0 1px rgba(255,255,255,0.08),
-                0 30px 80px rgba(0,0,0,0.8),
-                0 8px 24px rgba(0,0,0,0.6);
+                0 0 0 1px rgba(255,255,255,0.1),
+                0 40px 100px rgba(0,0,0,0.9),
+                0 10px 30px rgba(0,0,0,0.7);
             user-select: none; pointer-events: none;
         }
         #card-modal-close {
-            position: absolute; top: -12px; right: -12px;
-            width: 28px; height: 28px;
-            background: rgba(30,30,40,0.95); border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 50%; color: rgba(255,255,255,0.7); font-size: 14px;
+            position: absolute; top: -14px; right: -14px;
+            width: 30px; height: 30px;
+            background: rgba(20,20,30,0.95); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50%; color: rgba(255,255,255,0.7); font-size: 13px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.14s; z-index: 2;
         }
-        #card-modal-close:hover { background: rgba(255,60,60,0.8); color: #fff; border-color: transparent; }
+        #card-modal-close:hover { background: rgba(220,50,50,0.9); color: #fff; border-color: transparent; }
 
         #card-modal-counter {
-            position: absolute; bottom: -26px; left: 50%; transform: translateX(-50%);
-            font-size: 11px; color: rgba(255,255,255,0.35); white-space: nowrap;
-            user-select: none;
+            position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
+            font-size: 11px; color: rgba(255,255,255,0.3); white-space: nowrap;
+            user-select: none; letter-spacing: 0.04em;
         }
 
         .modal-nav {
-            width: 40px; height: 40px; flex-shrink: 0;
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50%; color: rgba(255,255,255,0.5); font-size: 20px;
+            width: 48px; height: 48px; flex-shrink: 0;
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50%; color: rgba(255,255,255,0.6); font-size: 24px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.14s; user-select: none;
-            position: relative; z-index: 20; /* 확대된 이미지 위에 항상 표시 */
+            position: relative; z-index: 20;
         }
-        .modal-nav:hover { background: rgba(255,255,255,0.14); color: #fff; }
-        .modal-nav:disabled { opacity: 0.15; cursor: default; pointer-events: none; }
+        .modal-nav:hover { background: rgba(255,255,255,0.16); color: #fff; border-color: rgba(255,255,255,0.3); transform: scale(1.08); }
+        .modal-nav:disabled { opacity: 0.12; cursor: default; pointer-events: none; transform: none; }
 
         /* ══ PAGE NAV ══ */
         .page-nav { display: flex; align-items: center; gap: 14px; }
@@ -544,14 +659,23 @@
         .nav-arrow:hover { background: rgba(255,255,255,0.09); color: #fff; border-color: rgba(255,255,255,0.16); }
         .nav-arrow:disabled { opacity: 0.16; cursor: default; pointer-events: none; }
 
-        .dots-wrap { display: flex; align-items: center; gap: 6px; }
-        .dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: rgba(255,255,255,0.13);
-            transition: all 0.18s; cursor: pointer;
+        .dots-wrap { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; }
+        /* 숫자 페이지 버튼 */
+        .pg-num {
+            min-width: 26px; height: 26px; padding: 0 7px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+            color: rgba(255,255,255,0.42); font-size: 11.5px; font-weight: 500;
+            cursor: pointer; transition: all 0.13s; user-select: none;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .dot.active { width: 18px; border-radius: 3px; background: rgba(130,130,255,0.9); box-shadow: 0 0 7px rgba(100,100,255,0.55); }
-        .dot:hover:not(.active) { background: rgba(255,255,255,0.28); }
+        .pg-num:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.2); }
+        .pg-num.active {
+            background: rgba(88,88,255,0.22); border-color: rgba(88,88,255,0.55);
+            color: #a0a0ff; font-weight: 700;
+            box-shadow: 0 0 8px rgba(88,88,255,0.3);
+        }
+        .pg-ellipsis { font-size: 12px; color: rgba(255,255,255,0.22); padding: 0 2px; user-select: none; line-height: 26px; }
 
         .pg-add-btn {
             width: 22px; height: 22px;
@@ -606,6 +730,131 @@
 
         /* 로그인된 사용자 이름 표시 */
         .login-user { font-size: 11px; color: rgba(255,255,255,0.55); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px; }
+
+        /* ══ PAGE FLAG TABS (포스트잇 북마크 탭) ══ */
+        /*
+         * 실제 포스트잇 탭처럼 바인더 오른쪽 엣지 밖으로 삐져나오는 직사각형 탭
+         * - right: -42px → 탭 52px 중 10px만 바인더 안쪽에 걸치고 42px 바깥 돌출
+         * - translateY(-50%) → 계산된 % 위치를 기준으로 수직 중앙 정렬
+         * - overflow: visible on .sticker-layer → 부모 밖으로 삐져나오게 허용
+         */
+        .sticker-layer {
+            position: absolute; inset: 0;
+            pointer-events: none; z-index: 15;
+            overflow: visible;
+        }
+
+        /* 채워진 탭 */
+        .page-tab {
+            position: absolute;
+            right: -42px;          /* 10px 안쪽 고정 + 42px 바깥 돌출 */
+            width: 52px; height: 28px;
+            border-radius: 0 5px 5px 0;        /* 왼쪽 완전 직각, 오른쪽만 살짝 둥글게 */
+            cursor: pointer; pointer-events: all;
+            box-shadow: 3px 1px 8px rgba(0,0,0,0.6),
+                        inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            opacity: 0.9;
+            transform: translateY(-50%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 5px 0 2px;
+            overflow: hidden;
+        }
+        .page-tab:hover {
+            transform: translateY(-50%) translateX(6px);
+            opacity: 1;
+            box-shadow: 5px 2px 14px rgba(0,0,0,0.65),
+                        inset 0 1px 0 rgba(255,255,255,0.28);
+            z-index: 20;
+        }
+        .page-tab.active {
+            transform: translateY(-50%) translateX(8px);
+            opacity: 1; height: 32px;
+            box-shadow: 5px 2px 16px rgba(0,0,0,0.7),
+                        inset 0 1px 0 rgba(255,255,255,0.32);
+            z-index: 20;
+        }
+
+        /* 탭 안의 가로 텍스트 */
+        .tab-label {
+            font-size: 9px; font-weight: 700;
+            color: rgba(255,255,255,0.95);
+            line-height: 1; overflow: hidden;
+            max-width: 42px;
+            white-space: nowrap; text-overflow: ellipsis;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.55);
+            pointer-events: none;
+            text-align: center; letter-spacing: 0.01em;
+        }
+
+        /* 탭 삭제 버튼 (hover 시 나타남) */
+        .tab-del {
+            position: absolute; top: -5px; right: 1px;
+            width: 14px; height: 14px;
+            background: rgba(15,15,25,0.92); border: none; border-radius: 50%;
+            color: rgba(255,255,255,0.8); font-size: 12px; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; pointer-events: all;
+            opacity: 0; transition: opacity 0.12s, background 0.12s;
+        }
+        .page-tab:hover .tab-del { opacity: 1; }
+        .tab-del:hover { background: rgba(200,55,55,0.95); }
+
+        /* + 탭 (현재 페이지, 스티커 없음) */
+        .tab-add {
+            position: absolute;
+            right: -42px; width: 52px; height: 28px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer; pointer-events: all;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px dashed rgba(255,255,255,0.25);
+            color: rgba(255,255,255,0.45); font-size: 15px; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.16s,
+                        transform 0.18s cubic-bezier(0.34,1.4,0.64,1),
+                        background 0.14s;
+        }
+        .binder-outer:hover .tab-add { opacity: 0.75; }
+        .tab-add:hover {
+            transform: translateY(-50%) translateX(6px);
+            opacity: 1;
+            color: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.09);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* 스티커 편집 팝업 */
+        .sticker-popup {
+            position: absolute;
+            right: 22px;           /* 탭 왼쪽에 붙음 */
+            pointer-events: all; z-index: 50;
+            background: #1c1c32; border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 11px; padding: 11px 13px;
+            box-shadow: -4px 4px 28px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+            min-width: 168px;
+        }
+        .sticker-swatches { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 9px; }
+        .sticker-swatch {
+            width: 18px; height: 18px; border-radius: 50%; cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.12s, border-color 0.12s; flex-shrink: 0;
+        }
+        .sticker-swatch:hover { transform: scale(1.28); }
+        .sticker-swatch.sel { border-color: #fff; transform: scale(1.15); }
+        .sticker-popup-inp {
+            width: 100%; background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14); border-radius: 7px;
+            color: #fff; padding: 7px 9px; font-size: 12px; outline: none;
+            font-family: inherit; margin-bottom: 9px; display: block; box-sizing: border-box;
+        }
+        .sticker-popup-inp:focus { border-color: rgba(88,88,255,0.55); }
+        .sticker-popup-btns { display: flex; gap: 6px; }
+        .sticker-ok { flex:1; padding:6px; font-size:11.5px; background:#5858ff; border:none; border-radius:7px; color:#fff; cursor:pointer; font-weight:600; }
+        .sticker-ok:hover { background:#7070ff; }
+        .sticker-cx { flex:1; padding:6px; font-size:11.5px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:7px; color:rgba(255,255,255,0.45); cursor:pointer; }
+        .sticker-cx:hover { color:rgba(255,255,255,0.75); }
     </style>
 </head>
 <body>
@@ -621,6 +870,10 @@
     <div class="binder-list" id="binder-list"></div>
     <div class="sidebar-add" id="btn-add-binder">
         <span style="font-size:13px;">＋</span> 새 바인더
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.05);margin-top:6px;padding-top:8px;">
+        <div class="sidebar-label" style="padding-top:6px;">카드 데이터</div>
+        <button class="sidebar-db-btn" id="btn-card-db">🗃️ 카드 DB 브라우저</button>
     </div>
     <div class="sidebar-footer">
         <div class="avatar">?</div>
@@ -681,6 +934,8 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Sticker layer: absolute over binder-outer, not inside any zone -->
+                    <div class="sticker-layer" id="sticker-layer"></div>
                 </div>
             </div>
         </div>
@@ -697,18 +952,33 @@
     </div>
 </div>
 
-<!-- TCG Search Modal -->
-<div id="tcg-modal">
-    <div id="tcg-backdrop"></div>
-    <div id="tcg-box">
-        <div id="tcg-header">
-            <input id="tcg-search" type="text" placeholder="포켓몬 이름으로 검색... (예: Pikachu, Charizard)">
-            <button id="tcg-search-btn">검색</button>
-            <button id="tcg-close-btn">✕</button>
+<!-- Card DB Modal -->
+<div id="db-modal">
+    <div id="db-backdrop"></div>
+    <div id="db-box">
+        <div id="db-header">
+            <span id="db-title">🗃️ 카드 DB</span>
+            <div id="db-lang-tabs">
+                <button class="db-lang-btn active" data-lang="kr">🇰🇷 한판</button>
+                <button class="db-lang-btn" data-lang="jp">🇯🇵 일판</button>
+                <button class="db-lang-btn" data-lang="en">🇺🇸 영판</button>
+            </div>
+            <button id="db-close">✕</button>
         </div>
-        <div id="tcg-status">포켓몬 이름을 검색해보세요</div>
-        <div id="tcg-results"></div>
+        <div id="db-series-row"></div>
+        <div id="db-nav">
+            <button id="db-back">← 뒤로</button>
+            <span id="db-nav-text"></span>
+        </div>
+        <div id="db-status">시리즈를 선택하세요</div>
+        <div id="db-content"></div>
     </div>
+</div>
+
+<!-- 슬롯 선택 오버레이 -->
+<div id="slot-pick-overlay">
+    🎯 추가할 슬롯을 클릭하세요
+    <button id="slot-pick-cancel-btn">취소 (ESC)</button>
 </div>
 
 <!-- Auth Modal -->
@@ -770,6 +1040,9 @@ let page     = 1;
 let flipping = false;
 const DURATION = 650;
 
+const stickerData = {};  // key: `${binderId}_${page}` → { text, color }
+const STICKER_COLORS = ['#e04f4f','#e07d25','#c4a820','#35a05a','#3d8ee0','#7248cc','#d04898','#28aaaa'];
+
 /* ══════════════════════════════════════
    SIZE
 ══════════════════════════════════════ */
@@ -824,7 +1097,24 @@ const fileInput = document.createElement('input');
 fileInput.type = 'file'; fileInput.accept = 'image/*';
 fileInput.multiple = true; fileInput.style.display = 'none';
 document.body.appendChild(fileInput);
-let pendingSlot = null;
+let pendingSlot   = null;
+let pendingDbCard = null; // DB에서 선택한 카드 URL — 슬롯 클릭 대기 중
+
+function enterSlotPickMode(url) {
+    pendingDbCard = url;
+    document.body.classList.add('slot-pick-mode');
+    document.getElementById('slot-pick-overlay').classList.add('show');
+    closeDbModal();
+}
+
+function exitSlotPickMode() {
+    pendingDbCard = null;
+    document.body.classList.remove('slot-pick-mode');
+    document.getElementById('slot-pick-overlay').classList.remove('show');
+}
+
+document.getElementById('slot-pick-cancel-btn').addEventListener('click', exitSlotPickMode);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && pendingDbCard) exitSlotPickMode(); });
 
 function openFilePicker(binderId, sp, side, idx) {
     pendingSlot = { binderId, sp, side, idx };
@@ -874,8 +1164,7 @@ function loadImgMulti(files, binderId, sp, side, startIdx) {
         reader.onload = e => {
             const s = slots[i];
             getCards(binderId, s.sp, s.side)[s.idx] = e.target.result;
-            if (++loaded === total) refreshSpread();
-            /* Supabase 자동 저장 (비동기, non-blocking) */
+            if (++loaded === total) { refreshSpread(); saveToLocalStorage(); }
             if (typeof sbSaveCard === 'function') sbSaveCard(binderId, s.sp, s.side, s.idx, e.target.result);
         };
         reader.readAsDataURL(file);
@@ -902,7 +1191,6 @@ function makePocket(binderId, sp, side, idx) {
         <div class="pocket-glare"></div>
         <div class="pocket-menu">
             <button class="pocket-menu-btn pocket-upload-btn">📁 파일</button>
-            <button class="pocket-menu-btn pocket-search-btn">🔍 검색</button>
         </div>
     </div>`;
 }
@@ -942,20 +1230,25 @@ function fillPage(gridId, sp, side) {
             e.stopPropagation();
             openFilePicker(activeBinder.id, pSp, pSide, idx);
         });
-        /* 🔍 TCG 검색 */
-        const searchBtn = pocket.querySelector('.pocket-search-btn');
-        if (searchBtn) searchBtn.addEventListener('click', e => {
-            e.stopPropagation();
-            openTcgModal(activeBinder.id, pSp, pSide, idx);
-        });
-
+        /* 슬롯 선택 모드: 빈 슬롯 클릭 시 pendingDbCard 삽입 */
+        if (!pocket.classList.contains('has-card')) {
+            pocket.addEventListener('click', e => {
+                if (!pendingDbCard) return;
+                if (e.target.closest('.pocket-menu')) return;
+                getCards(activeBinder.id, pSp, pSide)[idx] = pendingDbCard;
+                saveToLocalStorage();
+                if (typeof sbSaveCard === 'function') sbSaveCard(activeBinder.id, pSp, pSide, idx, pendingDbCard);
+                refreshSpread();
+                exitSlotPickMode();
+            });
+        }
         /* × remove */
         const removeBtn = pocket.querySelector('.pocket-remove');
         if (removeBtn) removeBtn.addEventListener('click', e => {
             e.stopPropagation();
             getCards(activeBinder.id, pSp, pSide)[idx] = null;
             refreshSpread();
-            /* Supabase 카드 삭제 */
+            saveToLocalStorage();
             if (typeof sbDeleteCard === 'function') sbDeleteCard(activeBinder.id, pSp, pSide, idx);
         });
 
@@ -975,6 +1268,7 @@ function refreshSpread() {
     fillPage('right-bg-grid',     page, 'R');
     fillPage('flip-R-front-grid', page, 'R');
     fillPage('flip-L-front-grid', page, 'L');
+    updateTopbar();
 }
 
 /* legacy shim — kept so nothing else breaks */
@@ -1036,6 +1330,8 @@ function renderSidebar() {
                 b.name = val;
                 if (activeBinder.id === b.id) updateTopbar();
                 renderSidebar();
+                if (typeof sbSaveBinder === 'function') sbSaveBinder(b);
+                saveToLocalStorage();
             });
         })
     );
@@ -1050,6 +1346,8 @@ function renderSidebar() {
             picker.onchange = ev => {
                 b.color = ev.target.value;
                 renderSidebar();
+                if (typeof sbSaveBinder === 'function') sbSaveBinder(b);
+                saveToLocalStorage();
             };
             picker.click();
         })
@@ -1070,8 +1368,11 @@ function renderSidebar() {
                 renderDots();
                 updateUI();
                 initFill();
+                renderSticker();
             }
             renderSidebar();
+            if (typeof sbDeleteBinder === 'function') sbDeleteBinder(id);
+            saveToLocalStorage();
         })
     );
 }
@@ -1086,6 +1387,7 @@ function switchBinder(id) {
     renderDots();
     updateUI();
     initFill();
+    renderSticker();
 }
 
 /* ══════════════════════════════════════
@@ -1093,12 +1395,20 @@ function switchBinder(id) {
 ══════════════════════════════════════ */
 const TYPES = ['9포켓', '12포켓', '탑로더'];
 
+function countFilledCards() {
+    let n = 0;
+    for (let sp = 1; sp <= activeBinder.pages; sp++)
+        for (const side of ['L', 'R'])
+            n += getCards(activeBinder.id, sp, side).filter(Boolean).length;
+    return n;
+}
+
 function updateTopbar() {
     document.getElementById('tb-title').textContent = activeBinder.name;
     document.getElementById('tb-badge').textContent = activeBinder.type;
     const cfg   = getBinderConfig(activeBinder.type);
     const total = activeBinder.pages * cfg.count * 2;
-    document.getElementById('tb-count').textContent = `0 / ${total} 카드`;
+    document.getElementById('tb-count').textContent = `${countFilledCards()} / ${total} 카드`;
 }
 
 /* title dblclick → edit */
@@ -1106,6 +1416,8 @@ document.getElementById('tb-title').addEventListener('dblclick', function() {
     inlineEdit(this, val => {
         activeBinder.name = val;
         renderSidebar();
+        if (typeof sbSaveBinder === 'function') sbSaveBinder(activeBinder);
+        saveToLocalStorage();
     });
 });
 
@@ -1115,25 +1427,46 @@ document.getElementById('tb-badge').addEventListener('click', () => {
     activeBinder.type = TYPES[(idx + 1) % TYPES.length];
     document.getElementById('tb-badge').textContent = activeBinder.type;
     renderSidebar();
+    initFill();
+    updateTopbar();
+    if (typeof sbSaveBinder === 'function') sbSaveBinder(activeBinder);
+    saveToLocalStorage();
 });
 
 /* ══════════════════════════════════════
    DOTS + PAGE MANAGEMENT
 ══════════════════════════════════════ */
 function renderDots() {
-    const total = activeBinder.pages;
+    const total     = activeBinder.pages;
     const container = document.getElementById('dots');
-    container.innerHTML = Array.from({length: total}, (_, i) =>
-        `<div class="dot${i+1===page?' active':''}" data-p="${i+1}"></div>`
-    ).join('');
-    container.querySelectorAll('.dot').forEach(d =>
-        d.addEventListener('click', () => {
-            const t = +d.dataset.p;
+
+    /* 숫자 버튼 생성 — 페이지가 많으면 스마트 윈도우 (1 … 3 4[5]6 7 … 10) */
+    const show = new Set();
+    if (total <= 9) {
+        for (let i = 1; i <= total; i++) show.add(i);
+    } else {
+        show.add(1); show.add(total);
+        for (let i = Math.max(1, page - 2); i <= Math.min(total, page + 2); i++) show.add(i);
+    }
+    const sorted = [...show].sort((a, b) => a - b);
+    let html = ''; let prev = 0;
+    for (const p of sorted) {
+        if (p - prev > 1) html += `<span class="pg-ellipsis">…</span>`;
+        html += `<button class="pg-num${p === page ? ' active' : ''}" data-p="${p}">${p}</button>`;
+        prev = p;
+    }
+    container.innerHTML = html;
+
+    container.querySelectorAll('.pg-num').forEach(btn =>
+        btn.addEventListener('click', () => {
+            const t = +btn.dataset.p;
             if (t !== page && !flipping) jumpTo(t);
         })
     );
+
     document.getElementById('pg-remove').disabled = total <= 1;
     document.getElementById('pg-add').disabled    = total >= 20;
+    updatePageIndicator(); // page-indicator 없으면 no-op
 }
 
 document.getElementById('pg-add').addEventListener('click', () => {
@@ -1141,16 +1474,23 @@ document.getElementById('pg-add').addEventListener('click', () => {
     activeBinder.pages++;
     renderDots();
     updateUI();
+    updateTopbar();
+    if (typeof sbSaveBinder === 'function') sbSaveBinder(activeBinder);
+    saveToLocalStorage();
 });
 document.getElementById('pg-remove').addEventListener('click', () => {
     if (activeBinder.pages <= 1) return;
     if (page > activeBinder.pages - 1) {
         page = activeBinder.pages - 1;
         initFill();
+        renderSticker();
     }
     activeBinder.pages--;
     renderDots();
     updateUI();
+    updateTopbar();
+    if (typeof sbSaveBinder === 'function') sbSaveBinder(activeBinder);
+    saveToLocalStorage();
 });
 
 /* ══════════════════════════════════════
@@ -1170,6 +1510,7 @@ document.getElementById('btn-add-binder').addEventListener('click', () => {
     switchBinder(newB.id);
     /* Supabase 저장 */
     if (typeof sbSaveBinder === 'function') sbSaveBinder(newB);
+    saveToLocalStorage();
 
     /* immediately edit the name in sidebar */
     setTimeout(() => {
@@ -1195,100 +1536,242 @@ function shadowPulse(id) {
 function flipNext() {
     if (flipping || page >= activeBinder.pages) return;
     flipping = true;
+
     const fR = document.getElementById('flipper-R');
-    fillPage('flip-R-back-grid', page + 1, 'L');
-    fillPage('right-bg-grid',    page + 1, 'R');
+    const fL = document.getElementById('flipper-L');
+
+    // Phase 1: flipper-R folds into spine (0° → -90°) — stays in zone-R
+    // Phase 2: flipper-L unfolds from spine (90° → 0°) — stays in zone-L
+    // Spine is NEVER obscured by either flipper
+
+    // Prep: new right bg revealed as flipper-R folds away
+    fillPage('right-bg-grid',     page + 1, 'R');
+    // Prep: new left page on flipper-L, ready to unfold
+    fillPage('flip-L-front-grid', page + 1, 'L');
+
     shadowPulse('shadow-L');
 
-    const t1 = Math.round(DURATION * 0.44); // 286ms — 0° → 90°
-    const t2 = DURATION - t1;               // 364ms — 90° → 180°
+    const half = Math.round(DURATION / 2);
 
-    // Phase 1: 0° → 90° with slight page curl
-    fR.style.transition = `transform ${t1}ms cubic-bezier(0.4,0,0.55,0.6)`;
-    fR.style.transform  = 'rotateY(-90deg) skewY(2.5deg)';
+    // Park flipper-L at 90° (edge-on, invisible) before animating
+    fL.style.display    = 'block';
+    fL.style.transition = 'none';
+    fL.style.transform  = 'rotateY(90deg)';
+    fL.offsetHeight; // flush style
+
+    // Phase 1: fold right page toward spine
+    fR.style.transition = `transform ${half}ms cubic-bezier(0.4, 0, 1, 0.8)`;
+    fR.style.transform  = 'rotateY(-90deg)';
 
     setTimeout(() => {
-        // Phase 2: 90° → 180°, curl releases naturally
-        fR.style.transition = `transform ${t2}ms cubic-bezier(0.45,0.4,0.15,1)`;
-        fR.style.transform  = 'rotateY(-180deg)';
+        // flipper-R is now edge-on — hide it instantly
+        fR.style.transition = 'none';
+        fR.style.opacity    = '0';
+
+        // Phase 2: unfold new left page from spine
+        fL.style.transition = `transform ${half}ms cubic-bezier(0, 0.2, 0.6, 1)`;
+        fL.style.transform  = 'rotateY(0deg)';
 
         setTimeout(() => {
             page++;
-            /* 콘텐츠 먼저 업데이트, 리셋은 opacity=0 상태로 */
             fillPage('left-bg-grid',      page, 'L');
             fillPage('flip-R-front-grid', page, 'R');
+
+            // Reset flipper-R
             fR.style.transition = 'none';
-            fR.style.opacity    = '0';
             fR.style.transform  = 'rotateY(0deg)';
+
+            // Hide flipper-L
+            fL.style.transition = 'none';
+            fL.style.display    = 'none';
+            fL.style.transform  = 'rotateY(0deg)';
+
             requestAnimationFrame(() => requestAnimationFrame(() => {
                 fR.style.opacity = '1';
                 renderDots();
                 updateUI();
+                renderSticker();
                 flipping = false;
             }));
-        }, t2 + 40);
-    }, t1);
+        }, half + 20);
+    }, half);
 }
 
 function flipPrev() {
     if (flipping || page <= 1) return;
     flipping = true;
+
     const fL = document.getElementById('flipper-L');
     const fR = document.getElementById('flipper-R');
-    fillPage('flip-L-front-grid', page,     'L');
-    fillPage('flip-L-back-grid',  page - 1, 'R');
-    fillPage('left-bg-grid',      page - 1, 'L');
-    fR.style.zIndex = '1';
-    shadowPulse('shadow-R');
-    const t1 = Math.round(DURATION * 0.44);
-    const t2 = DURATION - t1;
 
+    // Phase 1: flipper-L folds into spine (0° → 90°) — stays in zone-L
+    // Phase 2: flipper-R unfolds from spine (-90° → 0°) — stays in zone-R
+    // Spine is NEVER obscured by either flipper
+
+    // Prep: new left bg revealed as flipper-L folds away
+    fillPage('left-bg-grid',      page - 1, 'L');
+    // Prep: current left page on flipper-L so it folds away
+    fillPage('flip-L-front-grid', page,     'L');
+    // Prep: new right page on flipper-R, ready to unfold
+    fillPage('flip-R-front-grid', page - 1, 'R');
+    // right-bg stays as current page R — visible while flipper-R is hidden
+
+    shadowPulse('shadow-R');
+
+    const half = Math.round(DURATION / 2);
+
+    // Show flipper-L covering current left page
     fL.style.display    = 'block';
-    fL.style.opacity    = '1';
     fL.style.transition = 'none';
     fL.style.transform  = 'rotateY(0deg)';
-    fL.offsetHeight;
 
-    // Phase 1: 0° → 90° with slight page curl
-    fL.style.transition = `transform ${t1}ms cubic-bezier(0.4,0,0.55,0.6)`;
-    fL.style.transform  = 'rotateY(90deg) skewY(-2.5deg)';
+    // Hide flipper-R and park it at -90° (edge-on, ready to unfold)
+    fR.style.transition = 'none';
+    fR.style.opacity    = '0';
+    fR.style.transform  = 'rotateY(-90deg)';
+    fL.offsetHeight; // flush style
+
+    // Phase 1: fold current left page toward spine
+    fL.style.transition = `transform ${half}ms cubic-bezier(0.4, 0, 1, 0.8)`;
+    fL.style.transform  = 'rotateY(90deg)';
 
     setTimeout(() => {
-        // Phase 2: 90° → 180°, curl releases naturally
-        fL.style.transition = `transform ${t2}ms cubic-bezier(0.45,0.4,0.15,1)`;
-        fL.style.transform  = 'rotateY(180deg)';
+        // flipper-L is now edge-on — hide it instantly
+        fL.style.transition = 'none';
+        fL.style.display    = 'none';
+        fL.style.transform  = 'rotateY(0deg)';
+
+        // Make flipper-R visible and unfold from spine
+        fR.style.transition = 'none';
+        fR.style.opacity    = '1';
+        fR.style.transform  = 'rotateY(-90deg)';
+        fR.offsetHeight; // flush style
+
+        // Phase 2: unfold new right page from spine
+        fR.style.transition = `transform ${half}ms cubic-bezier(0, 0.2, 0.6, 1)`;
+        fR.style.transform  = 'rotateY(0deg)';
 
         setTimeout(() => {
             page--;
-            fillPage('right-bg-grid',     page, 'R');
-            fillPage('flip-R-front-grid', page, 'R');
-            fR.style.zIndex     = '4';
-            fR.style.transition = 'none';
-            fR.style.transform  = 'rotateY(0deg)';
-            /* fL 숨김도 opacity로 자연스럽게 */
-            fL.style.transition = 'none';
-            fL.style.opacity    = '0';
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-                fL.style.display   = 'none';
-                fL.style.opacity   = '1';
-                fL.style.transform = 'rotateY(0deg)';
-                renderDots();
-                updateUI();
-                flipping = false;
-            }));
-        }, t2 + 40);
-    }, t1);
+            fillPage('right-bg-grid', page, 'R');
+
+            renderDots();
+            updateUI();
+            renderSticker();
+            flipping = false;
+        }, half + 20);
+    }, half);
 }
 
 function jumpTo(target) {
-    const dir = target > page ? 'next' : 'prev';
-    let remaining = Math.abs(target - page);
-    const step = () => {
-        if (remaining-- <= 0) return;
-        dir === 'next' ? flipNext() : flipPrev();
-        if (remaining > 0) setTimeout(step, DURATION + 60);
-    };
-    step();
+    if (flipping) return;
+    const dist = Math.abs(target - page);
+    if (dist === 0) return;
+    // 거리에 상관없이 항상 애니메이션 1회
+    target > page ? flipJumpForward(target) : flipJumpBackward(target);
+}
+
+function flipJumpForward(target) {
+    if (flipping || target <= page || target > activeBinder.pages) return;
+    flipping = true;
+
+    const fR = document.getElementById('flipper-R');
+    const fL = document.getElementById('flipper-L');
+
+    fillPage('right-bg-grid',     target, 'R');
+    fillPage('flip-L-front-grid', target, 'L');
+
+    shadowPulse('shadow-L');
+
+    const half = Math.round(DURATION / 2);
+
+    fL.style.display    = 'block';
+    fL.style.transition = 'none';
+    fL.style.transform  = 'rotateY(90deg)';
+    fL.offsetHeight;
+
+    fR.style.transition = `transform ${half}ms cubic-bezier(0.4, 0, 1, 0.8)`;
+    fR.style.transform  = 'rotateY(-90deg)';
+
+    setTimeout(() => {
+        fR.style.transition = 'none';
+        fR.style.opacity    = '0';
+
+        fL.style.transition = `transform ${half}ms cubic-bezier(0, 0.2, 0.6, 1)`;
+        fL.style.transform  = 'rotateY(0deg)';
+
+        setTimeout(() => {
+            page = target;
+            fillPage('left-bg-grid',      page, 'L');
+            fillPage('flip-R-front-grid', page, 'R');
+
+            fR.style.transition = 'none';
+            fR.style.transform  = 'rotateY(0deg)';
+            fL.style.transition = 'none';
+            fL.style.display    = 'none';
+            fL.style.transform  = 'rotateY(0deg)';
+
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                fR.style.opacity = '1';
+                renderDots();
+                updateUI();
+                renderSticker();
+                flipping = false;
+            }));
+        }, half + 20);
+    }, half);
+}
+
+function flipJumpBackward(target) {
+    if (flipping || target >= page || target < 1) return;
+    flipping = true;
+
+    const fL = document.getElementById('flipper-L');
+    const fR = document.getElementById('flipper-R');
+
+    fillPage('left-bg-grid',      target, 'L');
+    fillPage('flip-L-front-grid', page,   'L');
+    fillPage('flip-R-front-grid', target, 'R');
+
+    shadowPulse('shadow-R');
+
+    const half = Math.round(DURATION / 2);
+
+    fL.style.display    = 'block';
+    fL.style.transition = 'none';
+    fL.style.transform  = 'rotateY(0deg)';
+
+    fR.style.transition = 'none';
+    fR.style.opacity    = '0';
+    fR.style.transform  = 'rotateY(-90deg)';
+    fL.offsetHeight;
+
+    fL.style.transition = `transform ${half}ms cubic-bezier(0.4, 0, 1, 0.8)`;
+    fL.style.transform  = 'rotateY(90deg)';
+
+    setTimeout(() => {
+        fL.style.transition = 'none';
+        fL.style.display    = 'none';
+        fL.style.transform  = 'rotateY(0deg)';
+
+        fR.style.transition = 'none';
+        fR.style.opacity    = '1';
+        fR.style.transform  = 'rotateY(-90deg)';
+        fR.offsetHeight;
+
+        fR.style.transition = `transform ${half}ms cubic-bezier(0, 0.2, 0.6, 1)`;
+        fR.style.transform  = 'rotateY(0deg)';
+
+        setTimeout(() => {
+            page = target;
+            fillPage('right-bg-grid', page, 'R');
+
+            renderDots();
+            updateUI();
+            renderSticker();
+            flipping = false;
+        }, half + 20);
+    }, half);
 }
 
 /* ══════════════════════════════════════
@@ -1315,6 +1798,8 @@ document.addEventListener('keydown', e => {
         if (e.key === 'ArrowLeft')  { if (modalCardIdx > 0) showModalCard(modalCardIdx - 1); }
         return;
     }
+    // DB 모달 열려있으면 바인더 페이지 넘기기 막기
+    if (dbModal && dbModal.classList.contains('open')) return;
     if (e.key === 'ArrowRight') flipNext();
     if (e.key === 'ArrowLeft')  flipPrev();
 });
@@ -1322,6 +1807,9 @@ document.addEventListener('keydown', e => {
 /* wheel: Ctrl+wheel → zoom (modal or binder), plain wheel → page flip */
 let wheelCooldown = false;
 document.addEventListener('wheel', e => {
+    // DB 모달 열려있으면 스크롤 그대로 허용
+    if (dbModal && dbModal.classList.contains('open')) return;
+
     e.preventDefault();
 
     if (e.ctrlKey) {
@@ -1345,71 +1833,724 @@ document.addEventListener('wheel', e => {
 }, { passive: false });
 
 /* ══════════════════════════════════════
-   TCG SEARCH
+   CARD DB BROWSER
 ══════════════════════════════════════ */
-const tcgModal   = document.getElementById('tcg-modal');
-const tcgSearch  = document.getElementById('tcg-search');
-const tcgResults = document.getElementById('tcg-results');
-const tcgStatus  = document.getElementById('tcg-status');
-let tcgTarget    = null; // { binderId, sp, side, idx }
+const dbModal    = document.getElementById('db-modal');
+const dbContent  = document.getElementById('db-content');
+const dbStatus   = document.getElementById('db-status');
+const dbNav      = document.getElementById('db-nav');
+const dbNavText  = document.getElementById('db-nav-text');
+const dbSeriesRow = document.getElementById('db-series-row');
+let dbLang       = 'kr';
+let dbView       = 'packs';
+let dbActiveSeries = null;
+const dbCache    = {};
 
-function openTcgModal(binderId, sp, side, idx) {
-    tcgTarget = { binderId, sp, side, idx };
-    tcgResults.innerHTML = '';
-    tcgStatus.textContent = '포켓몬 이름을 검색해보세요';
-    tcgSearch.value = '';
-    tcgModal.classList.add('open');
-    setTimeout(() => tcgSearch.focus(), 100);
+const KR_SERIES = [
+    { code: 'MEGA', label: 'MEGA', sub: '메가시리즈' },
+    { code: 'SV',   label: 'SV',   sub: '스칼렛&바이올렛' },
+    { code: 'S',    label: 'SS',   sub: '소드&실드' },
+    { code: 'SM',   label: 'SM',   sub: '썬&문' },
+    { code: 'XY',   label: 'XY',   sub: '' },
+    { code: 'BW',   label: 'BW',   sub: '블랙&화이트' },
+    { code: 'DP',   label: 'DP',   sub: '다이아몬드&펄' },
+];
+const EN_SERIES_MAP = {
+    me:   'Mega Evolution',
+    sv:   'Scarlet & Violet',
+    swsh: 'Sword & Shield',
+    sm:   'Sun & Moon',
+    xy:   'XY',
+    bw:   'Black & White',
+    hgss: 'HeartGold & SoulSilver',
+    dp:   'Diamond & Pearl',
+    pt:   'Platinum',
+};
+const EN_SERIES = [
+    { code: 'me',   label: 'MEGA', sub: 'Mega Evolution' },
+    { code: 'sv',   label: 'SV',   sub: 'Scarlet & Violet' },
+    { code: 'swsh', label: 'SWSH', sub: 'Sword & Shield' },
+    { code: 'sm',   label: 'SM',   sub: 'Sun & Moon' },
+    { code: 'xy',   label: 'XY',   sub: '' },
+    { code: 'bw',   label: 'BW',   sub: 'Black & White' },
+    { code: 'hgss', label: 'HGSS', sub: 'HeartGold & SoulSilver' },
+    { code: 'dp',   label: 'DP',   sub: 'Diamond & Pearl' },
+    { code: 'pt',   label: 'PT',   sub: 'Platinum' },
+];
+const JP_SERIES = [
+    { code: 'SV', label: 'SV', sub: 'スカーレット&バイオレット' },
+    { code: 'S',  label: 'SS', sub: 'ソード&シールド' },
+    { code: 'SM', label: 'SM', sub: 'サン&ムーン' },
+    { code: 'XY', label: 'XY', sub: 'XY' },
+    { code: 'BW', label: 'BW', sub: 'ブラック&ホワイト' },
+];
+const EN_KR_NAMES = {
+    // Scarlet & Violet
+    'sv1':'스칼렛 & 바이올렛','sv2':'팔데아 에볼브드','sv3':'옵시디언 플레임즈',
+    'sv3pt5':'151','sv4':'패러독스 리프트','sv4pt5':'팔데안 페이츠',
+    'sv5':'템포럴 포시즈','sv6':'트와일라잇 마스커레이드','sv6pt5':'쉬라우디드 페이블',
+    'sv7':'스텔라 크라운','sv8':'서징 스팍스','sv8pt5':'프리즈매틱 에볼루션즈',
+    'sv9':'저니 투게더','sv10':'데스틴드 라이벌즈',
+    'zsv10pt5':'블랙 볼트','rsv10pt5':'화이트 플레어',
+    'svp':'스칼렛 & 바이올렛 프로모','sve':'스칼렛 & 바이올렛 에너지',
+    // Sword & Shield
+    'swsh1':'소드 & 실드','swsh2':'레벨 클래시','swsh3':'다크니스 어블레이즈',
+    'swsh35':'챔피언스 패스','swsh4':'비비드 볼티지','swsh45':'샤이닝 페이츠',
+    'swsh5':'배틀 스타일즈','swsh6':'칠링 레인','swsh7':'이볼빙 스카이즈',
+    'swsh8':'퓨전 스트라이크','swsh9':'브릴리언트 스타즈','swsh10':'아스트랄 래디언스',
+    'swsh11':'로스트 오리진','swsh12':'실버 템페스트','swsh12pt5':'크라운 제니스',
+    // Sun & Moon
+    'sm1':'썬 & 문','sm2':'가디언즈 라이징','sm3':'버닝 섀도우즈',
+    'sm35':'샤이닝 레전즈','sm4':'크림슨 인베이젼','sm5':'울트라 프리즘',
+    'sm6':'포비든 라이트','sm7':'셀레스챌 스톰','sm75':'드래곤 마제스티',
+    'sm8':'로스트 썬더','sm9':'팀 업','sm10':'언브로큰 본즈',
+    'sm11':'유니파이드 마인즈','sm115':'히든 페이츠','sm12':'코즈믹 이클립스',
+    // XY
+    'xy1':'XY','xy2':'플래시파이어','xy3':'퍼즐 오브 타임','xy4':'팬텀 포시즈',
+    'xy5':'프라이멀 클래시','xy6':'로아링 스카이즈','xy7':'에인션트 오리진즈',
+    'xy8':'브레이크스루','xy9':'브레이킹 웨이브즈','xy10':'페이탈 라이트닝',
+    'xy11':'스팀 시즈','xy12':'이볼루션즈','xyp':'XY 프로모',
+    // Black & White
+    'bw1':'블랙 & 화이트','bw2':'이머징 파워즈','bw3':'노블 빅토리즈',
+    'bw4':'넥스트 데스티니즈','bw5':'다크 익스플로러즈','bw6':'드래곤즈 엑스알트',
+    'bw7':'바운더리 크로스드','bw8':'플라즈마 스톰','bw9':'플라즈마 프리즈',
+    'bw10':'플라즈마 블래스트','bw11':'레전더리 트레져즈',
+    // HeartGold & SoulSilver
+    'hgss1':'하트골드 & 소울실버','hgss2':'언리쉬드','hgss3':'언다운티드',
+    'hgss4':'트라이엄펀트','hgss5':'콜 오브 레전즈',
+    // Diamond & Pearl
+    'dp1':'다이아몬드 & 펄','dp2':'미스터리어스 트레져즈','dp3':'시크릿 원더즈',
+    'dp4':'그레이트 인카운터즈','dp5':'마제스틱 던','dp6':'레전즈 어와켄드',
+    'dp7':'스톰프런트',
+    // Platinum
+    'pl1':'플래티넘','pl2':'라이징 라이벌즈','pl3':'슈프림 빅터즈','pl4':'아르세우스',
+    // Mega Evolution (영판 메가시리즈)
+    'me1':'메가 에볼루션','me2':'판타즈멀 플레임즈','me2pt5':'어센디드 히어로즈',
+    'me3':'퍼펙트 오더',
+};
+
+function openDbModal() {
+    dbModal.classList.add('open');
+    const prevLang   = dbLang || 'kr';
+    const prevSeries = dbActiveSeries;
+    setDbLang(prevLang);
+    if (prevSeries) selectSeries(prevSeries);
 }
-function closeTcgModal() { tcgModal.classList.remove('open'); tcgTarget = null; }
+function closeDbModal() {
+    dbModal.classList.remove('open');
+}
 
-async function searchTcg(query) {
-    if (!query.trim()) return;
-    tcgStatus.textContent = '검색 중...';
-    tcgResults.innerHTML = '';
+function setDbLang(lang) {
+    dbLang = lang;
+    document.querySelectorAll('.db-lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+    dbView = 'packs'; dbActiveSeries = null;
+    dbContent.innerHTML = '';
+    dbNav.classList.remove('visible');
+    dbStatus.textContent = '불러오는 중...';
+    buildSeriesRow();
+    // 첫 번째 시리즈 자동 선택
+    const firstSeries = lang === 'kr' ? KR_SERIES[1].code   // SV
+                      : lang === 'jp' ? JP_SERIES[0].code    // SV
+                      : EN_SERIES[0].code;                   // sv
+    selectSeries(firstSeries);
+}
+
+function buildSeriesRow() {
+    const series = dbLang === 'kr' ? KR_SERIES : dbLang === 'jp' ? JP_SERIES : EN_SERIES;
+    dbSeriesRow.innerHTML = series.map(s => `
+        <button class="db-series-btn${dbActiveSeries === s.code ? ' active' : ''}" data-code="${s.code}">
+            ${s.label}${s.sub ? ` <span style="opacity:0.5;font-weight:400;font-size:10.5px">${s.sub}</span>` : ''}
+        </button>`).join('');
+    dbSeriesRow.querySelectorAll('.db-series-btn').forEach(btn =>
+        btn.addEventListener('click', () => selectSeries(btn.dataset.code))
+    );
+}
+
+async function selectSeries(code) {
+    dbActiveSeries = code; dbView = 'packs';
+    dbNav.classList.remove('visible');
+    buildSeriesRow();
+    dbContent.innerHTML = '';
+    dbStatus.textContent = '불러오는 중...';
+    if (dbLang === 'kr')      await loadKrPacks(code);
+    else if (dbLang === 'jp') await loadJpPacks(code);
+    else                      await loadEnSets(code);
+}
+
+async function loadKrPacks(seriesCode) {
     try {
-        const res  = await fetch(
-            `https://api.pokemontcg.io/v2/cards?q=name:"${encodeURIComponent(query)}"&pageSize=30&select=id,name,images`
-        );
-        const data = await res.json();
-        const cards = data.data || [];
-        if (!cards.length) { tcgStatus.textContent = '검색 결과 없음'; return; }
-        tcgStatus.textContent = `${cards.length}장 찾음 — 클릭해서 추가`;
-        tcgResults.innerHTML = cards.map(c => `
-            <div class="tcg-card" data-large="${c.images.large}" data-name="${c.name}">
-                <img src="${c.images.small}" loading="lazy" alt="${c.name}">
-            </div>`).join('');
-        tcgResults.querySelectorAll('.tcg-card').forEach(el => {
+        const url = `/data/kr/${seriesCode}.json`;
+        if (!dbCache[url]) { const r = await fetch(url); dbCache[url] = await r.json(); }
+        const raw = dbCache[url];
+        const allPacks = Array.isArray(raw) ? raw : Object.values(raw);
+        // 팩 코드 기준 중복 제거만 (소드/실드처럼 이미지 같아도 다른 팩이면 유지)
+        const seenCodes = new Set();
+        const packs = allPacks
+            .filter(p => {
+                if (seenCodes.has(p.code)) return false;
+                seenCodes.add(p.code);
+                return true;
+            })
+            // 출시일 역순 (최신순)
+            .sort((a, b) => {
+                const da = a.release_date || '0000-00-00';
+                const db2 = b.release_date || '0000-00-00';
+                return da > db2 ? -1 : da < db2 ? 1 : 0;
+            });
+        dbStatus.textContent = `${packs.length}개 팩`;
+        dbContent.innerHTML = `<div class="db-pack-grid">${packs.map(p => `
+            <div class="db-pack-item" data-code="${p.code}">
+                <div class="db-pack-cover-wrap">
+                    ${p.image_cover_url
+                        ? `<img class="db-pack-cover" src="${p.image_cover_url}" loading="lazy" onerror="this.outerHTML='<div class=\\'db-pack-cover-placeholder\\'>📦</div>'">`
+                        : `<div class="db-pack-cover-placeholder">📦</div>`}
+                    ${p.image_symbol_url
+                        ? `<img class="db-pack-symbol-badge" src="${p.image_symbol_url}" onerror="this.style.display='none'">`
+                        : ''}
+                </div>
+                <div class="db-pack-info">
+                    <div class="db-pack-code">${p.code}</div>
+                    <div class="db-pack-name">${p.name}</div>
+                    <div class="db-pack-meta">
+                        📅 ${p.release_date || '?'}&nbsp;&nbsp;🃏 ${p.printed_total || p.total || '?'}장
+                        ${p.price ? `<br>💰 ${p.price}` : ''}
+                    </div>
+                </div>
+            </div>`).join('')}</div>`;
+        dbContent.querySelectorAll('.db-pack-item').forEach(el => {
+            const pack = packs.find(p => p.code === el.dataset.code);
+            if (pack) el.addEventListener('click', () => showKrCards(pack));
+        });
+    } catch(e) { dbStatus.textContent = '로딩 오류. 잠시 후 다시 시도하세요.'; }
+}
+
+/* 레어도 색상 매핑 */
+const RARITY_COLOR = {
+    'C':   '#8888aa',
+    'U':   '#55aadd',
+    'R':   '#ffcc44',
+    'RR':  '#ff8844',
+    'RRR': '#ff4488',
+    'UR':  '#cc44ff',
+    'HR':  '#ff44ff',
+    'SR':  '#eeaaff',
+    'SSR': '#ffddff',
+    'AR':  '#aaffdd',
+    'SAR': '#88ffcc',
+    'PR':  '#aaddff',
+    'MUR': '#ffd700',
+    'MA':  '#ff99cc',
+};
+
+async function showKrCards(pack) {
+    dbView = 'cards';
+    const series = (pack.series && pack.series[0]) || '';
+
+    let cards;
+    if (pack.card_list_detail && pack.card_list_detail.length > 0) {
+        const seen = new Set();
+        cards = pack.card_list_detail.filter(c => {
+            const key = String(c.num);
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+        cards.sort((a, b) => (parseInt(a.num,10)||0) - (parseInt(b.num,10)||0));
+    } else {
+        const total = parseInt(pack.total || pack.printed_total || 0, 10);
+        cards = Array.from({ length: total }, (_, i) => ({
+            num: String(i + 1).padStart(3, '0'), name: '', rarity: ''
+        }));
+    }
+
+    dbNav.classList.add('visible');
+    dbNavText.textContent = pack.name;
+    dbStatus.textContent = '카드 불러오는 중...';
+
+    // artofpkm 이미지 시도
+    let thumbUrls, fullUrls;
+    if (pack.artofpkm_id) {
+        try {
+            const r = await fetch(`/api/artofpkm/${pack.artofpkm_id}`);
+            const j = await r.json();
+            if (j.cards && j.cards.length > 0) {
+                // artofpkm 카드 수가 card_list보다 적을 수 있으므로 인덱스 안전 처리
+                thumbUrls = cards.map((_, i) => j.cards[i] ? j.cards[i].thumb : null);
+                fullUrls  = cards.map((_, i) => j.cards[i] ? j.cards[i].full  : null);
+            }
+        } catch(e) { /* fallthrough to KR CDN */ }
+    }
+
+    // Korean CDN fallback
+    if (!thumbUrls) {
+        thumbUrls = cards.map(c => {
+            const num = String(c.num).padStart(3, '0');
+            return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}.png?w=200`;
+        });
+        fullUrls = cards.map(c => {
+            const num = String(c.num).padStart(3, '0');
+            return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}.png?w=512`;
+        });
+    }
+
+    dbStatus.textContent = `총 ${pack.printed_total || pack.total || cards.length}종 · ${cards.length}장 표시`;
+    dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => {
+        const rarColor = RARITY_COLOR[c.rarity] || 'rgba(255,255,255,0.3)';
+        const rarBadge = c.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${c.rarity}</div>` : '';
+        const imgSrc = thumbUrls[i] || '';
+        return `
+        <div class="db-card-item" data-idx="${i}" title="${c.num} ${c.name}${c.rarity ? ' ['+c.rarity+']' : ''}">
+            <img src="${imgSrc}" loading="lazy" alt="${c.name}" onerror="this.parentElement.style.opacity='0.15'">
+            ${rarBadge}
+            <div class="db-card-label">${c.num}  ${c.name}</div>
+            <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
+        </div>`;
+    }).join('')}</div>`;
+    dbContent.querySelectorAll('.db-card-item').forEach(el => {
+        el.addEventListener('click', e => {
+            if (e.target.closest('.db-add-btn')) {
+                enterSlotPickMode(fullUrls[+el.dataset.idx]);
+            } else {
+                openCardModalFromDb(fullUrls, +el.dataset.idx);
+            }
+        });
+    });
+}
+
+function getJpSymbolUrl(code, serie) {
+    const krCdn = 'https://cards.image.pokemonkorea.co.kr/data/images/symbol/';
+    const tcgIo = (id) => `https://images.pokemontcg.io/${id}/symbol.png`;
+
+    if (serie === 'SV' || serie === 'SS') return krCdn + code + '.png';
+
+    if (serie === 'SM') {
+        const KR_SM_OK = new Set(['SM6b','SM11a','SM11b','SM12','SM12a']);
+        if (KR_SM_OK.has(code)) return krCdn + code + '.png';
+        const SM_EN_MAP = {
+            'SM1S':'sm1','SM1M':'sm1','SM2K':'sm2','SM2L':'sm2',
+            'SM3H':'sm3','SM3N':'sm3','SM4S':'sm4','SM4A':'sm4',
+            'SM5S':'sm5','SM5M':'sm5','SM6':'sm6',
+            'SM6a':'sm7','SM7':'sm7','SM7a':'sm7pt5','SM7b':'sm7pt5',
+            'SM8':'sm8','SM8a':'sm8pt5','SM8b':'sm8pt5',
+            'SM9':'sm9','SM9a':'sm9pt5','SM9b':'sm9pt5',
+            'SM10':'sm10','SM10b':'sm10pt5','sn11':'sm11'
+        };
+        const enId = SM_EN_MAP[code];
+        return enId ? tcgIo(enId) : null;
+    }
+
+    if (serie === 'XY') {
+        const XY_EN_MAP = {
+            'XY1a':'xy1','XY1b':'xy2','XY2':'xy3','XY3':'xy4',
+            'XY4':'xy5','XY5a':'xy6','XY5b':'xy6','XY6':'xy7',
+            'XY7':'xy8','XY8a':'xy9','XY8b':'xy9','XY9':'xy10',
+            'XY10':'xy11','XY11a':'xy12','XY11b':'xy12','XY12':'xy12'
+        };
+        const enId = XY_EN_MAP[code];
+        return enId ? tcgIo(enId) : null;
+    }
+
+    if (serie === 'BW') {
+        const BW_EN_MAP = {
+            'BW1a':'bw1','BW1b':'bw1','BW2':'bw2','BW3a':'bw3',
+            'BW3b':'bw3','BW4':'bw4','BW5a':'bw5','BW5b':'bw5',
+            'BW6a':'bw6','BW6b':'bw6','BW7':'bw7','BW8a':'bw8',
+            'BW8b':'bw8','BW9':'bw9','BWH1':'bw10'
+        };
+        const enId = BW_EN_MAP[code];
+        return enId ? tcgIo(enId) : null;
+    }
+
+    return null;
+}
+
+async function loadJpPacks(seriesCode) {
+    try {
+        const url = `/data/jp/${seriesCode}.json`;
+        if (!dbCache[url]) { const r = await fetch(url); dbCache[url] = await r.json(); }
+        const packs = dbCache[url];
+        dbStatus.textContent = `${packs.length}개 팩`;
+        dbContent.innerHTML = `<div class="db-pack-grid">${packs.map(p => {
+            const symUrl = getJpSymbolUrl(p.code, p.tcgdex_serie || seriesCode);
+            const coverHtml = p.image_cover_url
+                ? `<img class="db-pack-cover" src="${p.image_cover_url}" loading="lazy" style="object-fit:contain;background:#0a0a18;padding:10px" onerror="this.outerHTML='<div class=\\'db-pack-cover-placeholder\\'>📦</div>'">`
+                : `<div class="db-pack-cover-placeholder">📦</div>`;
+            const symBadge = symUrl
+                ? `<img class="db-pack-symbol-badge" src="${symUrl}" onerror="this.style.display='none'">`
+                : '';
+            return `
+            <div class="db-pack-item" data-code="${p.code}" style="cursor:pointer">
+                <div class="db-pack-cover-wrap">${coverHtml}${symBadge}</div>
+                <div class="db-pack-info">
+                    <div class="db-pack-name">${p.name}</div>
+                    ${p.name_en ? `<div style="font-size:9px;color:rgba(160,200,255,0.6);margin-top:1px;line-height:1.3">${p.name_en}</div>` : ''}
+                    ${p.name_kr ? `<div style="font-size:9px;color:rgba(255,200,120,0.7);margin-top:1px;line-height:1.3">${p.name_kr}</div>` : ''}
+                    <div class="db-pack-code">${p.code}</div>
+                    <div class="db-pack-meta">${p.release_date || ''}<br>🖨 ${p.printed_total}종 · 총 ${p.total}장</div>
+                </div>
+            </div>`;
+        }).join('')}</div>`;
+        dbContent.querySelectorAll('.db-pack-item').forEach(el => {
             el.addEventListener('click', () => {
-                if (!tcgTarget) return;
-                const { binderId, sp, side, idx } = tcgTarget;
-                const imgUrl = el.dataset.large;
-                getCards(binderId, sp, side)[idx] = imgUrl;
-                refreshSpread();
-                closeTcgModal();
-                /* Supabase 자동 저장 */
-                if (typeof sbSaveCard === 'function') sbSaveCard(binderId, sp, side, idx, imgUrl);
+                const pack = packs.find(p => p.code === el.dataset.code);
+                if (pack) showJpCards(pack);
             });
         });
-    } catch(e) {
-        tcgStatus.textContent = '오류 발생. 잠시 후 다시 시도해주세요.';
+    } catch(e) { dbStatus.textContent = '로딩 오류.'; }
+}
+
+async function showJpCards(pack) {
+    dbView = 'cards';
+    dbNav.classList.add('visible');
+    dbNavText.textContent = `${pack.name} (${pack.name_en || pack.code})`;
+    dbStatus.textContent = '카드 불러오는 중...';
+    dbContent.innerHTML = '';
+
+    const serie = pack.tcgdex_serie || 'SV';
+    const total = pack.total || pack.printed_total || 0;
+
+    function renderCards(cards) {
+        const fullUrls = cards.map(c => c.full);
+        dbStatus.textContent = `총 ${cards.length}장`;
+        dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => `
+            <div class="db-card-item" data-idx="${i}" title="${c.label}">
+                <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
+                <div class="db-card-label">${c.label}</div>
+                <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
+            </div>`).join('')}</div>`;
+        dbContent.querySelectorAll('.db-card-item').forEach(el => {
+            el.addEventListener('click', e => {
+                if (e.target.closest('.db-add-btn')) {
+                    enterSlotPickMode(fullUrls[+el.dataset.idx]);
+                } else {
+                    openCardModalFromDb(fullUrls, +el.dataset.idx);
+                }
+            });
+        });
+    }
+
+    function useTcgdex() {
+        const cards = Array.from({ length: total }, (_, i) => {
+            const num = String(i + 1).padStart(3, '0');
+            return {
+                thumb: `https://assets.tcgdex.net/ja/${serie}/${pack.code}/${num}/low.webp`,
+                full:  `https://assets.tcgdex.net/ja/${serie}/${pack.code}/${num}/high.webp`,
+                label: num
+            };
+        });
+        renderCards(cards);
+    }
+
+    if (pack.artofpkm_id) {
+        try {
+            const r = await fetch(`/api/artofpkm/${pack.artofpkm_id}`);
+            const j = await r.json();
+            if (j.cards && j.cards.length > 0) {
+                const cards = j.cards.map((c, i) => {
+                    const m = c.file && c.file.match(/^\d+_[PTE]_(.+)\.jpg$/i);
+                    const name = m ? m[1].replace(/_/g, ' ') : String(i + 1).padStart(3, '0');
+                    return { thumb: c.thumb, full: c.full, label: name };
+                });
+                renderCards(cards);
+            } else {
+                useTcgdex();
+            }
+        } catch(e) {
+            useTcgdex();
+        }
+    } else {
+        useTcgdex();
     }
 }
 
-document.getElementById('tcg-search-btn').addEventListener('click', () => searchTcg(tcgSearch.value));
-document.getElementById('tcg-close-btn').addEventListener('click', closeTcgModal);
-document.getElementById('tcg-backdrop').addEventListener('click', closeTcgModal);
-tcgSearch.addEventListener('keydown', e => { if (e.key === 'Enter') searchTcg(tcgSearch.value); });
+async function loadEnSets(seriesCode) {
+    try {
+        const url = '/data/en/en.json';
+        if (!dbCache[url]) { const r = await fetch(url); const j = await r.json(); dbCache[url] = Array.isArray(j) ? j : (j.data || []); }
+        const targetSeries = EN_SERIES_MAP[seriesCode] || '';
+        const filtered = dbCache[url].filter(s => s.series === targetSeries);
+        dbStatus.textContent = `${filtered.length}개 세트`;
+        dbContent.innerHTML = `<div class="db-pack-grid">${filtered.map(s => `
+            <div class="db-pack-item" data-id="${s.id}">
+                ${s.images?.logo
+                    ? `<img class="db-pack-cover" src="${s.images.logo}" loading="lazy" style="object-fit:contain;background:#0a0a18;padding:10px" onerror="this.outerHTML='<div class=\\'db-pack-cover-placeholder\\'>📦</div>'">`
+                    : `<div class="db-pack-cover-placeholder">📦</div>`}
+                <div class="db-pack-info">
+                    <div class="db-pack-name">${s.name}</div>
+                    ${EN_KR_NAMES[s.id] ? `<div style="font-size:9px;color:rgba(255,200,120,0.7);margin-top:1px;line-height:1.3">${EN_KR_NAMES[s.id]}</div>` : ''}
+                    <div class="db-pack-meta">📅 ${s.releaseDate || '?'}&nbsp;&nbsp;🃏 ${s.total || '?'}장</div>
+                </div>
+            </div>`).join('')}</div>`;
+        dbContent.querySelectorAll('.db-pack-item').forEach(el =>
+            el.addEventListener('click', () => showEnCards(el.dataset.id, filtered.find(s => s.id === el.dataset.id)?.name))
+        );
+    } catch(e) { dbStatus.textContent = '로딩 오류.'; }
+}
+
+async function showEnCards(setId, setName) {
+    dbView = 'cards';
+    dbNav.classList.add('visible');
+    dbNavText.textContent = setName || setId;
+    dbStatus.textContent = '카드 불러오는 중...';
+    dbContent.innerHTML = '';
+    try {
+        const url = `https://api.pokemontcg.io/v2/cards?q=set.id:${setId}&pageSize=250&orderBy=number&select=id,name,images`;
+        if (!dbCache[url]) { const r = await fetch(url); const j = await r.json(); dbCache[url] = j.data || []; }
+        const cards = dbCache[url];
+        const fullUrls = cards.map(c => c.images.large || c.images.small);
+        dbStatus.textContent = `${cards.length}장`;
+        dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => `
+            <div class="db-card-item" data-idx="${i}" title="${c.name}">
+                <img src="${c.images.small}" loading="lazy" alt="${c.name}" onerror="this.parentElement.style.opacity='0.15'">
+                <div class="db-card-label">${c.name}</div>
+                <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
+            </div>`).join('')}</div>`;
+        dbContent.querySelectorAll('.db-card-item').forEach(el => {
+            el.addEventListener('click', e => {
+                if (e.target.closest('.db-add-btn')) {
+                    enterSlotPickMode(fullUrls[+el.dataset.idx]);
+                } else {
+                    openCardModalFromDb(fullUrls, +el.dataset.idx);
+                }
+            });
+        });
+    } catch(e) { dbStatus.textContent = '로딩 오류.'; }
+}
+
+document.getElementById('btn-card-db').addEventListener('click', openDbModal);
+document.getElementById('db-close').addEventListener('click', closeDbModal);
+document.getElementById('db-backdrop').addEventListener('click', closeDbModal);
+// 언어 탭 버튼이 있을 때만 이벤트 등록 (현재 한판만 활성화)
+document.querySelectorAll('.db-lang-btn').forEach(b =>
+    b.addEventListener('click', () => setDbLang(b.dataset.lang))
+);
+document.getElementById('db-back').addEventListener('click', () => {
+    if (dbView === 'cards') {
+        dbView = 'packs';
+        dbNav.classList.remove('visible');
+        if (dbLang === 'kr') loadKrPacks(dbActiveSeries);
+        else loadEnSets(dbActiveSeries);
+    }
+});
+
+/* ══════════════════════════════════════
+   LOCAL STORAGE (비로그인 영구 저장)
+══════════════════════════════════════ */
+function saveToLocalStorage() {
+    try {
+        localStorage.setItem('pb_binders',  JSON.stringify(BINDERS));
+        localStorage.setItem('pb_nextId',   String(nextId));
+        localStorage.setItem('pb_stickers', JSON.stringify(stickerData));
+        /* data: URL은 용량이 크므로 제외 — https URL 카드만 저장 */
+        const slim = {};
+        Object.entries(cardData).forEach(([k, arr]) => {
+            const f = arr.map(v => (v && !v.startsWith('data:')) ? v : null);
+            if (f.some(Boolean)) slim[k] = f;
+        });
+        localStorage.setItem('pb_cards', JSON.stringify(slim));
+    } catch(e) { console.warn('localStorage 저장 실패:', e); }
+}
+
+function loadFromLocalStorage() {
+    try {
+        const rawB = localStorage.getItem('pb_binders');
+        const rawC = localStorage.getItem('pb_cards');
+        const rawN = localStorage.getItem('pb_nextId');
+        const rawS = localStorage.getItem('pb_stickers');
+        if (rawB) {
+            const parsed = JSON.parse(rawB);
+            if (Array.isArray(parsed) && parsed.length) {
+                BINDERS.length = 0;
+                parsed.forEach(b => BINDERS.push(b));
+                activeBinder = BINDERS[0];
+                nextId = rawN ? +rawN : Math.max(...BINDERS.map(b => +b.id || 0)) + 1;
+            }
+        }
+        if (rawC) Object.assign(cardData, JSON.parse(rawC));
+        if (rawS) Object.assign(stickerData, JSON.parse(rawS));
+    } catch(e) { console.warn('localStorage 로드 실패:', e); }
+}
+
+/* ══════════════════════════════════════
+   PAGE INDICATOR (클릭해서 페이지 이동)
+══════════════════════════════════════ */
+function updatePageIndicator() {
+    const el = document.getElementById('page-indicator');
+    if (el && el.tagName === 'SPAN') el.textContent = `${page} / ${activeBinder.pages}`;
+}
+
+// page-indicator는 숫자 버튼으로 교체됨 (renderDots 참조)
+
+/* ══════════════════════════════════════
+   STICKERS (페이지 표시 스티커)
+══════════════════════════════════════ */
+/* 모든 페이지의 탭을 동시에 오른쪽 엣지에 렌더링
+ * 포스트잇처럼 여러 탭이 다른 높이에 걸쳐서 보임 */
+function tabTopPct(sp, total) {
+    if (total <= 1) return 6;
+    return 4 + (sp - 1) / (total - 1) * 34; // 4% ~ 38% (오른쪽 위쪽에만 집중)
+}
+
+function renderSticker() {
+    const layer = document.getElementById('sticker-layer');
+    if (!layer) return;
+
+    // 팝업 닫혔는지 체크해서 유지
+    const hadPopup = !!document.getElementById('sticker-popup');
+    if (hadPopup) return; // 팝업 열린 동안은 탭 재렌더 안 함
+
+    layer.innerHTML = '';
+    const total = activeBinder.pages;
+
+    for (let sp = 1; sp <= total; sp++) {
+        const key   = `${activeBinder.id}_${sp}`;
+        const st    = stickerData[key];
+        const top   = tabTopPct(sp, total);
+        const isCur = sp === page;
+
+        if (st) {
+            /* ── 채워진 탭 ── */
+            const tab = document.createElement('div');
+            tab.className = `page-tab${isCur ? ' active' : ''}`;
+            tab.style.cssText = `top:${top}%; background:${st.color};`;
+            tab.title = `${sp}페이지 — ${st.text}`;
+
+            const lbl = document.createElement('span');
+            lbl.className = 'tab-label';
+            lbl.textContent = st.text.slice(0, 5); // 세로 텍스트 최대 5자
+            tab.appendChild(lbl);
+
+            const del = document.createElement('button');
+            del.className = 'tab-del';
+            del.title = '스티커 삭제';
+            del.textContent = '×';
+            del.addEventListener('click', e => {
+                e.stopPropagation();
+                delete stickerData[key];
+                saveToLocalStorage();
+                renderSticker();
+            });
+            tab.appendChild(del);
+
+            tab.addEventListener('click', e => {
+                if (e.target.closest('.tab-del')) return;
+                if (sp !== page) jumpTo(sp);        // 다른 페이지 → 즉시 이동
+                else openStickerEdit(key, st);      // 현재 페이지 → 편집
+            });
+            layer.appendChild(tab);
+
+        } else if (isCur) {
+            /* ── 현재 페이지 + 스티커 없음 → + 탭 ── */
+            const btn = document.createElement('div');
+            btn.className = 'tab-add';
+            btn.style.top = `${top}%`;
+            btn.title = '이 페이지에 스티커 추가';
+            btn.textContent = '+';
+            btn.addEventListener('click', () => openStickerEdit(key, null));
+            layer.appendChild(btn);
+        }
+    }
+}
+
+function openStickerEdit(key, existing) {
+    const layer   = document.getElementById('sticker-layer');
+    let selColor  = existing?.color || STICKER_COLORS[0];
+    const curText = existing?.text  || '';
+
+    // 기존 팝업 제거
+    const old = document.getElementById('sticker-popup');
+    if (old) old.remove();
+
+    // 팝업 위치: 해당 탭 높이 근처
+    const sp    = parseInt(key.split('_').pop());
+    const total = activeBinder.pages;
+    const top   = tabTopPct(sp, total);
+
+    const popup = document.createElement('div');
+    popup.id        = 'sticker-popup';
+    popup.className = 'sticker-popup';
+    // 팝업이 화면 위아래 벗어나지 않도록 clamp
+    const clampedTop = Math.min(Math.max(top, 4), 55);
+    popup.style.cssText = `top:calc(${clampedTop}% - 8px); right:22px;`;
+
+    popup.innerHTML = `
+        <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:8px;font-weight:600;">
+            ${sp}페이지 스티커
+        </div>
+        <div class="sticker-swatches">
+            ${STICKER_COLORS.map(c =>
+                `<div class="sticker-swatch${c===selColor?' sel':''}" style="background:${c}" data-c="${c}"></div>`
+            ).join('')}
+        </div>
+        <input class="sticker-popup-inp" id="sticker-text-inp"
+               type="text" placeholder="스티커 이름 (예: 스타터덱)"
+               maxlength="18" value="${curText}">
+        <div class="sticker-popup-btns">
+            <button class="sticker-ok" id="sticker-ok">확인</button>
+            <button class="sticker-cx" id="sticker-cx">취소</button>
+        </div>`;
+
+    layer.appendChild(popup);
+
+    popup.querySelectorAll('.sticker-swatch').forEach(sw => {
+        sw.addEventListener('click', () => {
+            popup.querySelectorAll('.sticker-swatch').forEach(s => s.classList.remove('sel'));
+            sw.classList.add('sel');
+            selColor = sw.dataset.c;
+        });
+    });
+
+    const inp = document.getElementById('sticker-text-inp');
+    inp.focus(); inp.select();
+
+    const save = () => {
+        const val = inp.value.trim();
+        if (val) {
+            stickerData[key] = { text: val, color: selColor };
+            saveToLocalStorage();
+        }
+        popup.remove();
+        renderSticker();
+    };
+
+    document.getElementById('sticker-ok').addEventListener('click', save);
+    document.getElementById('sticker-cx').addEventListener('click', () => {
+        popup.remove(); renderSticker();
+    });
+    inp.addEventListener('keydown', e => {
+        e.stopPropagation();
+        if (e.key === 'Enter')  { e.preventDefault(); save(); }
+        if (e.key === 'Escape') { popup.remove(); renderSticker(); }
+    });
+
+    // 팝업 외부 클릭 시 닫기
+    const outsideClick = e => {
+        if (!popup.contains(e.target)) {
+            popup.remove();
+            renderSticker();
+            document.removeEventListener('mousedown', outsideClick);
+        }
+    };
+    setTimeout(() => document.addEventListener('mousedown', outsideClick), 50);
+}
+
+/* ── Supabase 바인더 삭제 ── */
+async function sbDeleteBinder(id) {
+    if (!sb || !sbUser) return;
+    await sb.from('binders').delete().eq('id', id);
+}
 
 /* ══════════════════════════════════════
    BOOT
 ══════════════════════════════════════ */
+loadFromLocalStorage();   // 비로그인 상태일 때 로컬 데이터 복원
 applySize();
 updateTopbar();
 renderSidebar();
 renderDots();
 updateUI();
 initFill();
+renderSticker();
 
 /* ══════════════════════════════════════
    CARD MODAL
@@ -1485,6 +2626,20 @@ function closeCardModal() {
     modal.classList.remove('open');
     document.body.style.overflow = '';
     setModalScale(1);
+}
+
+function openCardModalFromDb(imgUrls, startIdx) {
+    modalCardList = imgUrls.map(u => ({ src: u }));
+    modalCardIdx  = startIdx;
+    setModalScale(1);
+    modalImg.style.transition = 'opacity 0.1s ease';
+    modalImg.src = imgUrls[startIdx];
+    modalImg.style.opacity = '1';
+    modalCounter.textContent = `${startIdx + 1} / ${imgUrls.length}`;
+    modalPrev.disabled = startIdx === 0;
+    modalNext.disabled = startIdx === imgUrls.length - 1;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
 }
 
 modalClose.addEventListener('click', closeCardModal);
@@ -1638,17 +2793,23 @@ async function sbSignOut() {
     await sb.auth.signOut();
     sbUser = null;
     updateAuthUI(null);
-    /* 로컬 기본 데이터로 초기화 */
+    /* 로그아웃 후 localStorage에 저장된 데이터 복원 (데이터를 날리지 않음) */
     BINDERS.length = 0;
-    BINDERS.push(
-        { id: 1, name: '스칼렛 & 바이올렛', color: '#6060ff', pages: 5, type: '9포켓' },
-        { id: 2, name: '소드 & 실드',       color: '#40b080', pages: 4, type: '9포켓' }
-    );
-    nextId = 3;
     Object.keys(cardData).forEach(k => delete cardData[k]);
+    Object.keys(stickerData).forEach(k => delete stickerData[k]);
+    loadFromLocalStorage();
+    if (!BINDERS.length) {
+        BINDERS.push(
+            { id: 1, name: '스칼렛 & 바이올렛', color: '#6060ff', pages: 5, type: '9포켓' },
+            { id: 2, name: '소드 & 실드',       color: '#40b080', pages: 4, type: '9포켓' },
+            { id: 3, name: '탑로더 컬렉션',     color: '#e06040', pages: 3, type: '탑로더' }
+        );
+        nextId = 4;
+    }
     activeBinder = BINDERS[0];
     page = 1;
     updateTopbar(); renderDots(); updateUI(); renderSidebar(); initFill();
+    renderSticker();
 }
 
 /* ── Supabase에서 데이터 불러오기 ── */
@@ -1667,6 +2828,7 @@ async function loadFromSb(userId) {
     if (binderIds.length > 0) {
         const { data: cards } = await sb.from('cards').select('*').in('binder_id', binderIds);
         Object.keys(cardData).forEach(k => delete cardData[k]);
+        Object.keys(stickerData).forEach(k => delete stickerData[k]);
         if (cards) {
             cards.forEach(c => {
                 const key = `${c.binder_id}_${c.sp}_${c.side}`;
@@ -1677,16 +2839,40 @@ async function loadFromSb(userId) {
     }
     page = 1;
     updateTopbar(); renderDots(); updateUI(); renderSidebar(); initFill();
+    renderSticker();
 }
 
 /* ── 바인더 저장 ── */
 async function sbSaveBinder(b) {
     if (!sb || !sbUser) return;
-    await sb.from('binders').upsert({
-        id: typeof b.id === 'number' && b.id < 1000 ? undefined : b.id,
+    const isLocalId = typeof b.id === 'number' && b.id < 100000;
+    const { data, error } = await sb.from('binders').upsert({
+        ...(isLocalId ? {} : { id: b.id }),
         user_id: sbUser.id, name: b.name, color: b.color,
         type: b.type, pages: b.pages, sort_order: BINDERS.indexOf(b)
-    }, { onConflict: 'id' });
+    }, { onConflict: 'id' }).select();
+
+    /* Supabase가 새 ID를 생성한 경우 로컬 바인더 ID를 갱신하고 카드 키도 재매핑 */
+    if (!error && data && data[0] && data[0].id !== b.id) {
+        const oldId = b.id;
+        const newId = data[0].id;
+        b.id = newId;
+        /* cardData 키 재매핑: "oldId_sp_side" → "newId_sp_side" */
+        Object.keys(cardData)
+            .filter(k => k.startsWith(String(oldId) + '_'))
+            .forEach(k => {
+                cardData[String(newId) + k.slice(String(oldId).length)] = cardData[k];
+                delete cardData[k];
+            });
+        /* stickerData 키 재매핑 */
+        Object.keys(stickerData)
+            .filter(k => k.startsWith(String(oldId) + '_'))
+            .forEach(k => {
+                stickerData[String(newId) + k.slice(String(oldId).length)] = stickerData[k];
+                delete stickerData[k];
+            });
+        saveToLocalStorage();
+    }
 }
 
 /* ── 카드 저장 (이미지 URL / data URL 모두 처리) ── */
@@ -1740,6 +2926,7 @@ async function sbDeleteCard(binderId, sp, side, slot) {
             updateAuthUI(sbUser);
             await loadFromSb(sbUser.id);
         } else if (event === 'SIGNED_OUT') {
+            /* sbSignOut() 에서 이미 처리하므로 여기선 UI만 갱신 */
             sbUser = null;
             updateAuthUI(null);
         }

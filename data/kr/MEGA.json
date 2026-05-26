@@ -1,0 +1,7732 @@
+[
+    {
+        "code": "M1S",
+        "name": "MEGA 확장팩 「메가심포니아」",
+        "type": "pack",
+        "printed_total": "92",
+        "total": 92,
+        "series": [
+            "MEGA"
+        ],
+        "release_date": "2025-09-20",
+        "artofpkm_id": 571,
+        "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/M1S.png",
+        "image_cover_url": "https://data1.pokemonkorea.co.kr/2025/09/2025-09-04_19-09-25-19256-1756980565.png",
+        "card_list_detail": [
+            {
+                "num": "001",
+                "name": "덩쿠리",
+                "rarity": "C"
+            },
+            {
+                "num": "002",
+                "name": "덩쿠림보",
+                "rarity": "U"
+            },
+            {
+                "num": "003",
+                "name": "치코리타",
+                "rarity": "C"
+            },
+            {
+                "num": "004",
+                "name": "베이리프",
+                "rarity": "C"
+            },
+            {
+                "num": "005",
+                "name": "메가니움",
+                "rarity": "R"
+            },
+            {
+                "num": "006",
+                "name": "단단지",
+                "rarity": "U"
+            },
+            {
+                "num": "007",
+                "name": "토중몬",
+                "rarity": "C"
+            },
+            {
+                "num": "008",
+                "name": "아이스크",
+                "rarity": "U"
+            },
+            {
+                "num": "009",
+                "name": "타타륜",
+                "rarity": "C"
+            },
+            {
+                "num": "010",
+                "name": "레오꼬",
+                "rarity": "C"
+            },
+            {
+                "num": "011",
+                "name": "화염레오",
+                "rarity": "U"
+            },
+            {
+                "num": "012",
+                "name": "태우지네",
+                "rarity": "C"
+            },
+            {
+                "num": "013",
+                "name": "다태우지네",
+                "rarity": "U"
+            },
+            {
+                "num": "014",
+                "name": "위유이",
+                "rarity": "U"
+            },
+            {
+                "num": "015",
+                "name": "만타인",
+                "rarity": "C"
+            },
+            {
+                "num": "016",
+                "name": "가이오가",
+                "rarity": "R"
+            },
+            {
+                "num": "017",
+                "name": "눈쓰개",
+                "rarity": "C"
+            },
+            {
+                "num": "018",
+                "name": "메가눈설왕ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "019",
+                "name": "완철포",
+                "rarity": "C"
+            },
+            {
+                "num": "020",
+                "name": "블로스터",
+                "rarity": "R"
+            },
+            {
+                "num": "021",
+                "name": "울머기",
+                "rarity": "C"
+            },
+            {
+                "num": "022",
+                "name": "누겔레온",
+                "rarity": "C"
+            },
+            {
+                "num": "023",
+                "name": "인텔리레온",
+                "rarity": "U"
+            },
+            {
+                "num": "024",
+                "name": "누니머기",
+                "rarity": "C"
+            },
+            {
+                "num": "025",
+                "name": "모스노우",
+                "rarity": "U"
+            },
+            {
+                "num": "026",
+                "name": "빙큐보",
+                "rarity": "C"
+            },
+            {
+                "num": "027",
+                "name": "코일",
+                "rarity": "C"
+            },
+            {
+                "num": "028",
+                "name": "레어코일",
+                "rarity": "C"
+            },
+            {
+                "num": "029",
+                "name": "자포코일",
+                "rarity": "U"
+            },
+            {
+                "num": "030",
+                "name": "라이코",
+                "rarity": "R"
+            },
+            {
+                "num": "031",
+                "name": "썬더라이",
+                "rarity": "C"
+            },
+            {
+                "num": "032",
+                "name": "메가썬더볼트ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "033",
+                "name": "파치리스",
+                "rarity": "C"
+            },
+            {
+                "num": "034",
+                "name": "목도리키텔",
+                "rarity": "C"
+            },
+            {
+                "num": "035",
+                "name": "일레도리자드",
+                "rarity": "C"
+            },
+            {
+                "num": "036",
+                "name": "캐이시",
+                "rarity": "C"
+            },
+            {
+                "num": "037",
+                "name": "윤겔라",
+                "rarity": "U"
+            },
+            {
+                "num": "038",
+                "name": "후딘",
+                "rarity": "R"
+            },
+            {
+                "num": "039",
+                "name": "루주라",
+                "rarity": "C"
+            },
+            {
+                "num": "040",
+                "name": "랄토스",
+                "rarity": "C"
+            },
+            {
+                "num": "041",
+                "name": "킬리아",
+                "rarity": "C"
+            },
+            {
+                "num": "042",
+                "name": "메가가디안ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "043",
+                "name": "껍질몬",
+                "rarity": "U"
+            },
+            {
+                "num": "044",
+                "name": "피그점프",
+                "rarity": "C"
+            },
+            {
+                "num": "045",
+                "name": "피그킹",
+                "rarity": "U"
+            },
+            {
+                "num": "046",
+                "name": "제르네아스",
+                "rarity": "R"
+            },
+            {
+                "num": "047",
+                "name": "망망이",
+                "rarity": "C"
+            },
+            {
+                "num": "048",
+                "name": "묘두기",
+                "rarity": "U"
+            },
+            {
+                "num": "049",
+                "name": "메가라티아스ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "050",
+                "name": "라티오스",
+                "rarity": "U"
+            },
+            {
+                "num": "051",
+                "name": "메가캥카ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "052",
+                "name": "딜리버드",
+                "rarity": "C"
+            },
+            {
+                "num": "053",
+                "name": "이어롤",
+                "rarity": "C"
+            },
+            {
+                "num": "054",
+                "name": "이어롭",
+                "rarity": "C"
+            },
+            {
+                "num": "055",
+                "name": "포곰곰",
+                "rarity": "C"
+            },
+            {
+                "num": "056",
+                "name": "이븐곰",
+                "rarity": "C"
+            },
+            {
+                "num": "057",
+                "name": "괴상한 시계",
+                "rarity": "U"
+            },
+            {
+                "num": "058",
+                "name": "메가시그널",
+                "rarity": "U"
+            },
+            {
+                "num": "059",
+                "name": "민진의 헤아림",
+                "rarity": "U"
+            },
+            {
+                "num": "060",
+                "name": "아세로라의 장난",
+                "rarity": "U"
+            },
+            {
+                "num": "061",
+                "name": "미스터리 가든",
+                "rarity": "U"
+            },
+            {
+                "num": "062",
+                "name": "파도타기 비치",
+                "rarity": "U"
+            },
+            {
+                "num": "063",
+                "name": "활력의 숲",
+                "rarity": "U"
+            },
+            {
+                "num": "064",
+                "name": "단단지",
+                "rarity": "AR"
+            },
+            {
+                "num": "065",
+                "name": "아이스크",
+                "rarity": "AR"
+            },
+            {
+                "num": "066",
+                "name": "레오꼬",
+                "rarity": "AR"
+            },
+            {
+                "num": "067",
+                "name": "눈쓰개",
+                "rarity": "AR"
+            },
+            {
+                "num": "068",
+                "name": "블로스터",
+                "rarity": "AR"
+            },
+            {
+                "num": "069",
+                "name": "인텔리레온",
+                "rarity": "AR"
+            },
+            {
+                "num": "070",
+                "name": "목도리키텔",
+                "rarity": "AR"
+            },
+            {
+                "num": "071",
+                "name": "후딘",
+                "rarity": "AR"
+            },
+            {
+                "num": "072",
+                "name": "껍질몬",
+                "rarity": "AR"
+            },
+            {
+                "num": "073",
+                "name": "묘두기",
+                "rarity": "AR"
+            },
+            {
+                "num": "074",
+                "name": "딜리버드",
+                "rarity": "AR"
+            },
+            {
+                "num": "075",
+                "name": "포곰곰",
+                "rarity": "AR"
+            },
+            {
+                "num": "076",
+                "name": "메가눈설왕ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "077",
+                "name": "메가썬더볼트ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "078",
+                "name": "메가가디안ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "079",
+                "name": "메가라티아스ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "080",
+                "name": "메가캥카ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "081",
+                "name": "메가시그널",
+                "rarity": "SR"
+            },
+            {
+                "num": "082",
+                "name": "이상한사탕",
+                "rarity": "SR"
+            },
+            {
+                "num": "083",
+                "name": "절친 포핀",
+                "rarity": "SR"
+            },
+            {
+                "num": "084",
+                "name": "민진의 헤아림",
+                "rarity": "SR"
+            },
+            {
+                "num": "085",
+                "name": "아세로라의 장난",
+                "rarity": "SR"
+            },
+            {
+                "num": "086",
+                "name": "미스터리 가든",
+                "rarity": "SR"
+            },
+            {
+                "num": "087",
+                "name": "메가가디안ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "088",
+                "name": "메가라티아스ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "089",
+                "name": "메가캥카ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "090",
+                "name": "민진의 헤아림",
+                "rarity": "SAR"
+            },
+            {
+                "num": "091",
+                "name": "아세로라의 장난",
+                "rarity": "SAR"
+            },
+            {
+                "num": "092",
+                "name": "메가가디안ex",
+                "rarity": "MUR"
+            }
+        ]
+    },
+    {
+        "code": "M1L",
+        "name": "MEGA 확장팩 「메가브레이브」",
+        "type": "pack",
+        "printed_total": "92",
+        "total": 92,
+        "series": [
+            "MEGA"
+        ],
+        "release_date": "2025-09-20",
+        "artofpkm_id": 570,
+        "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/M1L.png",
+        "image_cover_url": "https://data1.pokemonkorea.co.kr/2025/09/2025-09-04_19-10-23-72498-1756980623.png",
+        "card_list_detail": [
+            {
+                "num": "001",
+                "name": "이상해씨",
+                "rarity": "C"
+            },
+            {
+                "num": "002",
+                "name": "이상해풀",
+                "rarity": "C"
+            },
+            {
+                "num": "003",
+                "name": "메가이상해꽃 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "004",
+                "name": "아라리",
+                "rarity": "C"
+            },
+            {
+                "num": "005",
+                "name": "나시",
+                "rarity": "U"
+            },
+            {
+                "num": "006",
+                "name": "세레비",
+                "rarity": "U"
+            },
+            {
+                "num": "007",
+                "name": "도토링",
+                "rarity": "C"
+            },
+            {
+                "num": "008",
+                "name": "잎새코",
+                "rarity": "C"
+            },
+            {
+                "num": "009",
+                "name": "다탱구",
+                "rarity": "U"
+            },
+            {
+                "num": "010",
+                "name": "식스테일",
+                "rarity": "C"
+            },
+            {
+                "num": "011",
+                "name": "나인테일",
+                "rarity": "U"
+            },
+            {
+                "num": "012",
+                "name": "둔타",
+                "rarity": "C"
+            },
+            {
+                "num": "013",
+                "name": "메가폭타 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "014",
+                "name": "볼케니온",
+                "rarity": "U"
+            },
+            {
+                "num": "015",
+                "name": "염버니",
+                "rarity": "C"
+            },
+            {
+                "num": "016",
+                "name": "래비풋",
+                "rarity": "C"
+            },
+            {
+                "num": "017",
+                "name": "에이스번",
+                "rarity": "R"
+            },
+            {
+                "num": "018",
+                "name": "가재군",
+                "rarity": "C"
+            },
+            {
+                "num": "019",
+                "name": "모으령",
+                "rarity": "C"
+            },
+            {
+                "num": "020",
+                "name": "모래두지",
+                "rarity": "C"
+            },
+            {
+                "num": "021",
+                "name": "고지",
+                "rarity": "C"
+            },
+            {
+                "num": "022",
+                "name": "롱스톤",
+                "rarity": "C"
+            },
+            {
+                "num": "023",
+                "name": "배루키",
+                "rarity": "C"
+            },
+            {
+                "num": "024",
+                "name": "마크탕",
+                "rarity": "C"
+            },
+            {
+                "num": "025",
+                "name": "하리뭉",
+                "rarity": "R"
+            },
+            {
+                "num": "026",
+                "name": "루나톤",
+                "rarity": "R"
+            },
+            {
+                "num": "027",
+                "name": "솔록",
+                "rarity": "U"
+            },
+            {
+                "num": "028",
+                "name": "리오르",
+                "rarity": "C"
+            },
+            {
+                "num": "029",
+                "name": "메가루카리오 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "030",
+                "name": "삐딱구리",
+                "rarity": "C"
+            },
+            {
+                "num": "031",
+                "name": "독개굴",
+                "rarity": "C"
+            },
+            {
+                "num": "032",
+                "name": "마샤도",
+                "rarity": "U"
+            },
+            {
+                "num": "033",
+                "name": "돌헨진",
+                "rarity": "U"
+            },
+            {
+                "num": "034",
+                "name": "베베솔트",
+                "rarity": "C"
+            },
+            {
+                "num": "035",
+                "name": "스태솔트",
+                "rarity": "C"
+            },
+            {
+                "num": "036",
+                "name": "콜로솔트",
+                "rarity": "U"
+            },
+            {
+                "num": "037",
+                "name": "가재장군",
+                "rarity": "U"
+            },
+            {
+                "num": "038",
+                "name": "메가앱솔 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "039",
+                "name": "화강돌",
+                "rarity": "U"
+            },
+            {
+                "num": "040",
+                "name": "이벨타르",
+                "rarity": "R"
+            },
+            {
+                "num": "041",
+                "name": "훔처우",
+                "rarity": "C"
+            },
+            {
+                "num": "042",
+                "name": "폭슬라이",
+                "rarity": "C"
+            },
+            {
+                "num": "043",
+                "name": "땃쭈르",
+                "rarity": "C"
+            },
+            {
+                "num": "044",
+                "name": "태깅구르",
+                "rarity": "C"
+            },
+            {
+                "num": "045",
+                "name": "강철톤",
+                "rarity": "R"
+            },
+            {
+                "num": "046",
+                "name": "메가입치트 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "047",
+                "name": "디아루가",
+                "rarity": "R"
+            },
+            {
+                "num": "048",
+                "name": "어리짱",
+                "rarity": "C"
+            },
+            {
+                "num": "049",
+                "name": "벼리짱",
+                "rarity": "C"
+            },
+            {
+                "num": "050",
+                "name": "두드리짱",
+                "rarity": "U"
+            },
+            {
+                "num": "051",
+                "name": "타부자고",
+                "rarity": "U"
+            },
+            {
+                "num": "052",
+                "name": "깨비참",
+                "rarity": "C"
+            },
+            {
+                "num": "053",
+                "name": "깨비드릴조",
+                "rarity": "C"
+            },
+            {
+                "num": "054",
+                "name": "밀탱크",
+                "rarity": "C"
+            },
+            {
+                "num": "055",
+                "name": "영구스",
+                "rarity": "C"
+            },
+            {
+                "num": "056",
+                "name": "형사구스",
+                "rarity": "U"
+            },
+            {
+                "num": "057",
+                "name": "벌레회피스프레이",
+                "rarity": "U"
+            },
+            {
+                "num": "058",
+                "name": "아이언 디펜드업",
+                "rarity": "U"
+            },
+            {
+                "num": "059",
+                "name": "파워프로틴",
+                "rarity": "U"
+            },
+            {
+                "num": "060",
+                "name": "파이팅공",
+                "rarity": "U"
+            },
+            {
+                "num": "061",
+                "name": "릴리에의 결심",
+                "rarity": "U"
+            },
+            {
+                "num": "062",
+                "name": "마티스의 거래",
+                "rarity": "U"
+            },
+            {
+                "num": "063",
+                "name": "위험한 폐허",
+                "rarity": "U"
+            },
+            {
+                "num": "064",
+                "name": "이상해씨",
+                "rarity": "AR"
+            },
+            {
+                "num": "065",
+                "name": "이상해풀",
+                "rarity": "AR"
+            },
+            {
+                "num": "066",
+                "name": "나시",
+                "rarity": "AR"
+            },
+            {
+                "num": "067",
+                "name": "식스테일",
+                "rarity": "AR"
+            },
+            {
+                "num": "068",
+                "name": "리오르",
+                "rarity": "AR"
+            },
+            {
+                "num": "069",
+                "name": "마샤도",
+                "rarity": "AR"
+            },
+            {
+                "num": "070",
+                "name": "콜로솔트",
+                "rarity": "AR"
+            },
+            {
+                "num": "071",
+                "name": "화강돌",
+                "rarity": "AR"
+            },
+            {
+                "num": "072",
+                "name": "땃쭈르",
+                "rarity": "AR"
+            },
+            {
+                "num": "073",
+                "name": "강철톤",
+                "rarity": "AR"
+            },
+            {
+                "num": "074",
+                "name": "깨비참",
+                "rarity": "AR"
+            },
+            {
+                "num": "075",
+                "name": "형사구스",
+                "rarity": "AR"
+            },
+            {
+                "num": "076",
+                "name": "메가이상해꽃 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "077",
+                "name": "메가폭타 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "078",
+                "name": "메가루카리오 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "079",
+                "name": "메가앱솔 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "080",
+                "name": "메가입치트 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "081",
+                "name": "밤의 들것",
+                "rarity": "SR"
+            },
+            {
+                "num": "082",
+                "name": "파워프로틴",
+                "rarity": "SR"
+            },
+            {
+                "num": "083",
+                "name": "파이팅공",
+                "rarity": "SR"
+            },
+            {
+                "num": "084",
+                "name": "풍선",
+                "rarity": "SR"
+            },
+            {
+                "num": "085",
+                "name": "릴리에의 결심",
+                "rarity": "SR"
+            },
+            {
+                "num": "086",
+                "name": "마티스의 거래",
+                "rarity": "SR"
+            },
+            {
+                "num": "087",
+                "name": "메가이상해꽃 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "088",
+                "name": "메가루카리오 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "089",
+                "name": "메가앱솔 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "090",
+                "name": "릴리에의 결심",
+                "rarity": "SAR"
+            },
+            {
+                "num": "091",
+                "name": "마티스의 거래",
+                "rarity": "SAR"
+            },
+            {
+                "num": "092",
+                "name": "메가루카리오 ex",
+                "rarity": "MUR"
+            }
+        ]
+    },
+    {
+        "code": "M2",
+        "name": "MEGA 확장팩 「인페르노X」",
+        "type": "pack",
+        "printed_total": "116",
+        "total": 116,
+        "series": [
+            "MEGA"
+        ],
+        "release_date": "2025-11-22",
+        "artofpkm_id": 575,
+        "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/M2.png",
+        "image_cover_url": "https://data1.pokemonkorea.co.kr/2025/11/2025-11-05_14-18-14-89295-1762319894.png",
+        "card_list_detail": [
+            {
+                "num": "001",
+                "name": "뚜벅쵸",
+                "rarity": "C"
+            },
+            {
+                "num": "002",
+                "name": "냄새꼬",
+                "rarity": "C"
+            },
+            {
+                "num": "003",
+                "name": "라플레시아",
+                "rarity": "U"
+            },
+            {
+                "num": "004",
+                "name": "메가헤라크로스 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "005",
+                "name": "연꽃몬",
+                "rarity": "C"
+            },
+            {
+                "num": "006",
+                "name": "로토스",
+                "rarity": "C"
+            },
+            {
+                "num": "007",
+                "name": "로파파",
+                "rarity": "U"
+            },
+            {
+                "num": "008",
+                "name": "게노세크트",
+                "rarity": "R"
+            },
+            {
+                "num": "009",
+                "name": "콩알뚜기",
+                "rarity": "C"
+            },
+            {
+                "num": "010",
+                "name": "엑스레그",
+                "rarity": "U"
+            },
+            {
+                "num": "011",
+                "name": "파이리",
+                "rarity": "C"
+            },
+            {
+                "num": "012",
+                "name": "리자드",
+                "rarity": "C"
+            },
+            {
+                "num": "013",
+                "name": "메가리자몽X ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "014",
+                "name": "파이어",
+                "rarity": "U"
+            },
+            {
+                "num": "015",
+                "name": "달막화",
+                "rarity": "C"
+            },
+            {
+                "num": "016",
+                "name": "불비달마",
+                "rarity": "U"
+            },
+            {
+                "num": "017",
+                "name": "레시라무",
+                "rarity": "R"
+            },
+            {
+                "num": "018",
+                "name": "춤추새 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "019",
+                "name": "카르본",
+                "rarity": "C"
+            },
+            {
+                "num": "020",
+                "name": "파라블레이즈",
+                "rarity": "U"
+            },
+            {
+                "num": "021",
+                "name": "쥬쥬",
+                "rarity": "C"
+            },
+            {
+                "num": "022",
+                "name": "쥬레곤",
+                "rarity": "C"
+            },
+            {
+                "num": "023",
+                "name": "꾸꾸리",
+                "rarity": "C"
+            },
+            {
+                "num": "024",
+                "name": "메꾸리",
+                "rarity": "C"
+            },
+            {
+                "num": "025",
+                "name": "맘모꾸리",
+                "rarity": "U"
+            },
+            {
+                "num": "026",
+                "name": "스이쿤",
+                "rarity": "R"
+            },
+            {
+                "num": "027",
+                "name": "팽도리",
+                "rarity": "C"
+            },
+            {
+                "num": "028",
+                "name": "팽태자",
+                "rarity": "C"
+            },
+            {
+                "num": "029",
+                "name": "로토무 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "030",
+                "name": "멍파치",
+                "rarity": "C"
+            },
+            {
+                "num": "031",
+                "name": "펄스멍",
+                "rarity": "C"
+            },
+            {
+                "num": "032",
+                "name": "빠모",
+                "rarity": "C"
+            },
+            {
+                "num": "033",
+                "name": "빠모트",
+                "rarity": "C"
+            },
+            {
+                "num": "034",
+                "name": "빠르모트",
+                "rarity": "R"
+            },
+            {
+                "num": "035",
+                "name": "무우마",
+                "rarity": "C"
+            },
+            {
+                "num": "036",
+                "name": "무우마직 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "037",
+                "name": "소미안",
+                "rarity": "C"
+            },
+            {
+                "num": "038",
+                "name": "엘풍",
+                "rarity": "U"
+            },
+            {
+                "num": "039",
+                "name": "자시안",
+                "rarity": "R"
+            },
+            {
+                "num": "040",
+                "name": "그푸리",
+                "rarity": "C"
+            },
+            {
+                "num": "041",
+                "name": "공푸리",
+                "rarity": "U"
+            },
+            {
+                "num": "042",
+                "name": "팔데아 켄타로스",
+                "rarity": "U"
+            },
+            {
+                "num": "043",
+                "name": "글라이거",
+                "rarity": "C"
+            },
+            {
+                "num": "044",
+                "name": "글라이온",
+                "rarity": "U"
+            },
+            {
+                "num": "045",
+                "name": "톱치",
+                "rarity": "C"
+            },
+            {
+                "num": "046",
+                "name": "비브라바",
+                "rarity": "C"
+            },
+            {
+                "num": "047",
+                "name": "플라이곤",
+                "rarity": "R"
+            },
+            {
+                "num": "048",
+                "name": "포푸니",
+                "rarity": "C"
+            },
+            {
+                "num": "049",
+                "name": "포푸니라",
+                "rarity": "U"
+            },
+            {
+                "num": "050",
+                "name": "샤프니아",
+                "rarity": "C"
+            },
+            {
+                "num": "051",
+                "name": "메가샤크니아 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "052",
+                "name": "세비퍼",
+                "rarity": "U"
+            },
+            {
+                "num": "053",
+                "name": "깜눈크",
+                "rarity": "C"
+            },
+            {
+                "num": "054",
+                "name": "악비르",
+                "rarity": "C"
+            },
+            {
+                "num": "055",
+                "name": "악비아르",
+                "rarity": "U"
+            },
+            {
+                "num": "056",
+                "name": "일레즌",
+                "rarity": "C"
+            },
+            {
+                "num": "057",
+                "name": "스트린더",
+                "rarity": "R"
+            },
+            {
+                "num": "058",
+                "name": "엠페르트 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "059",
+                "name": "동미러",
+                "rarity": "C"
+            },
+            {
+                "num": "060",
+                "name": "동탁군",
+                "rarity": "U"
+            },
+            {
+                "num": "061",
+                "name": "토게데마루",
+                "rarity": "C"
+            },
+            {
+                "num": "062",
+                "name": "두랄루돈",
+                "rarity": "C"
+            },
+            {
+                "num": "063",
+                "name": "브리두라스",
+                "rarity": "U"
+            },
+            {
+                "num": "064",
+                "name": "푸린",
+                "rarity": "C"
+            },
+            {
+                "num": "065",
+                "name": "푸크린",
+                "rarity": "U"
+            },
+            {
+                "num": "066",
+                "name": "에이팜",
+                "rarity": "C"
+            },
+            {
+                "num": "067",
+                "name": "겟핸보숭",
+                "rarity": "R"
+            },
+            {
+                "num": "068",
+                "name": "루브도",
+                "rarity": "C"
+            },
+            {
+                "num": "069",
+                "name": "지그제구리",
+                "rarity": "C"
+            },
+            {
+                "num": "070",
+                "name": "직구리",
+                "rarity": "U"
+            },
+            {
+                "num": "071",
+                "name": "이어롤",
+                "rarity": "C"
+            },
+            {
+                "num": "072",
+                "name": "메가이어롭 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "073",
+                "name": "점보 아이스",
+                "rarity": "U"
+            },
+            {
+                "num": "074",
+                "name": "히트 버너",
+                "rarity": "U"
+            },
+            {
+                "num": "075",
+                "name": "성스러운 부적",
+                "rarity": "U"
+            },
+            {
+                "num": "076",
+                "name": "불놀이꾼",
+                "rarity": "U"
+            },
+            {
+                "num": "077",
+                "name": "블래리의 한 수",
+                "rarity": "U"
+            },
+            {
+                "num": "078",
+                "name": "빛나",
+                "rarity": "U"
+            },
+            {
+                "num": "079",
+                "name": "배틀 콜로세움",
+                "rarity": "U"
+            },
+            {
+                "num": "080",
+                "name": "현기증 계곡",
+                "rarity": "U"
+            },
+            {
+                "num": "081",
+                "name": "로파파",
+                "rarity": "AR"
+            },
+            {
+                "num": "082",
+                "name": "콩알뚜기",
+                "rarity": "AR"
+            },
+            {
+                "num": "083",
+                "name": "카르본",
+                "rarity": "AR"
+            },
+            {
+                "num": "084",
+                "name": "쥬레곤",
+                "rarity": "AR"
+            },
+            {
+                "num": "085",
+                "name": "팽도리",
+                "rarity": "AR"
+            },
+            {
+                "num": "086",
+                "name": "멍파치",
+                "rarity": "AR"
+            },
+            {
+                "num": "087",
+                "name": "자시안",
+                "rarity": "AR"
+            },
+            {
+                "num": "088",
+                "name": "플라이곤",
+                "rarity": "AR"
+            },
+            {
+                "num": "089",
+                "name": "스트린더",
+                "rarity": "AR"
+            },
+            {
+                "num": "090",
+                "name": "토게데마루",
+                "rarity": "AR"
+            },
+            {
+                "num": "091",
+                "name": "푸크린",
+                "rarity": "AR"
+            },
+            {
+                "num": "092",
+                "name": "겟핸보숭",
+                "rarity": "AR"
+            },
+            {
+                "num": "093",
+                "name": "메가헤라크로스 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "094",
+                "name": "메가리자몽X ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "095",
+                "name": "춤추새 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "096",
+                "name": "로토무 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "097",
+                "name": "무우마직 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "098",
+                "name": "메가샤크니아 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "099",
+                "name": "엠페르트 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "100",
+                "name": "메가이어롭 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "101",
+                "name": "포켓몬 교체",
+                "rarity": "SR"
+            },
+            {
+                "num": "102",
+                "name": "히트 버너",
+                "rarity": "SR"
+            },
+            {
+                "num": "103",
+                "name": "성스러운 부적",
+                "rarity": "SR"
+            },
+            {
+                "num": "104",
+                "name": "펑크멧",
+                "rarity": "SR"
+            },
+            {
+                "num": "105",
+                "name": "불놀이꾼",
+                "rarity": "SR"
+            },
+            {
+                "num": "106",
+                "name": "블래리의 한 수",
+                "rarity": "SR"
+            },
+            {
+                "num": "107",
+                "name": "빛나",
+                "rarity": "SR"
+            },
+            {
+                "num": "108",
+                "name": "배틀 콜로세움",
+                "rarity": "SR"
+            },
+            {
+                "num": "109",
+                "name": "이그니션 에너지",
+                "rarity": "SR"
+            },
+            {
+                "num": "110",
+                "name": "메가리자몽X ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "111",
+                "name": "춤추새 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "112",
+                "name": "로토무 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "113",
+                "name": "메가샤크니아 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "114",
+                "name": "메가이어롭 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "115",
+                "name": "빛나",
+                "rarity": "SAR"
+            },
+            {
+                "num": "116",
+                "name": "메가리자몽X ex",
+                "rarity": "MUR"
+            }
+        ]
+    },
+    {
+        "code": "M2a",
+        "name": "MEGA 하이클래스팩 「MEGA 드림 ex」",
+        "type": "pack",
+        "printed_total": "250",
+        "total": 250,
+        "series": [
+            "MEGA"
+        ],
+        "release_date": "2026-01-17",
+        "artofpkm_id": 579,
+        "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/M2a.png",
+        "image_cover_url": "https://data1.pokemonkorea.co.kr/2025/12/2025-12-30_11-00-50-12772-1767060050.png",
+        "card_list_detail": [
+            {
+                "num": "001",
+                "name": "심향의 쁘사이저",
+                "rarity": "U"
+            },
+            {
+                "num": "002",
+                "name": "왕자리",
+                "rarity": "C"
+            },
+            {
+                "num": "003",
+                "name": "메가자리 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "004",
+                "name": "개무소",
+                "rarity": "?"
+            },
+            {
+                "num": "005",
+                "name": "실쿤",
+                "rarity": "?"
+            },
+            {
+                "num": "006",
+                "name": "뷰티플라이",
+                "rarity": "?"
+            },
+            {
+                "num": "007",
+                "name": "카스쿤",
+                "rarity": "?"
+            },
+            {
+                "num": "008",
+                "name": "독케일",
+                "rarity": "?"
+            },
+            {
+                "num": "009",
+                "name": "난천의 로젤리아",
+                "rarity": "C"
+            },
+            {
+                "num": "010",
+                "name": "난천의 로즈레이드",
+                "rarity": "R"
+            },
+            {
+                "num": "011",
+                "name": "꼬몽울",
+                "rarity": "?"
+            },
+            {
+                "num": "012",
+                "name": "쉐이미",
+                "rarity": "U"
+            },
+            {
+                "num": "013",
+                "name": "돌살이",
+                "rarity": "C"
+            },
+            {
+                "num": "014",
+                "name": "암팰리스",
+                "rarity": "R"
+            },
+            {
+                "num": "015",
+                "name": "로켓단의 타랜툴라",
+                "rarity": "C"
+            },
+            {
+                "num": "016",
+                "name": "로켓단의 트래피더",
+                "rarity": "R"
+            },
+            {
+                "num": "017",
+                "name": "오거폰 벽록의 가면 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "018",
+                "name": "심향의 마그마그",
+                "rarity": "C"
+            },
+            {
+                "num": "019",
+                "name": "심향의 마그카르고",
+                "rarity": "?"
+            },
+            {
+                "num": "020",
+                "name": "앤테이",
+                "rarity": "?"
+            },
+            {
+                "num": "021",
+                "name": "심향의 칠색조 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "022",
+                "name": "둔타",
+                "rarity": "?"
+            },
+            {
+                "num": "023",
+                "name": "폭타",
+                "rarity": "?"
+            },
+            {
+                "num": "024",
+                "name": "뚜꾸리",
+                "rarity": "C"
+            },
+            {
+                "num": "025",
+                "name": "차오꿀",
+                "rarity": "C"
+            },
+            {
+                "num": "026",
+                "name": "염무왕",
+                "rarity": "R"
+            },
+            {
+                "num": "027",
+                "name": "N의 달막화",
+                "rarity": "C"
+            },
+            {
+                "num": "028",
+                "name": "N의 불비달마",
+                "rarity": "U"
+            },
+            {
+                "num": "029",
+                "name": "레시라무 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "030",
+                "name": "카르본",
+                "rarity": "?"
+            },
+            {
+                "num": "031",
+                "name": "파라블레이즈 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "032",
+                "name": "고라파덕",
+                "rarity": "?"
+            },
+            {
+                "num": "033",
+                "name": "골덕",
+                "rarity": "?"
+            },
+            {
+                "num": "034",
+                "name": "로켓단의 프리져",
+                "rarity": "R"
+            },
+            {
+                "num": "035",
+                "name": "눈꼬마",
+                "rarity": "?"
+            },
+            {
+                "num": "036",
+                "name": "메가눈여아 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "037",
+                "name": "N의 바닐프티",
+                "rarity": "C"
+            },
+            {
+                "num": "038",
+                "name": "N의 바닐리치",
+                "rarity": "C"
+            },
+            {
+                "num": "039",
+                "name": "N의 배바닐라",
+                "rarity": "U"
+            },
+            {
+                "num": "040",
+                "name": "누니머기",
+                "rarity": "?"
+            },
+            {
+                "num": "041",
+                "name": "모스노우",
+                "rarity": "?"
+            },
+            {
+                "num": "042",
+                "name": "블리자포스",
+                "rarity": "?"
+            },
+            {
+                "num": "043",
+                "name": "파오젠",
+                "rarity": "?"
+            },
+            {
+                "num": "044",
+                "name": "피카츄 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "045",
+                "name": "코일",
+                "rarity": "?"
+            },
+            {
+                "num": "046",
+                "name": "레어코일",
+                "rarity": "?"
+            },
+            {
+                "num": "047",
+                "name": "저리어",
+                "rarity": "C"
+            },
+            {
+                "num": "048",
+                "name": "저리릴",
+                "rarity": "U"
+            },
+            {
+                "num": "049",
+                "name": "메가저리더프 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "050",
+                "name": "메더",
+                "rarity": "U"
+            },
+            {
+                "num": "051",
+                "name": "제크로무 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "052",
+                "name": "목도리키텔",
+                "rarity": "?"
+            },
+            {
+                "num": "053",
+                "name": "일레도리자드",
+                "rarity": "?"
+            },
+            {
+                "num": "054",
+                "name": "카푸꼬꼬꼭",
+                "rarity": "?"
+            },
+            {
+                "num": "055",
+                "name": "제라오라",
+                "rarity": "R"
+            },
+            {
+                "num": "056",
+                "name": "모야모의 빈나두",
+                "rarity": "?"
+            },
+            {
+                "num": "057",
+                "name": "모야모의 찌리배리 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "058",
+                "name": "모야모의 찌리비",
+                "rarity": "?"
+            },
+            {
+                "num": "059",
+                "name": "모야모의 찌리비크",
+                "rarity": "?"
+            },
+            {
+                "num": "060",
+                "name": "릴리에의 삐삐 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "061",
+                "name": "로켓단의 아라리",
+                "rarity": "?"
+            },
+            {
+                "num": "062",
+                "name": "로켓단의 나시",
+                "rarity": "?"
+            },
+            {
+                "num": "063",
+                "name": "로켓단의 뮤츠 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "064",
+                "name": "토게피",
+                "rarity": "?"
+            },
+            {
+                "num": "065",
+                "name": "토게틱",
+                "rarity": "?"
+            },
+            {
+                "num": "066",
+                "name": "토게키스",
+                "rarity": "?"
+            },
+            {
+                "num": "067",
+                "name": "무우마",
+                "rarity": "?"
+            },
+            {
+                "num": "068",
+                "name": "무우마직",
+                "rarity": "?"
+            },
+            {
+                "num": "069",
+                "name": "랄토스",
+                "rarity": "?"
+            },
+            {
+                "num": "070",
+                "name": "킬리아",
+                "rarity": "?"
+            },
+            {
+                "num": "071",
+                "name": "메가가디안 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "072",
+                "name": "해골몽",
+                "rarity": "?"
+            },
+            {
+                "num": "073",
+                "name": "미라몽",
+                "rarity": "?"
+            },
+            {
+                "num": "074",
+                "name": "야느와르몽",
+                "rarity": "?"
+            },
+            {
+                "num": "075",
+                "name": "라티아스 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "076",
+                "name": "로토무",
+                "rarity": "?"
+            },
+            {
+                "num": "077",
+                "name": "호브의 나목령",
+                "rarity": "?"
+            },
+            {
+                "num": "078",
+                "name": "호브의 대로트",
+                "rarity": "?"
+            },
+            {
+                "num": "079",
+                "name": "로켓단의 따라큐",
+                "rarity": "?"
+            },
+            {
+                "num": "080",
+                "name": "레이스포스",
+                "rarity": "?"
+            },
+            {
+                "num": "081",
+                "name": "이야후",
+                "rarity": "?"
+            },
+            {
+                "num": "082",
+                "name": "로켓단의 디그다",
+                "rarity": "?"
+            },
+            {
+                "num": "083",
+                "name": "로켓단의 닥트리오",
+                "rarity": "?"
+            },
+            {
+                "num": "084",
+                "name": "요가랑",
+                "rarity": "C"
+            },
+            {
+                "num": "085",
+                "name": "요가램",
+                "rarity": "?"
+            },
+            {
+                "num": "086",
+                "name": "루나톤",
+                "rarity": "?"
+            },
+            {
+                "num": "087",
+                "name": "솔록",
+                "rarity": "?"
+            },
+            {
+                "num": "088",
+                "name": "난천의 딥상어동",
+                "rarity": "C"
+            },
+            {
+                "num": "089",
+                "name": "난천의 한바이트",
+                "rarity": "C"
+            },
+            {
+                "num": "090",
+                "name": "난천의 한카리아스 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "091",
+                "name": "리오르",
+                "rarity": "?"
+            },
+            {
+                "num": "092",
+                "name": "메가루카리오 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "093",
+                "name": "판짱",
+                "rarity": "?"
+            },
+            {
+                "num": "094",
+                "name": "메가루차불 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "095",
+                "name": "탄동",
+                "rarity": "?"
+            },
+            {
+                "num": "096",
+                "name": "탄차곤",
+                "rarity": "?"
+            },
+            {
+                "num": "097",
+                "name": "석탄산",
+                "rarity": "?"
+            },
+            {
+                "num": "098",
+                "name": "조타구",
+                "rarity": "?"
+            },
+            {
+                "num": "099",
+                "name": "로켓단의 주뱃",
+                "rarity": "C"
+            },
+            {
+                "num": "100",
+                "name": "로켓단의 골뱃",
+                "rarity": "U"
+            },
+            {
+                "num": "101",
+                "name": "로켓단의 크로뱃 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "102",
+                "name": "로켓단의 니로우",
+                "rarity": "U"
+            },
+            {
+                "num": "103",
+                "name": "로켓단의 돈크로우",
+                "rarity": "?"
+            },
+            {
+                "num": "104",
+                "name": "로켓단의 포푸니",
+                "rarity": "R"
+            },
+            {
+                "num": "105",
+                "name": "가라르 지그제구리",
+                "rarity": "?"
+            },
+            {
+                "num": "106",
+                "name": "가라르 직구리",
+                "rarity": "?"
+            },
+            {
+                "num": "107",
+                "name": "가라르 가로막구리",
+                "rarity": "?"
+            },
+            {
+                "num": "108",
+                "name": "난천의 화강돌",
+                "rarity": "?"
+            },
+            {
+                "num": "109",
+                "name": "곤율랭",
+                "rarity": "C"
+            },
+            {
+                "num": "110",
+                "name": "메가곤율거니 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "111",
+                "name": "N의 조로아",
+                "rarity": "C"
+            },
+            {
+                "num": "112",
+                "name": "N의 조로아크 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "113",
+                "name": "부란다",
+                "rarity": "?"
+            },
+            {
+                "num": "114",
+                "name": "기로치 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "115",
+                "name": "복숭악동",
+                "rarity": "?"
+            },
+            {
+                "num": "116",
+                "name": "자망칼",
+                "rarity": "C"
+            },
+            {
+                "num": "117",
+                "name": "절각참",
+                "rarity": "U"
+            },
+            {
+                "num": "118",
+                "name": "대도각참",
+                "rarity": "?"
+            },
+            {
+                "num": "119",
+                "name": "게노세크트 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "120",
+                "name": "마기아나",
+                "rarity": "?"
+            },
+            {
+                "num": "121",
+                "name": "두랄루돈",
+                "rarity": "?"
+            },
+            {
+                "num": "122",
+                "name": "브리두라스 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "123",
+                "name": "호브의 자시안 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "124",
+                "name": "미뇽",
+                "rarity": "?"
+            },
+            {
+                "num": "125",
+                "name": "신뇽",
+                "rarity": "?"
+            },
+            {
+                "num": "126",
+                "name": "메가망나뇽 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "127",
+                "name": "레쿠쟈",
+                "rarity": "?"
+            },
+            {
+                "num": "128",
+                "name": "N의 레시라무",
+                "rarity": "?"
+            },
+            {
+                "num": "129",
+                "name": "N의 제크로무",
+                "rarity": "?"
+            },
+            {
+                "num": "130",
+                "name": "음뱃",
+                "rarity": "?"
+            },
+            {
+                "num": "131",
+                "name": "음번",
+                "rarity": "?"
+            },
+            {
+                "num": "132",
+                "name": "드라꼰",
+                "rarity": "?"
+            },
+            {
+                "num": "133",
+                "name": "드래런치",
+                "rarity": "?"
+            },
+            {
+                "num": "134",
+                "name": "드래펄트 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "135",
+                "name": "싸리용",
+                "rarity": "?"
+            },
+            {
+                "num": "136",
+                "name": "호브의 잠만보",
+                "rarity": "?"
+            },
+            {
+                "num": "137",
+                "name": "부우부",
+                "rarity": "?"
+            },
+            {
+                "num": "138",
+                "name": "야부엉",
+                "rarity": "?"
+            },
+            {
+                "num": "139",
+                "name": "스핀로토무",
+                "rarity": "?"
+            },
+            {
+                "num": "140",
+                "name": "버프론",
+                "rarity": "RR"
+            },
+            {
+                "num": "141",
+                "name": "호브의 우르",
+                "rarity": "?"
+            },
+            {
+                "num": "142",
+                "name": "호브의 배우르",
+                "rarity": "?"
+            },
+            {
+                "num": "143",
+                "name": "호브의 윽우지",
+                "rarity": "?"
+            },
+            {
+                "num": "144",
+                "name": "테라파고스",
+                "rarity": "?"
+            },
+            {
+                "num": "145",
+                "name": "테라파고스 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "146",
+                "name": "N의 포인트업",
+                "rarity": "?"
+            },
+            {
+                "num": "147",
+                "name": "개조해머",
+                "rarity": "?"
+            },
+            {
+                "num": "148",
+                "name": "곤충채집세트",
+                "rarity": "?"
+            },
+            {
+                "num": "149",
+                "name": "로켓단의 리시버",
+                "rarity": "?"
+            },
+            {
+                "num": "150",
+                "name": "메가시그널",
+                "rarity": "?"
+            },
+            {
+                "num": "151",
+                "name": "밤의 들것",
+                "rarity": "?"
+            },
+            {
+                "num": "152",
+                "name": "성스러운분말",
+                "rarity": "?"
+            },
+            {
+                "num": "153",
+                "name": "에너지 리사이클",
+                "rarity": "?"
+            },
+            {
+                "num": "154",
+                "name": "유리나팔",
+                "rarity": "?"
+            },
+            {
+                "num": "155",
+                "name": "절친 포핀",
+                "rarity": "?"
+            },
+            {
+                "num": "156",
+                "name": "테라스탈오브",
+                "rarity": "?"
+            },
+            {
+                "num": "157",
+                "name": "툴스크래퍼",
+                "rarity": "?"
+            },
+            {
+                "num": "158",
+                "name": "파워프로틴",
+                "rarity": "?"
+            },
+            {
+                "num": "159",
+                "name": "파이팅공",
+                "rarity": "?"
+            },
+            {
+                "num": "160",
+                "name": "호브의 가방",
+                "rarity": "?"
+            },
+            {
+                "num": "161",
+                "name": "난천의 파워웨이트",
+                "rarity": "?"
+            },
+            {
+                "num": "162",
+                "name": "두꺼운비늘",
+                "rarity": "?"
+            },
+            {
+                "num": "163",
+                "name": "브레이브뱅글",
+                "rarity": "?"
+            },
+            {
+                "num": "164",
+                "name": "전기구슬",
+                "rarity": "?"
+            },
+            {
+                "num": "165",
+                "name": "카운터 게인",
+                "rarity": "?"
+            },
+            {
+                "num": "166",
+                "name": "풍선",
+                "rarity": "?"
+            },
+            {
+                "num": "167",
+                "name": "호브의 구애머리띠",
+                "rarity": "?"
+            },
+            {
+                "num": "168",
+                "name": "로켓단의 람다",
+                "rarity": "?"
+            },
+            {
+                "num": "169",
+                "name": "로켓단의 랜스",
+                "rarity": "?"
+            },
+            {
+                "num": "170",
+                "name": "로켓단의 비주기",
+                "rarity": "?"
+            },
+            {
+                "num": "171",
+                "name": "로켓단의 아테나",
+                "rarity": "?"
+            },
+            {
+                "num": "172",
+                "name": "로켓단의 아폴로",
+                "rarity": "?"
+            },
+            {
+                "num": "173",
+                "name": "릴리에의 결심",
+                "rarity": "?"
+            },
+            {
+                "num": "174",
+                "name": "버베나와 헬레나",
+                "rarity": "?"
+            },
+            {
+                "num": "175",
+                "name": "서퍼",
+                "rarity": "?"
+            },
+            {
+                "num": "176",
+                "name": "심향의 모험",
+                "rarity": "?"
+            },
+            {
+                "num": "177",
+                "name": "아세로라의 장난",
+                "rarity": "?"
+            },
+            {
+                "num": "178",
+                "name": "아이리스의 투지",
+                "rarity": "?"
+            },
+            {
+                "num": "179",
+                "name": "카나리",
+                "rarity": "?"
+            },
+            {
+                "num": "180",
+                "name": "투희",
+                "rarity": "?"
+            },
+            {
+                "num": "181",
+                "name": "N의 성",
+                "rarity": "?"
+            },
+            {
+                "num": "182",
+                "name": "그래비티 마운틴",
+                "rarity": "?"
+            },
+            {
+                "num": "183",
+                "name": "누룩스시티",
+                "rarity": "?"
+            },
+            {
+                "num": "184",
+                "name": "로켓단의 감시탑",
+                "rarity": "?"
+            },
+            {
+                "num": "185",
+                "name": "로켓단의 팩토리",
+                "rarity": "?"
+            },
+            {
+                "num": "186",
+                "name": "미스터리 가든",
+                "rarity": "?"
+            },
+            {
+                "num": "187",
+                "name": "밤의 광산",
+                "rarity": "?"
+            },
+            {
+                "num": "188",
+                "name": "제로의 대공동",
+                "rarity": "?"
+            },
+            {
+                "num": "189",
+                "name": "펄롱마을",
+                "rarity": "?"
+            },
+            {
+                "num": "190",
+                "name": "활력의 숲",
+                "rarity": "?"
+            },
+            {
+                "num": "191",
+                "name": "로켓단 에너지",
+                "rarity": "?"
+            },
+            {
+                "num": "192",
+                "name": "이그니션 에너지",
+                "rarity": "?"
+            },
+            {
+                "num": "193",
+                "name": "프리즘 에너지",
+                "rarity": "?"
+            },
+            {
+                "num": "194",
+                "name": "뷰티플라이",
+                "rarity": "AR"
+            },
+            {
+                "num": "195",
+                "name": "독케일",
+                "rarity": "AR"
+            },
+            {
+                "num": "196",
+                "name": "꼬몽울",
+                "rarity": "AR"
+            },
+            {
+                "num": "197",
+                "name": "심향의 마그카르고",
+                "rarity": "AR"
+            },
+            {
+                "num": "198",
+                "name": "둔타",
+                "rarity": "AR"
+            },
+            {
+                "num": "199",
+                "name": "고라파덕",
+                "rarity": "AR"
+            },
+            {
+                "num": "200",
+                "name": "눈꼬마",
+                "rarity": "AR"
+            },
+            {
+                "num": "201",
+                "name": "일레도리자드",
+                "rarity": "AR"
+            },
+            {
+                "num": "202",
+                "name": "무우마",
+                "rarity": "AR"
+            },
+            {
+                "num": "203",
+                "name": "토게키스",
+                "rarity": "AR"
+            },
+            {
+                "num": "204",
+                "name": "호브의 대로트",
+                "rarity": "AR"
+            },
+            {
+                "num": "205",
+                "name": "로켓단의 따라큐",
+                "rarity": "AR"
+            },
+            {
+                "num": "206",
+                "name": "로켓단의 닥트리오",
+                "rarity": "AR"
+            },
+            {
+                "num": "207",
+                "name": "요가램",
+                "rarity": "AR"
+            },
+            {
+                "num": "208",
+                "name": "난천의 화강돌",
+                "rarity": "AR"
+            },
+            {
+                "num": "209",
+                "name": "가라르 가로막구리",
+                "rarity": "AR"
+            },
+            {
+                "num": "210",
+                "name": "N의 제크로무",
+                "rarity": "AR"
+            },
+            {
+                "num": "211",
+                "name": "드라꼰",
+                "rarity": "AR"
+            },
+            {
+                "num": "212",
+                "name": "드래런치",
+                "rarity": "AR"
+            },
+            {
+                "num": "213",
+                "name": "스핀로토무",
+                "rarity": "AR"
+            },
+            {
+                "num": "214",
+                "name": "N의 포인트업",
+                "rarity": "SR"
+            },
+            {
+                "num": "215",
+                "name": "로켓단의 리시버",
+                "rarity": "SR"
+            },
+            {
+                "num": "216",
+                "name": "유리나팔",
+                "rarity": "SR"
+            },
+            {
+                "num": "217",
+                "name": "하이퍼볼",
+                "rarity": "SR"
+            },
+            {
+                "num": "218",
+                "name": "카운터 게인",
+                "rarity": "SR"
+            },
+            {
+                "num": "219",
+                "name": "버베나와 헬레나",
+                "rarity": "SR"
+            },
+            {
+                "num": "220",
+                "name": "카나리",
+                "rarity": "SR"
+            },
+            {
+                "num": "221",
+                "name": "태권왕의 수련",
+                "rarity": "SR"
+            },
+            {
+                "num": "222",
+                "name": "재밍타워",
+                "rarity": "SR"
+            },
+            {
+                "num": "223",
+                "name": "메가리자몽X ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "224",
+                "name": "메가눈여아 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "225",
+                "name": "메가저리더프 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "226",
+                "name": "메가가디안 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "227",
+                "name": "메가디안시 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "228",
+                "name": "메가루카리오 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "229",
+                "name": "메가루차불 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "230",
+                "name": "메가팬텀 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "231",
+                "name": "메가곤율거니 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "232",
+                "name": "메가망나뇽 ex",
+                "rarity": "MA"
+            },
+            {
+                "num": "233",
+                "name": "메가눈여아 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "234",
+                "name": "피카츄 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "235",
+                "name": "메가저리더프 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "236",
+                "name": "모야모의 찌리배리 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "237",
+                "name": "로켓단의 뮤츠 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "238",
+                "name": "메가디안시 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "239",
+                "name": "메가루차불 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "240",
+                "name": "메가팬텀 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "241",
+                "name": "메가곤율거니 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "242",
+                "name": "N의 조로아크 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "243",
+                "name": "마리의 오롱털 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "244",
+                "name": "기로치 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "245",
+                "name": "성호의 메타그로스 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "246",
+                "name": "메가망나뇽 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "247",
+                "name": "서퍼",
+                "rarity": "SAR"
+            },
+            {
+                "num": "248",
+                "name": "아이리스의 투지",
+                "rarity": "SAR"
+            },
+            {
+                "num": "249",
+                "name": "카나리",
+                "rarity": "SAR"
+            },
+            {
+                "num": "250",
+                "name": "메가망나뇽 ex",
+                "rarity": "MUR"
+            }
+        ]
+    },
+    {
+        "code": "M3",
+        "name": "MEGA 확장팩 「니힐제로」",
+        "type": "pack",
+        "printed_total": "117",
+        "total": 117,
+        "series": [
+            "MEGA"
+        ],
+        "release_date": "2026-03-07",
+        "artofpkm_id": 583,
+        "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/M3.png",
+        "image_cover_url": "https://data1.pokemonkorea.co.kr/2026/02/2026-02-19_10-47-15-17514-1771465635.png",
+        "card_list_detail": [
+            {
+                "num": "001",
+                "name": "페이검",
+                "rarity": "C"
+            },
+            {
+                "num": "002",
+                "name": "아리아도스",
+                "rarity": "C"
+            },
+            {
+                "num": "003",
+                "name": "쉐이미",
+                "rarity": "U"
+            },
+            {
+                "num": "004",
+                "name": "주리비얀",
+                "rarity": "C"
+            },
+            {
+                "num": "005",
+                "name": "샤비",
+                "rarity": "C"
+            },
+            {
+                "num": "006",
+                "name": "샤로다",
+                "rarity": "R"
+            },
+            {
+                "num": "007",
+                "name": "분이벌레",
+                "rarity": "C"
+            },
+            {
+                "num": "008",
+                "name": "분떠도리",
+                "rarity": "C"
+            },
+            {
+                "num": "009",
+                "name": "비비용",
+                "rarity": "U"
+            },
+            {
+                "num": "010",
+                "name": "나몰빼미",
+                "rarity": "C"
+            },
+            {
+                "num": "011",
+                "name": "빼미스로우",
+                "rarity": "C"
+            },
+            {
+                "num": "012",
+                "name": "모크나이퍼 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "013",
+                "name": "불화살빈",
+                "rarity": "C"
+            },
+            {
+                "num": "014",
+                "name": "파이어로",
+                "rarity": "U"
+            },
+            {
+                "num": "015",
+                "name": "야도뇽",
+                "rarity": "C"
+            },
+            {
+                "num": "016",
+                "name": "염뉴트 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "017",
+                "name": "폭거북스",
+                "rarity": "U"
+            },
+            {
+                "num": "018",
+                "name": "쥬쥬",
+                "rarity": "C"
+            },
+            {
+                "num": "019",
+                "name": "쥬레곤",
+                "rarity": "R"
+            },
+            {
+                "num": "020",
+                "name": "별가사리",
+                "rarity": "C"
+            },
+            {
+                "num": "021",
+                "name": "메가아쿠스타 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "022",
+                "name": "아마루스",
+                "rarity": "C"
+            },
+            {
+                "num": "023",
+                "name": "아마루르가",
+                "rarity": "U"
+            },
+            {
+                "num": "024",
+                "name": "볼케니온",
+                "rarity": "U"
+            },
+            {
+                "num": "025",
+                "name": "꼬링크",
+                "rarity": "C"
+            },
+            {
+                "num": "026",
+                "name": "럭시오",
+                "rarity": "U"
+            },
+            {
+                "num": "027",
+                "name": "렌트라",
+                "rarity": "R"
+            },
+            {
+                "num": "028",
+                "name": "데덴네",
+                "rarity": "C"
+            },
+            {
+                "num": "029",
+                "name": "삐삐",
+                "rarity": "C"
+            },
+            {
+                "num": "030",
+                "name": "메가픽시 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "031",
+                "name": "입치트",
+                "rarity": "C"
+            },
+            {
+                "num": "032",
+                "name": "냐스퍼",
+                "rarity": "C"
+            },
+            {
+                "num": "033",
+                "name": "냐오닉스",
+                "rarity": "U"
+            },
+            {
+                "num": "034",
+                "name": "슈쁘",
+                "rarity": "C"
+            },
+            {
+                "num": "035",
+                "name": "프레프티르",
+                "rarity": "U"
+            },
+            {
+                "num": "036",
+                "name": "코코파스",
+                "rarity": "C"
+            },
+            {
+                "num": "037",
+                "name": "대코파스",
+                "rarity": "C"
+            },
+            {
+                "num": "038",
+                "name": "히포포타스",
+                "rarity": "C"
+            },
+            {
+                "num": "039",
+                "name": "하마돈",
+                "rarity": "U"
+            },
+            {
+                "num": "040",
+                "name": "랜드로스",
+                "rarity": "R"
+            },
+            {
+                "num": "041",
+                "name": "거북손손",
+                "rarity": "C"
+            },
+            {
+                "num": "042",
+                "name": "거북손데스",
+                "rarity": "U"
+            },
+            {
+                "num": "043",
+                "name": "티고라스",
+                "rarity": "C"
+            },
+            {
+                "num": "044",
+                "name": "견고라스",
+                "rarity": "U"
+            },
+            {
+                "num": "045",
+                "name": "루차불",
+                "rarity": "C"
+            },
+            {
+                "num": "046",
+                "name": "메가지가르데 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "047",
+                "name": "고오스",
+                "rarity": "C"
+            },
+            {
+                "num": "048",
+                "name": "고우스트",
+                "rarity": "C"
+            },
+            {
+                "num": "049",
+                "name": "팬텀",
+                "rarity": "U"
+            },
+            {
+                "num": "050",
+                "name": "스콜피",
+                "rarity": "C"
+            },
+            {
+                "num": "051",
+                "name": "드래피온",
+                "rarity": "U"
+            },
+            {
+                "num": "052",
+                "name": "이벨타르 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "053",
+                "name": "파오젠",
+                "rarity": "R"
+            },
+            {
+                "num": "054",
+                "name": "메가무장조 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "055",
+                "name": "단칼빙",
+                "rarity": "C"
+            },
+            {
+                "num": "056",
+                "name": "쌍검킬",
+                "rarity": "C"
+            },
+            {
+                "num": "057",
+                "name": "킬가르도",
+                "rarity": "U"
+            },
+            {
+                "num": "058",
+                "name": "클레피",
+                "rarity": "C"
+            },
+            {
+                "num": "059",
+                "name": "꼬렛",
+                "rarity": "C"
+            },
+            {
+                "num": "060",
+                "name": "레트라",
+                "rarity": "U"
+            },
+            {
+                "num": "061",
+                "name": "나옹 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "062",
+                "name": "잠만보",
+                "rarity": "C"
+            },
+            {
+                "num": "063",
+                "name": "파르빗",
+                "rarity": "C"
+            },
+            {
+                "num": "064",
+                "name": "파르토",
+                "rarity": "U"
+            },
+            {
+                "num": "065",
+                "name": "화살꼬빈",
+                "rarity": "C"
+            },
+            {
+                "num": "066",
+                "name": "트리미앙",
+                "rarity": "C"
+            },
+            {
+                "num": "067",
+                "name": "미르갈레트",
+                "rarity": "U"
+            },
+            {
+                "num": "068",
+                "name": "에너지탁치기",
+                "rarity": "U"
+            },
+            {
+                "num": "069",
+                "name": "오래된 지느러미화석",
+                "rarity": "C"
+            },
+            {
+                "num": "070",
+                "name": "오래된 턱화석",
+                "rarity": "C"
+            },
+            {
+                "num": "071",
+                "name": "포켓패드",
+                "rarity": "U"
+            },
+            {
+                "num": "072",
+                "name": "코어 메모리",
+                "rarity": "U"
+            },
+            {
+                "num": "073",
+                "name": "명희의 격려",
+                "rarity": "U"
+            },
+            {
+                "num": "074",
+                "name": "유카리",
+                "rarity": "U"
+            },
+            {
+                "num": "075",
+                "name": "이노",
+                "rarity": "U"
+            },
+            {
+                "num": "076",
+                "name": "타라곤",
+                "rarity": "U"
+            },
+            {
+                "num": "077",
+                "name": "미르시티",
+                "rarity": "U"
+            },
+            {
+                "num": "078",
+                "name": "그로우 풀 에너지",
+                "rarity": "R"
+            },
+            {
+                "num": "079",
+                "name": "텔레패스 초 에너지",
+                "rarity": "R"
+            },
+            {
+                "num": "080",
+                "name": "록 격투 에너지",
+                "rarity": "R"
+            },
+            {
+                "num": "081",
+                "name": "분떠도리",
+                "rarity": "AR"
+            },
+            {
+                "num": "082",
+                "name": "나몰빼미",
+                "rarity": "AR"
+            },
+            {
+                "num": "083",
+                "name": "파이어로",
+                "rarity": "AR"
+            },
+            {
+                "num": "084",
+                "name": "아마루르가",
+                "rarity": "AR"
+            },
+            {
+                "num": "085",
+                "name": "데덴네",
+                "rarity": "AR"
+            },
+            {
+                "num": "086",
+                "name": "삐삐",
+                "rarity": "AR"
+            },
+            {
+                "num": "087",
+                "name": "냐스퍼",
+                "rarity": "AR"
+            },
+            {
+                "num": "088",
+                "name": "대코파스",
+                "rarity": "AR"
+            },
+            {
+                "num": "089",
+                "name": "티고라스",
+                "rarity": "AR"
+            },
+            {
+                "num": "090",
+                "name": "드래피온",
+                "rarity": "AR"
+            },
+            {
+                "num": "091",
+                "name": "쌍검킬",
+                "rarity": "AR"
+            },
+            {
+                "num": "092",
+                "name": "레트라",
+                "rarity": "AR"
+            },
+            {
+                "num": "093",
+                "name": "모크나이퍼 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "094",
+                "name": "염뉴트 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "095",
+                "name": "메가아쿠스타 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "096",
+                "name": "메가픽시 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "097",
+                "name": "메가지가르데 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "098",
+                "name": "이벨타르 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "099",
+                "name": "메가무장조 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "100",
+                "name": "나옹 ex",
+                "rarity": "SR"
+            },
+            {
+                "num": "101",
+                "name": "성스러운분말",
+                "rarity": "SR"
+            },
+            {
+                "num": "102",
+                "name": "에너지 리사이클",
+                "rarity": "SR"
+            },
+            {
+                "num": "103",
+                "name": "원더패치",
+                "rarity": "SR"
+            },
+            {
+                "num": "104",
+                "name": "포켓패드",
+                "rarity": "SR"
+            },
+            {
+                "num": "105",
+                "name": "명희의 격려",
+                "rarity": "SR"
+            },
+            {
+                "num": "106",
+                "name": "유카리",
+                "rarity": "SR"
+            },
+            {
+                "num": "107",
+                "name": "이노",
+                "rarity": "SR"
+            },
+            {
+                "num": "108",
+                "name": "타라곤",
+                "rarity": "SR"
+            },
+            {
+                "num": "109",
+                "name": "미르시티",
+                "rarity": "SR"
+            },
+            {
+                "num": "110",
+                "name": "활력의 숲",
+                "rarity": "SR"
+            },
+            {
+                "num": "111",
+                "name": "메가아쿠스타 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "112",
+                "name": "메가픽시 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "113",
+                "name": "메가지가르데 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "114",
+                "name": "나옹 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "115",
+                "name": "명희의 격려",
+                "rarity": "SAR"
+            },
+            {
+                "num": "116",
+                "name": "유카리",
+                "rarity": "SAR"
+            },
+            {
+                "num": "117",
+                "name": "메가지가르데 ex",
+                "rarity": "MUR"
+            }
+        ]
+    },
+    {
+        "code": "M4",
+        "name": "MEGA 확장팩 「닌자스피너」",
+        "type": "pack",
+        "printed_total": "83",
+        "total": 83,
+        "series": [
+            "MEGA"
+        ],
+        "release_date": "2026-04-25",
+        "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/M4.png",
+        "image_cover_url": "https://data1.pokemonkorea.co.kr/2026/04/2026-04-03_16-28-57-18746-1775201337.png",
+        "card_list_detail": [
+            {
+                "num": "001",
+                "name": "뿔충이",
+                "rarity": "C"
+            },
+            {
+                "num": "002",
+                "name": "딱충이",
+                "rarity": "C"
+            },
+            {
+                "num": "003",
+                "name": "독침붕 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "004",
+                "name": "무스틈니",
+                "rarity": "C"
+            },
+            {
+                "num": "005",
+                "name": "도치마론",
+                "rarity": "C"
+            },
+            {
+                "num": "006",
+                "name": "도치보구",
+                "rarity": "C"
+            },
+            {
+                "num": "007",
+                "name": "브리가론",
+                "rarity": "R"
+            },
+            {
+                "num": "008",
+                "name": "식스테일",
+                "rarity": "C"
+            },
+            {
+                "num": "009",
+                "name": "나인테일",
+                "rarity": "U"
+            },
+            {
+                "num": "010",
+                "name": "칠색조",
+                "rarity": "U"
+            },
+            {
+                "num": "011",
+                "name": "푸호꼬",
+                "rarity": "C"
+            },
+            {
+                "num": "012",
+                "name": "테르나",
+                "rarity": "C"
+            },
+            {
+                "num": "013",
+                "name": "마폭시",
+                "rarity": "R"
+            },
+            {
+                "num": "014",
+                "name": "레오꼬",
+                "rarity": "C"
+            },
+            {
+                "num": "015",
+                "name": "메가화염레오 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "016",
+                "name": "총어",
+                "rarity": "C"
+            },
+            {
+                "num": "017",
+                "name": "대포무노",
+                "rarity": "C"
+            },
+            {
+                "num": "018",
+                "name": "딜리버드",
+                "rarity": "U"
+            },
+            {
+                "num": "019",
+                "name": "케르디오",
+                "rarity": "U"
+            },
+            {
+                "num": "020",
+                "name": "개구마르",
+                "rarity": "C"
+            },
+            {
+                "num": "021",
+                "name": "개굴반장",
+                "rarity": "C"
+            },
+            {
+                "num": "022",
+                "name": "메가개굴닌자 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "023",
+                "name": "꽁어름",
+                "rarity": "C"
+            },
+            {
+                "num": "024",
+                "name": "크레베이스",
+                "rarity": "U"
+            },
+            {
+                "num": "025",
+                "name": "꼬시레",
+                "rarity": "C"
+            },
+            {
+                "num": "026",
+                "name": "갑주무사",
+                "rarity": "U"
+            },
+            {
+                "num": "027",
+                "name": "메리프",
+                "rarity": "C"
+            },
+            {
+                "num": "028",
+                "name": "보송송",
+                "rarity": "C"
+            },
+            {
+                "num": "029",
+                "name": "전룡",
+                "rarity": "R"
+            },
+            {
+                "num": "030",
+                "name": "에몽가",
+                "rarity": "C"
+            },
+            {
+                "num": "031",
+                "name": "테오키스",
+                "rarity": "U"
+            },
+            {
+                "num": "032",
+                "name": "테오키스",
+                "rarity": "U"
+            },
+            {
+                "num": "033",
+                "name": "테오키스",
+                "rarity": "U"
+            },
+            {
+                "num": "034",
+                "name": "테오키스",
+                "rarity": "U"
+            },
+            {
+                "num": "035",
+                "name": "메가플라엣테 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "036",
+                "name": "냐스퍼",
+                "rarity": "C"
+            },
+            {
+                "num": "037",
+                "name": "냐오닉스",
+                "rarity": "U"
+            },
+            {
+                "num": "038",
+                "name": "나목령",
+                "rarity": "C"
+            },
+            {
+                "num": "039",
+                "name": "대로트",
+                "rarity": "R"
+            },
+            {
+                "num": "040",
+                "name": "호바귀",
+                "rarity": "C"
+            },
+            {
+                "num": "041",
+                "name": "펌킨인 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "042",
+                "name": "제르네아스",
+                "rarity": "R"
+            },
+            {
+                "num": "043",
+                "name": "꼬지모",
+                "rarity": "U"
+            },
+            {
+                "num": "044",
+                "name": "코코리",
+                "rarity": "C"
+            },
+            {
+                "num": "045",
+                "name": "코리갑",
+                "rarity": "C"
+            },
+            {
+                "num": "046",
+                "name": "오뚝군",
+                "rarity": "C"
+            },
+            {
+                "num": "047",
+                "name": "점토도리",
+                "rarity": "U"
+            },
+            {
+                "num": "048",
+                "name": "주뱃",
+                "rarity": "C"
+            },
+            {
+                "num": "049",
+                "name": "골뱃",
+                "rarity": "C"
+            },
+            {
+                "num": "050",
+                "name": "크로뱃",
+                "rarity": "U"
+            },
+            {
+                "num": "051",
+                "name": "침바루",
+                "rarity": "C"
+            },
+            {
+                "num": "052",
+                "name": "스컹뿡",
+                "rarity": "C"
+            },
+            {
+                "num": "053",
+                "name": "스컹탱크",
+                "rarity": "U"
+            },
+            {
+                "num": "054",
+                "name": "깨봉이",
+                "rarity": "C"
+            },
+            {
+                "num": "055",
+                "name": "더스트나",
+                "rarity": "U"
+            },
+            {
+                "num": "056",
+                "name": "수레기",
+                "rarity": "C"
+            },
+            {
+                "num": "057",
+                "name": "메탕",
+                "rarity": "C"
+            },
+            {
+                "num": "058",
+                "name": "메탕구",
+                "rarity": "C"
+            },
+            {
+                "num": "059",
+                "name": "메타그로스",
+                "rarity": "U"
+            },
+            {
+                "num": "060",
+                "name": "철시드",
+                "rarity": "C"
+            },
+            {
+                "num": "061",
+                "name": "너트령",
+                "rarity": "U"
+            },
+            {
+                "num": "062",
+                "name": "코바르온 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "063",
+                "name": "메가드래캄 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "064",
+                "name": "미끄메라",
+                "rarity": "C"
+            },
+            {
+                "num": "065",
+                "name": "미끄네일",
+                "rarity": "C"
+            },
+            {
+                "num": "066",
+                "name": "미끄래곤",
+                "rarity": "U"
+            },
+            {
+                "num": "067",
+                "name": "켄타로스",
+                "rarity": "U"
+            },
+            {
+                "num": "068",
+                "name": "보르쥐",
+                "rarity": "C"
+            },
+            {
+                "num": "069",
+                "name": "보르그",
+                "rarity": "C"
+            },
+            {
+                "num": "070",
+                "name": "치라미",
+                "rarity": "C"
+            },
+            {
+                "num": "071",
+                "name": "치라치노 ex",
+                "rarity": "RR"
+            },
+            {
+                "num": "072",
+                "name": "변화의 서",
+                "rarity": "U"
+            },
+            {
+                "num": "073",
+                "name": "스페셜 레드카드",
+                "rarity": "U"
+            },
+            {
+                "num": "074",
+                "name": "월척네트",
+                "rarity": "U"
+            },
+            {
+                "num": "075",
+                "name": "AZ의 평온",
+                "rarity": "U"
+            },
+            {
+                "num": "076",
+                "name": "마티에르",
+                "rarity": "U"
+            },
+            {
+                "num": "077",
+                "name": "보미카의 연주",
+                "rarity": "U"
+            },
+            {
+                "num": "078",
+                "name": "지프",
+                "rarity": "U"
+            },
+            {
+                "num": "079",
+                "name": "앙쥬 플라엣테",
+                "rarity": "U"
+            },
+            {
+                "num": "080",
+                "name": "프리즘타워",
+                "rarity": "U"
+            },
+            {
+                "num": "081",
+                "name": "니트로 불꽃 에너지",
+                "rarity": "R"
+            },
+            {
+                "num": "082",
+                "name": "버블 물 에너지",
+                "rarity": "R"
+            },
+            {
+                "num": "083",
+                "name": "마그넷 강철 에너지",
+                "rarity": "R"
+            }
+        ]
+    },
+    {
+        "code": "MC",
+        "name": "MEGA 「스타트 덱 100 배틀컬렉션」",
+        "type": "deck",
+        "printed_total": "742",
+        "total": 774,
+        "series": [
+            "MEGA"
+        ],
+        "release_date": "2026-02-13",
+        "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/MC.png",
+        "image_cover_url": "https://data1.pokemonkorea.co.kr/2026/01/2026-01-08_14-44-54-26761-1767851094.png",
+        "card_list_detail": [
+            {
+                "num": "001",
+                "name": "민화의 뚜벅쵸",
+                "rarity": "−"
+            },
+            {
+                "num": "002",
+                "name": "민화의 냄새꼬",
+                "rarity": "−"
+            },
+            {
+                "num": "003",
+                "name": "민화의 라플레시아 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "004",
+                "name": "파라스",
+                "rarity": "−"
+            },
+            {
+                "num": "005",
+                "name": "파라섹트",
+                "rarity": "−"
+            },
+            {
+                "num": "006",
+                "name": "민화의 모다피",
+                "rarity": "−"
+            },
+            {
+                "num": "007",
+                "name": "민화의 우츠동",
+                "rarity": "−"
+            },
+            {
+                "num": "008",
+                "name": "민화의 우츠보트",
+                "rarity": "−"
+            },
+            {
+                "num": "009",
+                "name": "아라리",
+                "rarity": "−"
+            },
+            {
+                "num": "010",
+                "name": "아라리",
+                "rarity": "−"
+            },
+            {
+                "num": "011",
+                "name": "나시",
+                "rarity": "−"
+            },
+            {
+                "num": "012",
+                "name": "덩쿠리",
+                "rarity": "−"
+            },
+            {
+                "num": "013",
+                "name": "덩쿠림보",
+                "rarity": "−"
+            },
+            {
+                "num": "014",
+                "name": "민화의 덩쿠리",
+                "rarity": "−"
+            },
+            {
+                "num": "015",
+                "name": "스라크",
+                "rarity": "−"
+            },
+            {
+                "num": "016",
+                "name": "치코리타",
+                "rarity": "−"
+            },
+            {
+                "num": "017",
+                "name": "베이리프",
+                "rarity": "−"
+            },
+            {
+                "num": "018",
+                "name": "메가메가니움 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "019",
+                "name": "레디바",
+                "rarity": "−"
+            },
+            {
+                "num": "020",
+                "name": "레디안",
+                "rarity": "−"
+            },
+            {
+                "num": "021",
+                "name": "왕자리",
+                "rarity": "−"
+            },
+            {
+                "num": "022",
+                "name": "메가자리 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "023",
+                "name": "단단지",
+                "rarity": "−"
+            },
+            {
+                "num": "024",
+                "name": "헤라크로스",
+                "rarity": "−"
+            },
+            {
+                "num": "025",
+                "name": "세레비",
+                "rarity": "−"
+            },
+            {
+                "num": "026",
+                "name": "버섯꼬",
+                "rarity": "−"
+            },
+            {
+                "num": "027",
+                "name": "버섯꼬",
+                "rarity": "−"
+            },
+            {
+                "num": "028",
+                "name": "버섯모",
+                "rarity": "−"
+            },
+            {
+                "num": "029",
+                "name": "버섯모",
+                "rarity": "−"
+            },
+            {
+                "num": "030",
+                "name": "로젤리아",
+                "rarity": "−"
+            },
+            {
+                "num": "031",
+                "name": "로즈레이드",
+                "rarity": "−"
+            },
+            {
+                "num": "032",
+                "name": "난천의 로젤리아",
+                "rarity": "−"
+            },
+            {
+                "num": "033",
+                "name": "난천의 로즈레이드",
+                "rarity": "−"
+            },
+            {
+                "num": "034",
+                "name": "모부기",
+                "rarity": "−"
+            },
+            {
+                "num": "035",
+                "name": "수풀부기",
+                "rarity": "−"
+            },
+            {
+                "num": "036",
+                "name": "토대부기 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "037",
+                "name": "리피아",
+                "rarity": "−"
+            },
+            {
+                "num": "038",
+                "name": "리피아 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "039",
+                "name": "쉐이미",
+                "rarity": "−"
+            },
+            {
+                "num": "040",
+                "name": "주리비얀",
+                "rarity": "−"
+            },
+            {
+                "num": "041",
+                "name": "샤비",
+                "rarity": "−"
+            },
+            {
+                "num": "042",
+                "name": "샤로다 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "043",
+                "name": "소미안",
+                "rarity": "−"
+            },
+            {
+                "num": "044",
+                "name": "엘풍 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "045",
+                "name": "돌살이",
+                "rarity": "−"
+            },
+            {
+                "num": "046",
+                "name": "암팰리스",
+                "rarity": "−"
+            },
+            {
+                "num": "047",
+                "name": "딱정곤",
+                "rarity": "−"
+            },
+            {
+                "num": "048",
+                "name": "깜놀버슬",
+                "rarity": "−"
+            },
+            {
+                "num": "049",
+                "name": "뽀록나",
+                "rarity": "−"
+            },
+            {
+                "num": "050",
+                "name": "전툴라",
+                "rarity": "−"
+            },
+            {
+                "num": "051",
+                "name": "아이앤트",
+                "rarity": "−"
+            },
+            {
+                "num": "052",
+                "name": "아이앤트 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "053",
+                "name": "비리디온",
+                "rarity": "−"
+            },
+            {
+                "num": "054",
+                "name": "비리디온",
+                "rarity": "−"
+            },
+            {
+                "num": "055",
+                "name": "나목령",
+                "rarity": "−"
+            },
+            {
+                "num": "056",
+                "name": "대로트",
+                "rarity": "−"
+            },
+            {
+                "num": "057",
+                "name": "턱지충이",
+                "rarity": "−"
+            },
+            {
+                "num": "058",
+                "name": "자마슈",
+                "rarity": "−"
+            },
+            {
+                "num": "059",
+                "name": "마셰이드",
+                "rarity": "−"
+            },
+            {
+                "num": "060",
+                "name": "타타륜",
+                "rarity": "−"
+            },
+            {
+                "num": "061",
+                "name": "카푸브루루",
+                "rarity": "−"
+            },
+            {
+                "num": "062",
+                "name": "과사삭벌레",
+                "rarity": "−"
+            },
+            {
+                "num": "063",
+                "name": "과미르",
+                "rarity": "−"
+            },
+            {
+                "num": "064",
+                "name": "과미드라 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "065",
+                "name": "나오하",
+                "rarity": "−"
+            },
+            {
+                "num": "066",
+                "name": "나로테",
+                "rarity": "−"
+            },
+            {
+                "num": "067",
+                "name": "마스카나",
+                "rarity": "−"
+            },
+            {
+                "num": "068",
+                "name": "나오하 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "069",
+                "name": "미니브",
+                "rarity": "−"
+            },
+            {
+                "num": "070",
+                "name": "올리뇨",
+                "rarity": "−"
+            },
+            {
+                "num": "071",
+                "name": "올리르바 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "072",
+                "name": "그푸리",
+                "rarity": "−"
+            },
+            {
+                "num": "073",
+                "name": "공푸리",
+                "rarity": "−"
+            },
+            {
+                "num": "074",
+                "name": "들눈해",
+                "rarity": "−"
+            },
+            {
+                "num": "075",
+                "name": "육파리",
+                "rarity": "−"
+            },
+            {
+                "num": "076",
+                "name": "캡싸이",
+                "rarity": "−"
+            },
+            {
+                "num": "077",
+                "name": "무쇠잎새 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "078",
+                "name": "차데스",
+                "rarity": "−"
+            },
+            {
+                "num": "079",
+                "name": "그우린차 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "080",
+                "name": "오거폰 벽록의 가면",
+                "rarity": "−"
+            },
+            {
+                "num": "081",
+                "name": "오거폰 벽록의 가면",
+                "rarity": "−"
+            },
+            {
+                "num": "082",
+                "name": "오거폰 벽록의 가면 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "083",
+                "name": "파이리",
+                "rarity": "−"
+            },
+            {
+                "num": "084",
+                "name": "리자드",
+                "rarity": "−"
+            },
+            {
+                "num": "085",
+                "name": "메가리자몽Y ex",
+                "rarity": "−"
+            },
+            {
+                "num": "086",
+                "name": "포니타",
+                "rarity": "−"
+            },
+            {
+                "num": "087",
+                "name": "포니타",
+                "rarity": "−"
+            },
+            {
+                "num": "088",
+                "name": "날쌩마",
+                "rarity": "−"
+            },
+            {
+                "num": "089",
+                "name": "날쌩마",
+                "rarity": "−"
+            },
+            {
+                "num": "090",
+                "name": "날쌩마",
+                "rarity": "−"
+            },
+            {
+                "num": "091",
+                "name": "마그마",
+                "rarity": "−"
+            },
+            {
+                "num": "092",
+                "name": "마그마번",
+                "rarity": "−"
+            },
+            {
+                "num": "093",
+                "name": "팔데아 켄타로스",
+                "rarity": "−"
+            },
+            {
+                "num": "094",
+                "name": "부스터 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "095",
+                "name": "마그마그",
+                "rarity": "−"
+            },
+            {
+                "num": "096",
+                "name": "마그카르고 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "097",
+                "name": "델빌",
+                "rarity": "−"
+            },
+            {
+                "num": "098",
+                "name": "헬가",
+                "rarity": "−"
+            },
+            {
+                "num": "099",
+                "name": "로켓단의 델빌",
+                "rarity": "−"
+            },
+            {
+                "num": "100",
+                "name": "로켓단의 헬가",
+                "rarity": "−"
+            },
+            {
+                "num": "101",
+                "name": "코터스",
+                "rarity": "−"
+            },
+            {
+                "num": "102",
+                "name": "캐스퐁 태양의 모습",
+                "rarity": "−"
+            },
+            {
+                "num": "103",
+                "name": "불꽃숭이",
+                "rarity": "−"
+            },
+            {
+                "num": "104",
+                "name": "파이숭이",
+                "rarity": "−"
+            },
+            {
+                "num": "105",
+                "name": "초염몽",
+                "rarity": "−"
+            },
+            {
+                "num": "106",
+                "name": "비크티니",
+                "rarity": "−"
+            },
+            {
+                "num": "107",
+                "name": "비크티니",
+                "rarity": "−"
+            },
+            {
+                "num": "108",
+                "name": "뚜꾸리",
+                "rarity": "−"
+            },
+            {
+                "num": "109",
+                "name": "뚜꾸리",
+                "rarity": "−"
+            },
+            {
+                "num": "110",
+                "name": "차오꿀",
+                "rarity": "−"
+            },
+            {
+                "num": "111",
+                "name": "차오꿀",
+                "rarity": "−"
+            },
+            {
+                "num": "112",
+                "name": "염무왕",
+                "rarity": "−"
+            },
+            {
+                "num": "113",
+                "name": "메가염무왕 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "114",
+                "name": "바오프",
+                "rarity": "−"
+            },
+            {
+                "num": "115",
+                "name": "바오키",
+                "rarity": "−"
+            },
+            {
+                "num": "116",
+                "name": "달막화",
+                "rarity": "−"
+            },
+            {
+                "num": "117",
+                "name": "불비달마",
+                "rarity": "−"
+            },
+            {
+                "num": "118",
+                "name": "N의 달막화",
+                "rarity": "−"
+            },
+            {
+                "num": "119",
+                "name": "N의 불비달마",
+                "rarity": "−"
+            },
+            {
+                "num": "120",
+                "name": "앤티골",
+                "rarity": "−"
+            },
+            {
+                "num": "121",
+                "name": "활화르바",
+                "rarity": "−"
+            },
+            {
+                "num": "122",
+                "name": "불카모스",
+                "rarity": "−"
+            },
+            {
+                "num": "123",
+                "name": "불카모스",
+                "rarity": "−"
+            },
+            {
+                "num": "124",
+                "name": "불카모스",
+                "rarity": "−"
+            },
+            {
+                "num": "125",
+                "name": "레시라무",
+                "rarity": "−"
+            },
+            {
+                "num": "126",
+                "name": "레시라무 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "127",
+                "name": "레오꼬",
+                "rarity": "−"
+            },
+            {
+                "num": "128",
+                "name": "화염레오",
+                "rarity": "−"
+            },
+            {
+                "num": "129",
+                "name": "볼케니온 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "130",
+                "name": "냐오불",
+                "rarity": "−"
+            },
+            {
+                "num": "131",
+                "name": "냐오히트",
+                "rarity": "−"
+            },
+            {
+                "num": "132",
+                "name": "어흥염 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "133",
+                "name": "춤추새",
+                "rarity": "−"
+            },
+            {
+                "num": "134",
+                "name": "야도뇽",
+                "rarity": "−"
+            },
+            {
+                "num": "135",
+                "name": "염뉴트",
+                "rarity": "−"
+            },
+            {
+                "num": "136",
+                "name": "폭거북스",
+                "rarity": "−"
+            },
+            {
+                "num": "137",
+                "name": "염버니",
+                "rarity": "−"
+            },
+            {
+                "num": "138",
+                "name": "래비풋",
+                "rarity": "−"
+            },
+            {
+                "num": "139",
+                "name": "에이스번 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "140",
+                "name": "태우지네",
+                "rarity": "−"
+            },
+            {
+                "num": "141",
+                "name": "다태우지네",
+                "rarity": "−"
+            },
+            {
+                "num": "142",
+                "name": "뜨아거",
+                "rarity": "−"
+            },
+            {
+                "num": "143",
+                "name": "악뜨거",
+                "rarity": "−"
+            },
+            {
+                "num": "144",
+                "name": "라우드본",
+                "rarity": "−"
+            },
+            {
+                "num": "145",
+                "name": "카르본",
+                "rarity": "−"
+            },
+            {
+                "num": "146",
+                "name": "카디나르마 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "147",
+                "name": "스코빌런 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "148",
+                "name": "오거폰 화덕의 가면",
+                "rarity": "−"
+            },
+            {
+                "num": "149",
+                "name": "오거폰 화덕의 가면 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "150",
+                "name": "꿰뚫는화염",
+                "rarity": "−"
+            },
+            {
+                "num": "151",
+                "name": "꿰뚫는화염 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "152",
+                "name": "쏘드라",
+                "rarity": "−"
+            },
+            {
+                "num": "153",
+                "name": "시드라",
+                "rarity": "−"
+            },
+            {
+                "num": "154",
+                "name": "킹드라 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "155",
+                "name": "이슬의 별가사리",
+                "rarity": "−"
+            },
+            {
+                "num": "156",
+                "name": "이슬의 아쿠스타",
+                "rarity": "−"
+            },
+            {
+                "num": "157",
+                "name": "이슬의 잉어킹",
+                "rarity": "−"
+            },
+            {
+                "num": "158",
+                "name": "이슬의 갸라도스",
+                "rarity": "−"
+            },
+            {
+                "num": "159",
+                "name": "라프라스",
+                "rarity": "−"
+            },
+            {
+                "num": "160",
+                "name": "이슬의 라프라스",
+                "rarity": "−"
+            },
+            {
+                "num": "161",
+                "name": "샤미드 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "162",
+                "name": "글레이시아 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "163",
+                "name": "프리져",
+                "rarity": "−"
+            },
+            {
+                "num": "164",
+                "name": "리아코",
+                "rarity": "−"
+            },
+            {
+                "num": "165",
+                "name": "리아코",
+                "rarity": "−"
+            },
+            {
+                "num": "166",
+                "name": "엘리게이",
+                "rarity": "−"
+            },
+            {
+                "num": "167",
+                "name": "엘리게이",
+                "rarity": "−"
+            },
+            {
+                "num": "168",
+                "name": "장크로다일",
+                "rarity": "−"
+            },
+            {
+                "num": "169",
+                "name": "메가장크로다일 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "170",
+                "name": "포푸니",
+                "rarity": "−"
+            },
+            {
+                "num": "171",
+                "name": "포푸니라",
+                "rarity": "−"
+            },
+            {
+                "num": "172",
+                "name": "만타인",
+                "rarity": "−"
+            },
+            {
+                "num": "173",
+                "name": "만타인",
+                "rarity": "−"
+            },
+            {
+                "num": "174",
+                "name": "스이쿤",
+                "rarity": "−"
+            },
+            {
+                "num": "175",
+                "name": "연꽃몬",
+                "rarity": "−"
+            },
+            {
+                "num": "176",
+                "name": "로토스",
+                "rarity": "−"
+            },
+            {
+                "num": "177",
+                "name": "로파파",
+                "rarity": "−"
+            },
+            {
+                "num": "178",
+                "name": "샤프니아",
+                "rarity": "−"
+            },
+            {
+                "num": "179",
+                "name": "샤크니아",
+                "rarity": "−"
+            },
+            {
+                "num": "180",
+                "name": "고래왕자",
+                "rarity": "−"
+            },
+            {
+                "num": "181",
+                "name": "고래왕",
+                "rarity": "−"
+            },
+            {
+                "num": "182",
+                "name": "가재군",
+                "rarity": "−"
+            },
+            {
+                "num": "183",
+                "name": "가재장군",
+                "rarity": "−"
+            },
+            {
+                "num": "184",
+                "name": "빈티나",
+                "rarity": "−"
+            },
+            {
+                "num": "185",
+                "name": "밀로틱 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "186",
+                "name": "눈꼬마",
+                "rarity": "−"
+            },
+            {
+                "num": "187",
+                "name": "얼음귀신",
+                "rarity": "−"
+            },
+            {
+                "num": "188",
+                "name": "대굴레오",
+                "rarity": "−"
+            },
+            {
+                "num": "189",
+                "name": "씨레오",
+                "rarity": "−"
+            },
+            {
+                "num": "190",
+                "name": "씨카이저",
+                "rarity": "−"
+            },
+            {
+                "num": "191",
+                "name": "레지아이스",
+                "rarity": "−"
+            },
+            {
+                "num": "192",
+                "name": "레지아이스 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "193",
+                "name": "브이젤",
+                "rarity": "−"
+            },
+            {
+                "num": "194",
+                "name": "플로젤",
+                "rarity": "−"
+            },
+            {
+                "num": "195",
+                "name": "형광어",
+                "rarity": "−"
+            },
+            {
+                "num": "196",
+                "name": "네오라이트",
+                "rarity": "−"
+            },
+            {
+                "num": "197",
+                "name": "꼬지보리",
+                "rarity": "−"
+            },
+            {
+                "num": "198",
+                "name": "스완나",
+                "rarity": "−"
+            },
+            {
+                "num": "199",
+                "name": "바닐프티",
+                "rarity": "−"
+            },
+            {
+                "num": "200",
+                "name": "바닐리치",
+                "rarity": "−"
+            },
+            {
+                "num": "201",
+                "name": "배바닐라",
+                "rarity": "−"
+            },
+            {
+                "num": "202",
+                "name": "프리지오",
+                "rarity": "−"
+            },
+            {
+                "num": "203",
+                "name": "큐레무 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "204",
+                "name": "블랙큐레무 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "205",
+                "name": "케르디오 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "206",
+                "name": "개구마르",
+                "rarity": "−"
+            },
+            {
+                "num": "207",
+                "name": "개굴반장",
+                "rarity": "−"
+            },
+            {
+                "num": "208",
+                "name": "개굴닌자 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "209",
+                "name": "모단단게",
+                "rarity": "−"
+            },
+            {
+                "num": "210",
+                "name": "윽우지",
+                "rarity": "−"
+            },
+            {
+                "num": "211",
+                "name": "꾸왁스",
+                "rarity": "−"
+            },
+            {
+                "num": "212",
+                "name": "아꾸왁",
+                "rarity": "−"
+            },
+            {
+                "num": "213",
+                "name": "웨이니발",
+                "rarity": "−"
+            },
+            {
+                "num": "214",
+                "name": "맨돌핀",
+                "rarity": "−"
+            },
+            {
+                "num": "215",
+                "name": "돌핀맨",
+                "rarity": "−"
+            },
+            {
+                "num": "216",
+                "name": "돌핀맨 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "217",
+                "name": "터벅고래",
+                "rarity": "−"
+            },
+            {
+                "num": "218",
+                "name": "우락고래",
+                "rarity": "−"
+            },
+            {
+                "num": "219",
+                "name": "가비루사",
+                "rarity": "−"
+            },
+            {
+                "num": "220",
+                "name": "어써러셔 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "221",
+                "name": "굽이치는물결",
+                "rarity": "−"
+            },
+            {
+                "num": "222",
+                "name": "굽이치는물결 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "223",
+                "name": "오거폰 우물의 가면",
+                "rarity": "−"
+            },
+            {
+                "num": "224",
+                "name": "오거폰 우물의 가면 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "225",
+                "name": "피카츄",
+                "rarity": "−"
+            },
+            {
+                "num": "226",
+                "name": "라이츄",
+                "rarity": "−"
+            },
+            {
+                "num": "227",
+                "name": "피카츄 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "228",
+                "name": "알로라 꼬마돌",
+                "rarity": "−"
+            },
+            {
+                "num": "229",
+                "name": "알로라 데구리",
+                "rarity": "−"
+            },
+            {
+                "num": "230",
+                "name": "알로라 딱구리",
+                "rarity": "−"
+            },
+            {
+                "num": "231",
+                "name": "코일",
+                "rarity": "−"
+            },
+            {
+                "num": "232",
+                "name": "레어코일",
+                "rarity": "−"
+            },
+            {
+                "num": "233",
+                "name": "찌리리공 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "234",
+                "name": "모야모의 찌리리공",
+                "rarity": "−"
+            },
+            {
+                "num": "235",
+                "name": "모야모의 붐볼",
+                "rarity": "−"
+            },
+            {
+                "num": "236",
+                "name": "에레브",
+                "rarity": "−"
+            },
+            {
+                "num": "237",
+                "name": "에레키블 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "238",
+                "name": "쥬피썬더 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "239",
+                "name": "썬더",
+                "rarity": "−"
+            },
+            {
+                "num": "240",
+                "name": "썬더",
+                "rarity": "−"
+            },
+            {
+                "num": "241",
+                "name": "심향의 피츄",
+                "rarity": "−"
+            },
+            {
+                "num": "242",
+                "name": "썬더라이",
+                "rarity": "−"
+            },
+            {
+                "num": "243",
+                "name": "썬더볼트",
+                "rarity": "−"
+            },
+            {
+                "num": "244",
+                "name": "꼬링크",
+                "rarity": "−"
+            },
+            {
+                "num": "245",
+                "name": "럭시오",
+                "rarity": "−"
+            },
+            {
+                "num": "246",
+                "name": "렌트라 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "247",
+                "name": "파치리스",
+                "rarity": "−"
+            },
+            {
+                "num": "248",
+                "name": "로토무",
+                "rarity": "−"
+            },
+            {
+                "num": "249",
+                "name": "줄뮤마",
+                "rarity": "−"
+            },
+            {
+                "num": "250",
+                "name": "줄뮤마",
+                "rarity": "−"
+            },
+            {
+                "num": "251",
+                "name": "제브라이카",
+                "rarity": "−"
+            },
+            {
+                "num": "252",
+                "name": "제브라이카",
+                "rarity": "−"
+            },
+            {
+                "num": "253",
+                "name": "에몽가",
+                "rarity": "−"
+            },
+            {
+                "num": "254",
+                "name": "파쪼옥",
+                "rarity": "−"
+            },
+            {
+                "num": "255",
+                "name": "전툴라 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "256",
+                "name": "저리어",
+                "rarity": "−"
+            },
+            {
+                "num": "257",
+                "name": "저리릴",
+                "rarity": "−"
+            },
+            {
+                "num": "258",
+                "name": "볼트로스",
+                "rarity": "−"
+            },
+            {
+                "num": "259",
+                "name": "제크로무 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "260",
+                "name": "목도리키텔",
+                "rarity": "−"
+            },
+            {
+                "num": "261",
+                "name": "일레도리자드",
+                "rarity": "−"
+            },
+            {
+                "num": "262",
+                "name": "전지충이",
+                "rarity": "−"
+            },
+            {
+                "num": "263",
+                "name": "투구뿌논",
+                "rarity": "−"
+            },
+            {
+                "num": "264",
+                "name": "토게데마루",
+                "rarity": "−"
+            },
+            {
+                "num": "265",
+                "name": "카푸꼬꼬꼭",
+                "rarity": "−"
+            },
+            {
+                "num": "266",
+                "name": "제라오라",
+                "rarity": "−"
+            },
+            {
+                "num": "267",
+                "name": "제라오라",
+                "rarity": "−"
+            },
+            {
+                "num": "268",
+                "name": "멍파치",
+                "rarity": "−"
+            },
+            {
+                "num": "269",
+                "name": "펄스멍",
+                "rarity": "−"
+            },
+            {
+                "num": "270",
+                "name": "모르페코",
+                "rarity": "−"
+            },
+            {
+                "num": "271",
+                "name": "빈나두",
+                "rarity": "−"
+            },
+            {
+                "num": "272",
+                "name": "찌리배리",
+                "rarity": "−"
+            },
+            {
+                "num": "273",
+                "name": "모야모의 빈나두",
+                "rarity": "−"
+            },
+            {
+                "num": "274",
+                "name": "모야모의 찌리배리 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "275",
+                "name": "찌리비",
+                "rarity": "−"
+            },
+            {
+                "num": "276",
+                "name": "찌리비크",
+                "rarity": "−"
+            },
+            {
+                "num": "277",
+                "name": "찌리비크",
+                "rarity": "−"
+            },
+            {
+                "num": "278",
+                "name": "모야모의 찌리비",
+                "rarity": "−"
+            },
+            {
+                "num": "279",
+                "name": "모야모의 찌리비크",
+                "rarity": "−"
+            },
+            {
+                "num": "280",
+                "name": "무쇠손",
+                "rarity": "−"
+            },
+            {
+                "num": "281",
+                "name": "무쇠가시",
+                "rarity": "−"
+            },
+            {
+                "num": "282",
+                "name": "무쇠가시 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "283",
+                "name": "미라이돈",
+                "rarity": "−"
+            },
+            {
+                "num": "284",
+                "name": "미라이돈 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "285",
+                "name": "삐삐",
+                "rarity": "−"
+            },
+            {
+                "num": "286",
+                "name": "픽시",
+                "rarity": "−"
+            },
+            {
+                "num": "287",
+                "name": "릴리에의 삐삐 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "288",
+                "name": "로켓단의 슬리프",
+                "rarity": "−"
+            },
+            {
+                "num": "289",
+                "name": "로켓단의 슬리퍼",
+                "rarity": "−"
+            },
+            {
+                "num": "290",
+                "name": "로켓단의 뮤츠 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "291",
+                "name": "토게피",
+                "rarity": "−"
+            },
+            {
+                "num": "292",
+                "name": "토게틱",
+                "rarity": "−"
+            },
+            {
+                "num": "293",
+                "name": "토게키스",
+                "rarity": "−"
+            },
+            {
+                "num": "294",
+                "name": "마릴",
+                "rarity": "−"
+            },
+            {
+                "num": "295",
+                "name": "마릴",
+                "rarity": "−"
+            },
+            {
+                "num": "296",
+                "name": "마릴리",
+                "rarity": "−"
+            },
+            {
+                "num": "297",
+                "name": "마릴리 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "298",
+                "name": "에브이 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "299",
+                "name": "님피아 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "300",
+                "name": "키링키",
+                "rarity": "−"
+            },
+            {
+                "num": "301",
+                "name": "키링키",
+                "rarity": "−"
+            },
+            {
+                "num": "302",
+                "name": "키키링",
+                "rarity": "−"
+            },
+            {
+                "num": "303",
+                "name": "블루",
+                "rarity": "−"
+            },
+            {
+                "num": "304",
+                "name": "그랑블루",
+                "rarity": "−"
+            },
+            {
+                "num": "305",
+                "name": "피그점프",
+                "rarity": "−"
+            },
+            {
+                "num": "306",
+                "name": "피그킹",
+                "rarity": "−"
+            },
+            {
+                "num": "307",
+                "name": "어둠대신",
+                "rarity": "−"
+            },
+            {
+                "num": "308",
+                "name": "해골몽",
+                "rarity": "−"
+            },
+            {
+                "num": "309",
+                "name": "미라몽",
+                "rarity": "−"
+            },
+            {
+                "num": "310",
+                "name": "야느와르몽",
+                "rarity": "−"
+            },
+            {
+                "num": "311",
+                "name": "라티아스",
+                "rarity": "−"
+            },
+            {
+                "num": "312",
+                "name": "라티아스 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "313",
+                "name": "라티오스",
+                "rarity": "−"
+            },
+            {
+                "num": "314",
+                "name": "유크시",
+                "rarity": "−"
+            },
+            {
+                "num": "315",
+                "name": "엠라이트",
+                "rarity": "−"
+            },
+            {
+                "num": "316",
+                "name": "아그놈",
+                "rarity": "−"
+            },
+            {
+                "num": "317",
+                "name": "크레세리아",
+                "rarity": "−"
+            },
+            {
+                "num": "318",
+                "name": "심보러",
+                "rarity": "−"
+            },
+            {
+                "num": "319",
+                "name": "데스마스",
+                "rarity": "−"
+            },
+            {
+                "num": "320",
+                "name": "데스마스",
+                "rarity": "−"
+            },
+            {
+                "num": "321",
+                "name": "데스니칸",
+                "rarity": "−"
+            },
+            {
+                "num": "322",
+                "name": "데스니칸",
+                "rarity": "−"
+            },
+            {
+                "num": "323",
+                "name": "고디탱",
+                "rarity": "−"
+            },
+            {
+                "num": "324",
+                "name": "고디보미",
+                "rarity": "−"
+            },
+            {
+                "num": "325",
+                "name": "고디모아젤",
+                "rarity": "−"
+            },
+            {
+                "num": "326",
+                "name": "리그레",
+                "rarity": "−"
+            },
+            {
+                "num": "327",
+                "name": "벰크",
+                "rarity": "−"
+            },
+            {
+                "num": "328",
+                "name": "플라베베",
+                "rarity": "−"
+            },
+            {
+                "num": "329",
+                "name": "플라엣테",
+                "rarity": "−"
+            },
+            {
+                "num": "330",
+                "name": "플라제스",
+                "rarity": "−"
+            },
+            {
+                "num": "331",
+                "name": "냐스퍼",
+                "rarity": "−"
+            },
+            {
+                "num": "332",
+                "name": "냐오닉스",
+                "rarity": "−"
+            },
+            {
+                "num": "333",
+                "name": "나룸퍼프",
+                "rarity": "−"
+            },
+            {
+                "num": "334",
+                "name": "나루림",
+                "rarity": "−"
+            },
+            {
+                "num": "335",
+                "name": "제르네아스",
+                "rarity": "−"
+            },
+            {
+                "num": "336",
+                "name": "춤추새",
+                "rarity": "−"
+            },
+            {
+                "num": "337",
+                "name": "춤추새",
+                "rarity": "−"
+            },
+            {
+                "num": "338",
+                "name": "릴리에의 에블리",
+                "rarity": "−"
+            },
+            {
+                "num": "339",
+                "name": "릴리에의 에리본",
+                "rarity": "−"
+            },
+            {
+                "num": "340",
+                "name": "릴리에의 큐아링",
+                "rarity": "−"
+            },
+            {
+                "num": "341",
+                "name": "로켓단의 따라큐",
+                "rarity": "−"
+            },
+            {
+                "num": "342",
+                "name": "카푸나비나",
+                "rarity": "−"
+            },
+            {
+                "num": "343",
+                "name": "메롱꿍",
+                "rarity": "−"
+            },
+            {
+                "num": "344",
+                "name": "쏘겨모",
+                "rarity": "−"
+            },
+            {
+                "num": "345",
+                "name": "오롱털",
+                "rarity": "−"
+            },
+            {
+                "num": "346",
+                "name": "러브로스",
+                "rarity": "−"
+            },
+            {
+                "num": "347",
+                "name": "쫀도기",
+                "rarity": "−"
+            },
+            {
+                "num": "348",
+                "name": "바우첼 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "349",
+                "name": "망망이",
+                "rarity": "−"
+            },
+            {
+                "num": "350",
+                "name": "묘두기",
+                "rarity": "−"
+            },
+            {
+                "num": "351",
+                "name": "묘두기 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "352",
+                "name": "우렁찬꼬리",
+                "rarity": "−"
+            },
+            {
+                "num": "353",
+                "name": "우렁찬꼬리 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "354",
+                "name": "날개치는머리",
+                "rarity": "−"
+            },
+            {
+                "num": "355",
+                "name": "날개치는머리",
+                "rarity": "−"
+            },
+            {
+                "num": "356",
+                "name": "모으령",
+                "rarity": "−"
+            },
+            {
+                "num": "357",
+                "name": "무쇠무인",
+                "rarity": "−"
+            },
+            {
+                "num": "358",
+                "name": "이야후",
+                "rarity": "−"
+            },
+            {
+                "num": "359",
+                "name": "기로치",
+                "rarity": "−"
+            },
+            {
+                "num": "360",
+                "name": "무쇠암석",
+                "rarity": "−"
+            },
+            {
+                "num": "361",
+                "name": "무쇠감투 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "362",
+                "name": "꾸꾸리",
+                "rarity": "−"
+            },
+            {
+                "num": "363",
+                "name": "메꾸리",
+                "rarity": "−"
+            },
+            {
+                "num": "364",
+                "name": "맘모꾸리 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "365",
+                "name": "코코리",
+                "rarity": "−"
+            },
+            {
+                "num": "366",
+                "name": "코리갑",
+                "rarity": "−"
+            },
+            {
+                "num": "367",
+                "name": "카포에라",
+                "rarity": "−"
+            },
+            {
+                "num": "368",
+                "name": "요가랑",
+                "rarity": "−"
+            },
+            {
+                "num": "369",
+                "name": "요가램",
+                "rarity": "−"
+            },
+            {
+                "num": "370",
+                "name": "요가램 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "371",
+                "name": "루나톤",
+                "rarity": "−"
+            },
+            {
+                "num": "372",
+                "name": "솔록",
+                "rarity": "−"
+            },
+            {
+                "num": "373",
+                "name": "레지락",
+                "rarity": "−"
+            },
+            {
+                "num": "374",
+                "name": "레지락 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "375",
+                "name": "그란돈",
+                "rarity": "−"
+            },
+            {
+                "num": "376",
+                "name": "난천의 딥상어동",
+                "rarity": "−"
+            },
+            {
+                "num": "377",
+                "name": "난천의 한바이트",
+                "rarity": "−"
+            },
+            {
+                "num": "378",
+                "name": "난천의 한카리아스 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "379",
+                "name": "리오르",
+                "rarity": "−"
+            },
+            {
+                "num": "380",
+                "name": "루카리오 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "381",
+                "name": "삐딱구리",
+                "rarity": "−"
+            },
+            {
+                "num": "382",
+                "name": "삐딱구리",
+                "rarity": "−"
+            },
+            {
+                "num": "383",
+                "name": "독개굴",
+                "rarity": "−"
+            },
+            {
+                "num": "384",
+                "name": "독개굴",
+                "rarity": "−"
+            },
+            {
+                "num": "385",
+                "name": "두더류",
+                "rarity": "−"
+            },
+            {
+                "num": "386",
+                "name": "몰드류",
+                "rarity": "−"
+            },
+            {
+                "num": "387",
+                "name": "몰드류 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "388",
+                "name": "으랏차",
+                "rarity": "−"
+            },
+            {
+                "num": "389",
+                "name": "토쇠골",
+                "rarity": "−"
+            },
+            {
+                "num": "390",
+                "name": "노보청",
+                "rarity": "−"
+            },
+            {
+                "num": "391",
+                "name": "타격귀",
+                "rarity": "−"
+            },
+            {
+                "num": "392",
+                "name": "아켄",
+                "rarity": "−"
+            },
+            {
+                "num": "393",
+                "name": "아케오스",
+                "rarity": "−"
+            },
+            {
+                "num": "394",
+                "name": "메더 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "395",
+                "name": "비조푸",
+                "rarity": "−"
+            },
+            {
+                "num": "396",
+                "name": "비조도",
+                "rarity": "−"
+            },
+            {
+                "num": "397",
+                "name": "랜드로스",
+                "rarity": "−"
+            },
+            {
+                "num": "398",
+                "name": "랜드로스",
+                "rarity": "−"
+            },
+            {
+                "num": "399",
+                "name": "판짱",
+                "rarity": "−"
+            },
+            {
+                "num": "400",
+                "name": "멜리시",
+                "rarity": "−"
+            },
+            {
+                "num": "401",
+                "name": "오기지게",
+                "rarity": "−"
+            },
+            {
+                "num": "402",
+                "name": "암멍이",
+                "rarity": "−"
+            },
+            {
+                "num": "403",
+                "name": "루가루암",
+                "rarity": "−"
+            },
+            {
+                "num": "404",
+                "name": "머드나기",
+                "rarity": "−"
+            },
+            {
+                "num": "405",
+                "name": "만마드",
+                "rarity": "−"
+            },
+            {
+                "num": "406",
+                "name": "만마드",
+                "rarity": "−"
+            },
+            {
+                "num": "407",
+                "name": "내던숭이",
+                "rarity": "−"
+            },
+            {
+                "num": "408",
+                "name": "마샤도",
+                "rarity": "−"
+            },
+            {
+                "num": "409",
+                "name": "탄동",
+                "rarity": "−"
+            },
+            {
+                "num": "410",
+                "name": "탄차곤",
+                "rarity": "−"
+            },
+            {
+                "num": "411",
+                "name": "석탄산",
+                "rarity": "−"
+            },
+            {
+                "num": "412",
+                "name": "때때무노",
+                "rarity": "−"
+            },
+            {
+                "num": "413",
+                "name": "케오퍼스",
+                "rarity": "−"
+            },
+            {
+                "num": "414",
+                "name": "돌헨진",
+                "rarity": "−"
+            },
+            {
+                "num": "415",
+                "name": "다투곰 붉은 달",
+                "rarity": "−"
+            },
+            {
+                "num": "416",
+                "name": "베베솔트",
+                "rarity": "−"
+            },
+            {
+                "num": "417",
+                "name": "스태솔트",
+                "rarity": "−"
+            },
+            {
+                "num": "418",
+                "name": "콜로솔트",
+                "rarity": "−"
+            },
+            {
+                "num": "419",
+                "name": "페퍼의 들눈해",
+                "rarity": "−"
+            },
+            {
+                "num": "420",
+                "name": "페퍼의 육파리",
+                "rarity": "−"
+            },
+            {
+                "num": "421",
+                "name": "절벼게",
+                "rarity": "−"
+            },
+            {
+                "num": "422",
+                "name": "위대한엄니",
+                "rarity": "−"
+            },
+            {
+                "num": "423",
+                "name": "땅을기는날개",
+                "rarity": "−"
+            },
+            {
+                "num": "424",
+                "name": "모래털가죽",
+                "rarity": "−"
+            },
+            {
+                "num": "425",
+                "name": "코라이돈 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "426",
+                "name": "조타구",
+                "rarity": "−"
+            },
+            {
+                "num": "427",
+                "name": "오거폰 주춧돌의 가면",
+                "rarity": "−"
+            },
+            {
+                "num": "428",
+                "name": "오거폰 주춧돌의 가면 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "429",
+                "name": "무쇠암석 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "430",
+                "name": "아보",
+                "rarity": "−"
+            },
+            {
+                "num": "431",
+                "name": "아보크",
+                "rarity": "−"
+            },
+            {
+                "num": "432",
+                "name": "로켓단의 니드런♀",
+                "rarity": "−"
+            },
+            {
+                "num": "433",
+                "name": "로켓단의 니드리나",
+                "rarity": "−"
+            },
+            {
+                "num": "434",
+                "name": "로켓단의 니드퀸",
+                "rarity": "−"
+            },
+            {
+                "num": "435",
+                "name": "로켓단의 니드런♂",
+                "rarity": "−"
+            },
+            {
+                "num": "436",
+                "name": "로켓단의 니드리노",
+                "rarity": "−"
+            },
+            {
+                "num": "437",
+                "name": "로켓단의 니드킹 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "438",
+                "name": "로켓단의 주뱃",
+                "rarity": "−"
+            },
+            {
+                "num": "439",
+                "name": "로켓단의 골뱃",
+                "rarity": "−"
+            },
+            {
+                "num": "440",
+                "name": "로켓단의 크로뱃 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "441",
+                "name": "고오스",
+                "rarity": "−"
+            },
+            {
+                "num": "442",
+                "name": "고오스",
+                "rarity": "−"
+            },
+            {
+                "num": "443",
+                "name": "고우스트",
+                "rarity": "−"
+            },
+            {
+                "num": "444",
+                "name": "고우스트",
+                "rarity": "−"
+            },
+            {
+                "num": "445",
+                "name": "팬텀 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "446",
+                "name": "블래키 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "447",
+                "name": "로켓단의 니로우",
+                "rarity": "−"
+            },
+            {
+                "num": "448",
+                "name": "로켓단의 포푸니",
+                "rarity": "−"
+            },
+            {
+                "num": "449",
+                "name": "델빌",
+                "rarity": "−"
+            },
+            {
+                "num": "450",
+                "name": "헬가",
+                "rarity": "−"
+            },
+            {
+                "num": "451",
+                "name": "포챠나",
+                "rarity": "−"
+            },
+            {
+                "num": "452",
+                "name": "그라에나",
+                "rarity": "−"
+            },
+            {
+                "num": "453",
+                "name": "깜까미",
+                "rarity": "−"
+            },
+            {
+                "num": "454",
+                "name": "앱솔",
+                "rarity": "−"
+            },
+            {
+                "num": "455",
+                "name": "화강돌",
+                "rarity": "−"
+            },
+            {
+                "num": "456",
+                "name": "다크라이 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "457",
+                "name": "N의 쌔비냥",
+                "rarity": "−"
+            },
+            {
+                "num": "458",
+                "name": "마리의 쌔비냥",
+                "rarity": "−"
+            },
+            {
+                "num": "459",
+                "name": "마리의 레파르다스",
+                "rarity": "−"
+            },
+            {
+                "num": "460",
+                "name": "마디네",
+                "rarity": "−"
+            },
+            {
+                "num": "461",
+                "name": "휠구",
+                "rarity": "−"
+            },
+            {
+                "num": "462",
+                "name": "펜드라",
+                "rarity": "−"
+            },
+            {
+                "num": "463",
+                "name": "마리의 곤율랭",
+                "rarity": "−"
+            },
+            {
+                "num": "464",
+                "name": "마리의 곤율거니",
+                "rarity": "−"
+            },
+            {
+                "num": "465",
+                "name": "깨봉이",
+                "rarity": "−"
+            },
+            {
+                "num": "466",
+                "name": "더스트나",
+                "rarity": "−"
+            },
+            {
+                "num": "467",
+                "name": "조로아",
+                "rarity": "−"
+            },
+            {
+                "num": "468",
+                "name": "조로아크",
+                "rarity": "−"
+            },
+            {
+                "num": "469",
+                "name": "N의 조로아",
+                "rarity": "−"
+            },
+            {
+                "num": "470",
+                "name": "N의 조로아크 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "471",
+                "name": "자망칼",
+                "rarity": "−"
+            },
+            {
+                "num": "472",
+                "name": "절각참",
+                "rarity": "−"
+            },
+            {
+                "num": "473",
+                "name": "대도각참",
+                "rarity": "−"
+            },
+            {
+                "num": "474",
+                "name": "벌차이",
+                "rarity": "−"
+            },
+            {
+                "num": "475",
+                "name": "버랜지나 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "476",
+                "name": "모노두",
+                "rarity": "−"
+            },
+            {
+                "num": "477",
+                "name": "디헤드",
+                "rarity": "−"
+            },
+            {
+                "num": "478",
+                "name": "삼삼드래 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "479",
+                "name": "부란다",
+                "rarity": "−"
+            },
+            {
+                "num": "480",
+                "name": "이벨타르",
+                "rarity": "−"
+            },
+            {
+                "num": "481",
+                "name": "이벨타르",
+                "rarity": "−"
+            },
+            {
+                "num": "482",
+                "name": "후파",
+                "rarity": "−"
+            },
+            {
+                "num": "483",
+                "name": "페퍼의 오라티프",
+                "rarity": "−"
+            },
+            {
+                "num": "484",
+                "name": "페퍼의 마피티프 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "485",
+                "name": "떨구새",
+                "rarity": "−"
+            },
+            {
+                "num": "486",
+                "name": "키키링 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "487",
+                "name": "사나운버섯",
+                "rarity": "−"
+            },
+            {
+                "num": "488",
+                "name": "조타구 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "489",
+                "name": "기로치 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "490",
+                "name": "복숭악동",
+                "rarity": "−"
+            },
+            {
+                "num": "491",
+                "name": "복숭악동 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "492",
+                "name": "핫삼 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "493",
+                "name": "무장조",
+                "rarity": "−"
+            },
+            {
+                "num": "494",
+                "name": "성호의 무장조",
+                "rarity": "−"
+            },
+            {
+                "num": "495",
+                "name": "입치트",
+                "rarity": "−"
+            },
+            {
+                "num": "496",
+                "name": "메탕",
+                "rarity": "−"
+            },
+            {
+                "num": "497",
+                "name": "메탕구",
+                "rarity": "−"
+            },
+            {
+                "num": "498",
+                "name": "레지스틸",
+                "rarity": "−"
+            },
+            {
+                "num": "499",
+                "name": "레지스틸 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "500",
+                "name": "동미러",
+                "rarity": "−"
+            },
+            {
+                "num": "501",
+                "name": "동탁군",
+                "rarity": "−"
+            },
+            {
+                "num": "502",
+                "name": "디아루가",
+                "rarity": "−"
+            },
+            {
+                "num": "503",
+                "name": "히드런",
+                "rarity": "−"
+            },
+            {
+                "num": "504",
+                "name": "슈바르고",
+                "rarity": "−"
+            },
+            {
+                "num": "505",
+                "name": "슈바르고",
+                "rarity": "−"
+            },
+            {
+                "num": "506",
+                "name": "기어르",
+                "rarity": "−"
+            },
+            {
+                "num": "507",
+                "name": "기기어르",
+                "rarity": "−"
+            },
+            {
+                "num": "508",
+                "name": "기기기어르",
+                "rarity": "−"
+            },
+            {
+                "num": "509",
+                "name": "가라르 메더",
+                "rarity": "−"
+            },
+            {
+                "num": "510",
+                "name": "자망칼",
+                "rarity": "−"
+            },
+            {
+                "num": "511",
+                "name": "절각참",
+                "rarity": "−"
+            },
+            {
+                "num": "512",
+                "name": "게노세크트 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "513",
+                "name": "클레피",
+                "rarity": "−"
+            },
+            {
+                "num": "514",
+                "name": "토게데마루 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "515",
+                "name": "마기아나",
+                "rarity": "−"
+            },
+            {
+                "num": "516",
+                "name": "멜탄",
+                "rarity": "−"
+            },
+            {
+                "num": "517",
+                "name": "멜탄",
+                "rarity": "−"
+            },
+            {
+                "num": "518",
+                "name": "멜메탈",
+                "rarity": "−"
+            },
+            {
+                "num": "519",
+                "name": "멜메탈 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "520",
+                "name": "호브의 아머까오",
+                "rarity": "−"
+            },
+            {
+                "num": "521",
+                "name": "끼리동",
+                "rarity": "−"
+            },
+            {
+                "num": "522",
+                "name": "대왕끼리동",
+                "rarity": "−"
+            },
+            {
+                "num": "523",
+                "name": "두랄루돈",
+                "rarity": "−"
+            },
+            {
+                "num": "524",
+                "name": "두랄루돈",
+                "rarity": "−"
+            },
+            {
+                "num": "525",
+                "name": "브리두라스",
+                "rarity": "−"
+            },
+            {
+                "num": "526",
+                "name": "브리두라스 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "527",
+                "name": "호브의 자시안 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "528",
+                "name": "어리짱",
+                "rarity": "−"
+            },
+            {
+                "num": "529",
+                "name": "벼리짱",
+                "rarity": "−"
+            },
+            {
+                "num": "530",
+                "name": "두드리짱",
+                "rarity": "−"
+            },
+            {
+                "num": "531",
+                "name": "부르롱",
+                "rarity": "−"
+            },
+            {
+                "num": "532",
+                "name": "부르르룸",
+                "rarity": "−"
+            },
+            {
+                "num": "533",
+                "name": "꿈트렁 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "534",
+                "name": "타부자고",
+                "rarity": "−"
+            },
+            {
+                "num": "535",
+                "name": "타부자고",
+                "rarity": "−"
+            },
+            {
+                "num": "536",
+                "name": "무쇠감투",
+                "rarity": "−"
+            },
+            {
+                "num": "537",
+                "name": "알로라 나시 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "538",
+                "name": "아공이",
+                "rarity": "−"
+            },
+            {
+                "num": "539",
+                "name": "쉘곤",
+                "rarity": "−"
+            },
+            {
+                "num": "540",
+                "name": "보만다 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "541",
+                "name": "터검니",
+                "rarity": "−"
+            },
+            {
+                "num": "542",
+                "name": "액슨도",
+                "rarity": "−"
+            },
+            {
+                "num": "543",
+                "name": "액스라이즈",
+                "rarity": "−"
+            },
+            {
+                "num": "544",
+                "name": "크리만",
+                "rarity": "−"
+            },
+            {
+                "num": "545",
+                "name": "N의 레시라무",
+                "rarity": "−"
+            },
+            {
+                "num": "546",
+                "name": "드라꼰",
+                "rarity": "−"
+            },
+            {
+                "num": "547",
+                "name": "드래런치",
+                "rarity": "−"
+            },
+            {
+                "num": "548",
+                "name": "드래펄트 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "549",
+                "name": "싸리용",
+                "rarity": "−"
+            },
+            {
+                "num": "550",
+                "name": "코라이돈",
+                "rarity": "−"
+            },
+            {
+                "num": "551",
+                "name": "코라이돈 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "552",
+                "name": "미라이돈",
+                "rarity": "−"
+            },
+            {
+                "num": "553",
+                "name": "미라이돈 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "554",
+                "name": "날뛰는우레 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "555",
+                "name": "로켓단의 꼬렛",
+                "rarity": "−"
+            },
+            {
+                "num": "556",
+                "name": "로켓단의 레트라",
+                "rarity": "−"
+            },
+            {
+                "num": "557",
+                "name": "깨비참",
+                "rarity": "−"
+            },
+            {
+                "num": "558",
+                "name": "깨비드릴조",
+                "rarity": "−"
+            },
+            {
+                "num": "559",
+                "name": "로켓단의 나옹",
+                "rarity": "−"
+            },
+            {
+                "num": "560",
+                "name": "로켓단의 페르시온 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "561",
+                "name": "럭키",
+                "rarity": "−"
+            },
+            {
+                "num": "562",
+                "name": "해피너스 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "563",
+                "name": "켄타로스",
+                "rarity": "−"
+            },
+            {
+                "num": "564",
+                "name": "이브이",
+                "rarity": "−"
+            },
+            {
+                "num": "565",
+                "name": "이브이",
+                "rarity": "−"
+            },
+            {
+                "num": "566",
+                "name": "이브이 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "567",
+                "name": "잠만보",
+                "rarity": "−"
+            },
+            {
+                "num": "568",
+                "name": "잠만보",
+                "rarity": "−"
+            },
+            {
+                "num": "569",
+                "name": "호브의 잠만보",
+                "rarity": "−"
+            },
+            {
+                "num": "570",
+                "name": "꼬리선",
+                "rarity": "−"
+            },
+            {
+                "num": "571",
+                "name": "다꼬리",
+                "rarity": "−"
+            },
+            {
+                "num": "572",
+                "name": "부우부",
+                "rarity": "−"
+            },
+            {
+                "num": "573",
+                "name": "야부엉",
+                "rarity": "−"
+            },
+            {
+                "num": "574",
+                "name": "노고치",
+                "rarity": "−"
+            },
+            {
+                "num": "575",
+                "name": "노고고치 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "576",
+                "name": "청목의 노고치",
+                "rarity": "−"
+            },
+            {
+                "num": "577",
+                "name": "청목의 노고고치 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "578",
+                "name": "밀탱크",
+                "rarity": "−"
+            },
+            {
+                "num": "579",
+                "name": "테일로",
+                "rarity": "−"
+            },
+            {
+                "num": "580",
+                "name": "스왈로",
+                "rarity": "−"
+            },
+            {
+                "num": "581",
+                "name": "게을로",
+                "rarity": "−"
+            },
+            {
+                "num": "582",
+                "name": "발바로",
+                "rarity": "−"
+            },
+            {
+                "num": "583",
+                "name": "게을킹 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "584",
+                "name": "에나비",
+                "rarity": "−"
+            },
+            {
+                "num": "585",
+                "name": "에나비",
+                "rarity": "−"
+            },
+            {
+                "num": "586",
+                "name": "델케티",
+                "rarity": "−"
+            },
+            {
+                "num": "587",
+                "name": "쟝고",
+                "rarity": "−"
+            },
+            {
+                "num": "588",
+                "name": "쟝고 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "589",
+                "name": "트로피우스",
+                "rarity": "−"
+            },
+            {
+                "num": "590",
+                "name": "청목의 찌르꼬",
+                "rarity": "−"
+            },
+            {
+                "num": "591",
+                "name": "청목의 찌르버드",
+                "rarity": "−"
+            },
+            {
+                "num": "592",
+                "name": "청목의 찌르호크",
+                "rarity": "−"
+            },
+            {
+                "num": "593",
+                "name": "이어롤",
+                "rarity": "−"
+            },
+            {
+                "num": "594",
+                "name": "이어롭",
+                "rarity": "−"
+            },
+            {
+                "num": "595",
+                "name": "나옹마",
+                "rarity": "−"
+            },
+            {
+                "num": "596",
+                "name": "몬냥이",
+                "rarity": "−"
+            },
+            {
+                "num": "597",
+                "name": "페라페",
+                "rarity": "−"
+            },
+            {
+                "num": "598",
+                "name": "콩둘기",
+                "rarity": "−"
+            },
+            {
+                "num": "599",
+                "name": "유토브",
+                "rarity": "−"
+            },
+            {
+                "num": "600",
+                "name": "켄호로우",
+                "rarity": "−"
+            },
+            {
+                "num": "601",
+                "name": "다부니",
+                "rarity": "−"
+            },
+            {
+                "num": "602",
+                "name": "메가다부니 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "603",
+                "name": "치라미",
+                "rarity": "−"
+            },
+            {
+                "num": "604",
+                "name": "치라치노",
+                "rarity": "−"
+            },
+            {
+                "num": "605",
+                "name": "버프론 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "606",
+                "name": "수리둥보",
+                "rarity": "−"
+            },
+            {
+                "num": "607",
+                "name": "워글",
+                "rarity": "−"
+            },
+            {
+                "num": "608",
+                "name": "청목의 수리둥보",
+                "rarity": "−"
+            },
+            {
+                "num": "609",
+                "name": "청목의 워글",
+                "rarity": "−"
+            },
+            {
+                "num": "610",
+                "name": "토네로스",
+                "rarity": "−"
+            },
+            {
+                "num": "611",
+                "name": "트리미앙",
+                "rarity": "−"
+            },
+            {
+                "num": "612",
+                "name": "트리미앙",
+                "rarity": "−"
+            },
+            {
+                "num": "613",
+                "name": "루차불",
+                "rarity": "−"
+            },
+            {
+                "num": "614",
+                "name": "음뱃",
+                "rarity": "−"
+            },
+            {
+                "num": "615",
+                "name": "음번",
+                "rarity": "−"
+            },
+            {
+                "num": "616",
+                "name": "포곰곰",
+                "rarity": "−"
+            },
+            {
+                "num": "617",
+                "name": "이븐곰",
+                "rarity": "−"
+            },
+            {
+                "num": "618",
+                "name": "하랑우탄",
+                "rarity": "−"
+            },
+            {
+                "num": "619",
+                "name": "청목의 자말라",
+                "rarity": "−"
+            },
+            {
+                "num": "620",
+                "name": "할비롱",
+                "rarity": "−"
+            },
+            {
+                "num": "621",
+                "name": "할비롱",
+                "rarity": "−"
+            },
+            {
+                "num": "622",
+                "name": "호브의 파라꼬",
+                "rarity": "−"
+            },
+            {
+                "num": "623",
+                "name": "호브의 파크로우",
+                "rarity": "−"
+            },
+            {
+                "num": "624",
+                "name": "호브의 윽우지",
+                "rarity": "−"
+            },
+            {
+                "num": "625",
+                "name": "다투곰 붉은 달 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "626",
+                "name": "시비꼬",
+                "rarity": "−"
+            },
+            {
+                "num": "627",
+                "name": "모토마",
+                "rarity": "−"
+            },
+            {
+                "num": "628",
+                "name": "무쇠머리",
+                "rarity": "−"
+            },
+            {
+                "num": "629",
+                "name": "테라파고스",
+                "rarity": "−"
+            },
+            {
+                "num": "630",
+                "name": "테라파고스 ex",
+                "rarity": "−"
+            },
+            {
+                "num": "631",
+                "name": "N의 포인트업",
+                "rarity": "−"
+            },
+            {
+                "num": "632",
+                "name": "각성의 드럼",
+                "rarity": "−"
+            },
+            {
+                "num": "633",
+                "name": "곤충채집세트",
+                "rarity": "−"
+            },
+            {
+                "num": "634",
+                "name": "괴상한 시계",
+                "rarity": "−"
+            },
+            {
+                "num": "635",
+                "name": "느긋풀",
+                "rarity": "−"
+            },
+            {
+                "num": "636",
+                "name": "데인저러스 광선",
+                "rarity": "−"
+            },
+            {
+                "num": "637",
+                "name": "도깨비의 가면",
+                "rarity": "−"
+            },
+            {
+                "num": "638",
+                "name": "로켓단의 깜짝봄",
+                "rarity": "−"
+            },
+            {
+                "num": "639",
+                "name": "로켓단의 리시버",
+                "rarity": "−"
+            },
+            {
+                "num": "640",
+                "name": "로켓단의 슈퍼볼",
+                "rarity": "−"
+            },
+            {
+                "num": "641",
+                "name": "리부트 포드",
+                "rarity": "−"
+            },
+            {
+                "num": "642",
+                "name": "몬스터볼",
+                "rarity": "−"
+            },
+            {
+                "num": "643",
+                "name": "밤의 들것",
+                "rarity": "−"
+            },
+            {
+                "num": "644",
+                "name": "벌레회피스프레이",
+                "rarity": "−"
+            },
+            {
+                "num": "645",
+                "name": "상처약",
+                "rarity": "−"
+            },
+            {
+                "num": "646",
+                "name": "스크램블 스위치",
+                "rarity": "−"
+            },
+            {
+                "num": "647",
+                "name": "아이언 디펜드업",
+                "rarity": "−"
+            },
+            {
+                "num": "648",
+                "name": "언페어 스탬프",
+                "rarity": "−"
+            },
+            {
+                "num": "649",
+                "name": "에너지 갈아 달기",
+                "rarity": "−"
+            },
+            {
+                "num": "650",
+                "name": "에너지 동전",
+                "rarity": "−"
+            },
+            {
+                "num": "651",
+                "name": "에너지 리사이클",
+                "rarity": "−"
+            },
+            {
+                "num": "652",
+                "name": "에너지 전송",
+                "rarity": "−"
+            },
+            {
+                "num": "653",
+                "name": "에너지 회수",
+                "rarity": "−"
+            },
+            {
+                "num": "654",
+                "name": "오래된 깃털화석",
+                "rarity": "−"
+            },
+            {
+                "num": "655",
+                "name": "용의 비약",
+                "rarity": "−"
+            },
+            {
+                "num": "656",
+                "name": "이상한사탕",
+                "rarity": "−"
+            },
+            {
+                "num": "657",
+                "name": "절친 포핀",
+                "rarity": "−"
+            },
+            {
+                "num": "658",
+                "name": "좋은상처약",
+                "rarity": "−"
+            },
+            {
+                "num": "659",
+                "name": "추리세트",
+                "rarity": "−"
+            },
+            {
+                "num": "660",
+                "name": "크래시 해머",
+                "rarity": "−"
+            },
+            {
+                "num": "661",
+                "name": "파워프로틴",
+                "rarity": "−"
+            },
+            {
+                "num": "662",
+                "name": "파이팅공",
+                "rarity": "−"
+            },
+            {
+                "num": "663",
+                "name": "페퍼의 샌드위치",
+                "rarity": "−"
+            },
+            {
+                "num": "664",
+                "name": "포켓기어3.0",
+                "rarity": "−"
+            },
+            {
+                "num": "665",
+                "name": "포켓몬 교체",
+                "rarity": "−"
+            },
+            {
+                "num": "666",
+                "name": "포켓몬 캐처",
+                "rarity": "−"
+            },
+            {
+                "num": "667",
+                "name": "포켓몬 회수 사이클론",
+                "rarity": "−"
+            },
+            {
+                "num": "668",
+                "name": "포켓바이털A",
+                "rarity": "−"
+            },
+            {
+                "num": "669",
+                "name": "포켓패드",
+                "rarity": "−"
+            },
+            {
+                "num": "670",
+                "name": "프라임 캐처",
+                "rarity": "−"
+            },
+            {
+                "num": "671",
+                "name": "프레셔스캐리",
+                "rarity": "−"
+            },
+            {
+                "num": "672",
+                "name": "하이퍼 아로마",
+                "rarity": "−"
+            },
+            {
+                "num": "673",
+                "name": "하이퍼볼",
+                "rarity": "−"
+            },
+            {
+                "num": "674",
+                "name": "핸드 트리머",
+                "rarity": "−"
+            },
+            {
+                "num": "675",
+                "name": "호브의 가방",
+                "rarity": "−"
+            },
+            {
+                "num": "676",
+                "name": "꼬시개열매",
+                "rarity": "−"
+            },
+            {
+                "num": "677",
+                "name": "난천의 파워웨이트",
+                "rarity": "−"
+            },
+            {
+                "num": "678",
+                "name": "디럭스봄",
+                "rarity": "−"
+            },
+            {
+                "num": "679",
+                "name": "릴리에의 진주",
+                "rarity": "−"
+            },
+            {
+                "num": "680",
+                "name": "마코열매",
+                "rarity": "−"
+            },
+            {
+                "num": "681",
+                "name": "맥시멈 벨트",
+                "rarity": "−"
+            },
+            {
+                "num": "682",
+                "name": "바리비열매",
+                "rarity": "−"
+            },
+            {
+                "num": "683",
+                "name": "반짝이는 결정",
+                "rarity": "−"
+            },
+            {
+                "num": "684",
+                "name": "브레이브뱅글",
+                "rarity": "−"
+            },
+            {
+                "num": "685",
+                "name": "사슬떡",
+                "rarity": "−"
+            },
+            {
+                "num": "686",
+                "name": "야파열매",
+                "rarity": "−"
+            },
+            {
+                "num": "687",
+                "name": "오카열매",
+                "rarity": "−"
+            },
+            {
+                "num": "688",
+                "name": "카운터 게인",
+                "rarity": "−"
+            },
+            {
+                "num": "689",
+                "name": "풍선",
+                "rarity": "−"
+            },
+            {
+                "num": "690",
+                "name": "하반열매",
+                "rarity": "−"
+            },
+            {
+                "num": "691",
+                "name": "호브의 구애머리띠",
+                "rarity": "−"
+            },
+            {
+                "num": "692",
+                "name": "히어로 망토",
+                "rarity": "−"
+            },
+            {
+                "num": "693",
+                "name": "힘의 모래시계",
+                "rarity": "−"
+            },
+            {
+                "num": "694",
+                "name": "N의 방안",
+                "rarity": "−"
+            },
+            {
+                "num": "695",
+                "name": "가이",
+                "rarity": "−"
+            },
+            {
+                "num": "696",
+                "name": "곤포",
+                "rarity": "−"
+            },
+            {
+                "num": "697",
+                "name": "규리의 눈빛",
+                "rarity": "−"
+            },
+            {
+                "num": "698",
+                "name": "도희의 비기",
+                "rarity": "−"
+            },
+            {
+                "num": "699",
+                "name": "드라세나",
+                "rarity": "−"
+            },
+            {
+                "num": "700",
+                "name": "로켓단의 람다",
+                "rarity": "−"
+            },
+            {
+                "num": "701",
+                "name": "로켓단의 랜스",
+                "rarity": "−"
+            },
+            {
+                "num": "702",
+                "name": "로켓단의 비주기",
+                "rarity": "−"
+            },
+            {
+                "num": "703",
+                "name": "로켓단의 아테나",
+                "rarity": "−"
+            },
+            {
+                "num": "704",
+                "name": "로켓단의 아폴로",
+                "rarity": "−"
+            },
+            {
+                "num": "705",
+                "name": "루티아의 어필",
+                "rarity": "−"
+            },
+            {
+                "num": "706",
+                "name": "릴리에의 결심",
+                "rarity": "−"
+            },
+            {
+                "num": "707",
+                "name": "마티스의 거래",
+                "rarity": "−"
+            },
+            {
+                "num": "708",
+                "name": "벨의 진심",
+                "rarity": "−"
+            },
+            {
+                "num": "709",
+                "name": "보스의 지령",
+                "rarity": "−"
+            },
+            {
+                "num": "710",
+                "name": "브라이어",
+                "rarity": "−"
+            },
+            {
+                "num": "711",
+                "name": "서퍼",
+                "rarity": "−"
+            },
+            {
+                "num": "712",
+                "name": "세류",
+                "rarity": "−"
+            },
+            {
+                "num": "713",
+                "name": "세이지",
+                "rarity": "−"
+            },
+            {
+                "num": "714",
+                "name": "수련의 돌봄",
+                "rarity": "−"
+            },
+            {
+                "num": "715",
+                "name": "시유",
+                "rarity": "−"
+            },
+            {
+                "num": "716",
+                "name": "시트론의 재치",
+                "rarity": "−"
+            },
+            {
+                "num": "717",
+                "name": "아세로라의 장난",
+                "rarity": "−"
+            },
+            {
+                "num": "718",
+                "name": "아이리스의 투지",
+                "rarity": "−"
+            },
+            {
+                "num": "719",
+                "name": "암호마니아의 해독",
+                "rarity": "−"
+            },
+            {
+                "num": "720",
+                "name": "오엽",
+                "rarity": "−"
+            },
+            {
+                "num": "721",
+                "name": "웨이트리스",
+                "rarity": "−"
+            },
+            {
+                "num": "722",
+                "name": "유빈의 확신",
+                "rarity": "−"
+            },
+            {
+                "num": "723",
+                "name": "저지맨",
+                "rarity": "−"
+            },
+            {
+                "num": "724",
+                "name": "제빈",
+                "rarity": "−"
+            },
+            {
+                "num": "725",
+                "name": "주리",
+                "rarity": "−"
+            },
+            {
+                "num": "726",
+                "name": "청목의 수완",
+                "rarity": "−"
+            },
+            {
+                "num": "727",
+                "name": "카지",
+                "rarity": "−"
+            },
+            {
+                "num": "728",
+                "name": "쿡",
+                "rarity": "−"
+            },
+            {
+                "num": "729",
+                "name": "크세로시키의 속셈",
+                "rarity": "−"
+            },
+            {
+                "num": "730",
+                "name": "타로",
+                "rarity": "−"
+            },
+            {
+                "num": "731",
+                "name": "탐험가의 선도",
+                "rarity": "−"
+            },
+            {
+                "num": "732",
+                "name": "태권왕의 수련",
+                "rarity": "−"
+            },
+            {
+                "num": "733",
+                "name": "투희",
+                "rarity": "−"
+            },
+            {
+                "num": "734",
+                "name": "팔자크",
+                "rarity": "−"
+            },
+            {
+                "num": "735",
+                "name": "하솔",
+                "rarity": "−"
+            },
+            {
+                "num": "736",
+                "name": "레거시 에너지",
+                "rarity": "−"
+            },
+            {
+                "num": "737",
+                "name": "로켓단 에너지",
+                "rarity": "−"
+            },
+            {
+                "num": "738",
+                "name": "리치 에너지",
+                "rarity": "−"
+            },
+            {
+                "num": "739",
+                "name": "부메랑 에너지",
+                "rarity": "−"
+            },
+            {
+                "num": "740",
+                "name": "스파이크 에너지",
+                "rarity": "−"
+            },
+            {
+                "num": "741",
+                "name": "이그니션 에너지",
+                "rarity": "−"
+            },
+            {
+                "num": "742",
+                "name": "프리즘 에너지",
+                "rarity": "−"
+            },
+            {
+                "num": "743",
+                "name": "민화의 덩쿠리",
+                "rarity": "AR"
+            },
+            {
+                "num": "744",
+                "name": "염뉴트",
+                "rarity": "AR"
+            },
+            {
+                "num": "745",
+                "name": "염버니",
+                "rarity": "AR"
+            },
+            {
+                "num": "746",
+                "name": "포푸니라",
+                "rarity": "AR"
+            },
+            {
+                "num": "747",
+                "name": "투구뿌논",
+                "rarity": "AR"
+            },
+            {
+                "num": "748",
+                "name": "마릴",
+                "rarity": "AR"
+            },
+            {
+                "num": "749",
+                "name": "다크펫",
+                "rarity": "AR"
+            },
+            {
+                "num": "750",
+                "name": "나루림",
+                "rarity": "AR"
+            },
+            {
+                "num": "751",
+                "name": "카포에라",
+                "rarity": "AR"
+            },
+            {
+                "num": "752",
+                "name": "멜리시",
+                "rarity": "AR"
+            },
+            {
+                "num": "753",
+                "name": "그라에나",
+                "rarity": "AR"
+            },
+            {
+                "num": "754",
+                "name": "입치트",
+                "rarity": "AR"
+            },
+            {
+                "num": "755",
+                "name": "이브이",
+                "rarity": "AR"
+            },
+            {
+                "num": "756",
+                "name": "청목의 찌르호크",
+                "rarity": "AR"
+            },
+            {
+                "num": "757",
+                "name": "나오하 ex",
+                "rarity": "AR"
+            },
+            {
+                "num": "758",
+                "name": "메더 ex",
+                "rarity": "AR"
+            },
+            {
+                "num": "759",
+                "name": "메가다부니 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "760",
+                "name": "보스의 지령",
+                "rarity": "SAR"
+            },
+            {
+                "num": "761",
+                "name": "메가메가니움 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "762",
+                "name": "메가염무왕 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "763",
+                "name": "메가장크로다일 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "764",
+                "name": "피카츄 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "765",
+                "name": "릴리에의 삐삐 ex",
+                "rarity": "SAR"
+            },
+            {
+                "num": "766",
+                "name": "메가리자몽Y ex",
+                "rarity": "MUR"
+            },
+            {
+                "num": "767",
+                "name": "기본 풀 에너지",
+                "rarity": "에너지"
+            },
+            {
+                "num": "768",
+                "name": "기본 불꽃 에너지",
+                "rarity": "에너지"
+            },
+            {
+                "num": "769",
+                "name": "기본 물 에너지",
+                "rarity": "에너지"
+            },
+            {
+                "num": "770",
+                "name": "기본 번개 에너지",
+                "rarity": "에너지"
+            },
+            {
+                "num": "771",
+                "name": "기본 초 에너지",
+                "rarity": "에너지"
+            },
+            {
+                "num": "772",
+                "name": "기본 격투 에너지",
+                "rarity": "에너지"
+            },
+            {
+                "num": "773",
+                "name": "기본 악 에너지",
+                "rarity": "에너지"
+            },
+            {
+                "num": "774",
+                "name": "기본 강철 에너지",
+                "rarity": "에너지"
+            }
+        ]
+    }
+]
