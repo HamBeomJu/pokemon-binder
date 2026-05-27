@@ -1069,15 +1069,8 @@
     <div id="bs-box">
         <div id="bs-header">
             <span id="bs-title">🔍 내 바인더</span>
-            <input id="bs-input" type="text" placeholder="카드 검색… (비워두면 전체 보기)" autocomplete="off">
+            <input id="bs-input" type="text" placeholder="이름, 번호, 세트코드, 페이지번호… 뭐든 입력하세요" autocomplete="off">
             <button id="bs-close">✕</button>
-        </div>
-        <div id="bs-filter-chips" class="search-filter-chips" style="padding-top:8px;border-bottom:1px solid rgba(255,255,255,0.05);">
-            <button class="sfc active" data-scope="all">전체</button>
-            <button class="sfc" data-scope="name">이름</button>
-            <button class="sfc" data-scope="num">번호</button>
-            <button class="sfc" data-scope="set">세트코드</button>
-            <button class="sfc" data-scope="page">페이지</button>
         </div>
         <div id="bs-status"></div>
         <div id="bs-grid"></div>
@@ -1103,14 +1096,8 @@
             <span id="db-nav-text"></span>
         </div>
         <div id="db-search-bar">
-            <input id="db-search-input" type="text" placeholder="팩 이름 또는 카드 이름·번호 검색…" autocomplete="off">
+            <input id="db-search-input" type="text" placeholder="이름, 번호, 레어도, 세트코드… 뭐든 입력하세요" autocomplete="off">
             <button id="db-search-clear">✕</button>
-        </div>
-        <div id="db-filter-chips" class="search-filter-chips">
-            <button class="sfc active" data-scope="all">전체</button>
-            <button class="sfc" data-scope="name">이름</button>
-            <button class="sfc" data-scope="num">번호</button>
-            <button class="sfc" data-scope="rarity">레어도</button>
         </div>
         <div id="db-status">시리즈를 선택하세요</div>
         <div id="db-content"></div>
@@ -2251,11 +2238,14 @@ async function showKrCards(pack) {
         const rarColor = RARITY_COLOR[c.rarity] || 'rgba(255,255,255,0.3)';
         const rarBadge = c.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${c.rarity}</div>` : '';
         const imgSrc = thumbUrls[i] || '';
+        const numPad = String(c.num).padStart(3,'0');
+        const _ds = [pack.code, numPad, c.num, c.name||'', c.rarity||'',
+                     `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
         return `
-        <div class="db-card-item" data-idx="${i}" title="${c.num} ${c.name}${c.rarity ? ' ['+c.rarity+']' : ''}">
+        <div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.name}${c.rarity ? ' ['+c.rarity+']' : ''}">
             <img src="${imgSrc}" loading="lazy" alt="${c.name}" onerror="this.parentElement.style.opacity='0.15'">
             ${rarBadge}
-            <div class="db-card-label">${c.num}  ${c.name}</div>
+            <div class="db-card-label">${numPad}  ${c.name}</div>
             <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
         </div>`;
     }).join('')}</div>`;
@@ -2367,12 +2357,16 @@ async function showJpCards(pack) {
     function renderCards(cards) {
         const fullUrls = cards.map(c => c.full);
         dbStatus.textContent = `총 ${cards.length}장`;
-        dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => `
-            <div class="db-card-item" data-idx="${i}" title="${c.label}">
+        dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => {
+            const numPad = String(i+1).padStart(3,'0');
+            const _ds = [pack.code, numPad, String(i+1), c.label||'',
+                         `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
+            return `
+            <div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.label}">
                 <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
-                <div class="db-card-label">${c.label}</div>
+                <div class="db-card-label">${numPad}  ${c.label}</div>
                 <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
-            </div>`).join('')}</div>`;
+            </div>`;}).join('')}</div>`;
         dbContent.querySelectorAll('.db-card-item').forEach(el => {
             el.addEventListener('click', e => {
                 if (e.target.closest('.db-add-btn')) {
@@ -2473,12 +2467,17 @@ async function showEnCards(set) {
     });
     const fullUrls = cards.map(c => c.full);
     dbStatus.textContent = `${total}장`;
-    dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => `
-        <div class="db-card-item" data-idx="${i}" title="${c.label}">
+    dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => {
+        const numPad = String(i+1).padStart(3,'0');
+        const _ds = [set.id, set.name||'', numPad, String(i+1), c.label||'',
+                     `${set.id}${numPad}`, `${set.id}/${numPad}`].join(' ').toLowerCase();
+        return `
+        <div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${set.id} ${numPad}">
             <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
-            <div class="db-card-label">${c.label}</div>
+            <div class="db-card-label">${numPad}</div>
             <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
-        </div>`).join('')}</div>`;
+        </div>`;
+    }).join('')}</div>`;
     dbContent.querySelectorAll('.db-card-item').forEach(el => {
         el.addEventListener('click', e => {
             if (e.target.closest('.db-add-btn')) {
@@ -3114,52 +3113,67 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
 });
 
 /* ══════════════════════════════════════
-   DB 검색
+   DB 검색 (통합)
 ══════════════════════════════════════ */
 {
-    const dbSI    = document.getElementById('db-search-input');
-    const dbSC    = document.getElementById('db-search-clear');
-    const dbChips = document.querySelectorAll('#db-filter-chips .sfc');
-    let dbScope   = 'all';
+    const dbSI = document.getElementById('db-search-input');
+    const dbSC = document.getElementById('db-search-clear');
 
-    const DB_PH = {
-        all:    '팩 이름 또는 카드 이름·번호 검색…',
-        name:   '카드 이름으로 검색… (예: 피카츄, PIKACHU)',
-        num:    '카드 번호로 검색… (예: 001, 025)',
-        rarity: '레어도로 검색… (예: RR, SR, HR, AR)',
-    };
+    /* 검색어 → 매칭 조건 배열 반환
+       groups: AND 조건. 각 그룹은 OR 대안 목록. */
+    function buildMatchGroups(q) {
+        if (!q) return [];
 
-    dbChips.forEach(chip => {
-        chip.addEventListener('click', () => {
-            dbChips.forEach(b => b.classList.remove('active'));
-            chip.classList.add('active');
-            dbScope = chip.dataset.scope;
-            dbSI.placeholder = DB_PH[dbScope] || DB_PH.all;
-            dbSI.value = '';
-            applyDbFilter();
-            dbSI.focus();
-        });
-    });
+        const sp = q.split('/').map(p => p.trim()).filter(Boolean);
+
+        if (sp.length >= 2) {
+            const first = sp[0];
+            // "m1s092/063" → 세트+번호/토탈
+            const snM = first.match(/^([a-z][a-z0-9]*)(\d+)$/i);
+            if (snM) {
+                const [, set, num] = snM;
+                const np = num.padStart(3,'0');
+                return [[set], [num, np, set+num, set+np]];
+            }
+            // "092/063" → 번호/토탈 → 앞 번호만
+            if (sp.every(p => /^\d+$/.test(p))) {
+                return [[sp[0], sp[0].padStart(3,'0')]];
+            }
+            // "mc/766" → 세트코드/번호
+            const alphas = sp.filter(p => /[a-z]/i.test(p));
+            const nums   = sp.filter(p => /^\d+$/.test(p));
+            if (alphas.length && nums.length) {
+                const set = alphas[0], num = nums[0], np = num.padStart(3,'0');
+                return [[set], [num, np, set+num, set+np]];
+            }
+            return [[q]];
+        }
+
+        // "mc766" / "m1s092" → 세트+번호 직결
+        const snM = q.match(/^([a-z][a-z0-9]*)(\d+)$/i);
+        if (snM) {
+            const [, set, num] = snM;
+            return [[q, set+num.padStart(3,'0')]];
+        }
+        // 순수 숫자
+        if (/^\d+$/.test(q)) return [[q, q.padStart(3,'0')]];
+        // 텍스트 (이름, 레어도 등)
+        return [[q]];
+    }
 
     function applyDbFilter() {
-        const q = dbSI.value.trim().toLowerCase();
+        const raw = dbSI.value.trim();
+        const q   = raw.toLowerCase();
+
         if (dbView === 'cards') {
+            const groups = buildMatchGroups(q);
             let vis = 0, tot = 0;
             dbContent.querySelectorAll('.db-card-item').forEach(el => {
-                const labelText = (el.querySelector('.db-card-label')?.textContent || '').trim();
-                const parts     = labelText.split(/\s+/);
-                const numPart   = parts[0] || '';
-                const namePart  = parts.slice(1).join(' ');
-                const rarity    = (el.querySelector('.db-card-rarity')?.textContent || '').trim();
-                let show = true;
-                if (q) {
-                    switch (dbScope) {
-                        case 'name':   show = namePart.toLowerCase().includes(q); break;
-                        case 'num':    show = numPart.toLowerCase().includes(q); break;
-                        case 'rarity': show = rarity.toLowerCase().includes(q); break;
-                        default:       show = labelText.toLowerCase().includes(q) || rarity.toLowerCase().includes(q);
-                    }
-                }
+                const search = (el.dataset.search || '').toLowerCase();
+                const rarity = (el.querySelector('.db-card-rarity')?.textContent || '').toLowerCase();
+                const all    = search + ' ' + rarity;
+                // 모든 그룹이 만족되어야 show (AND)
+                const show   = !q || groups.every(grp => grp.some(v => all.includes(v)));
                 el.style.display = show ? '' : 'none';
                 tot++; if (show) vis++;
             });
@@ -3173,91 +3187,71 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
 
     dbSI.addEventListener('input', applyDbFilter);
     dbSC.addEventListener('click', () => { dbSI.value = ''; applyDbFilter(); dbSI.focus(); });
-
-    // DB 모달 열릴 때 포커스
     document.getElementById('btn-card-db').addEventListener('click', () => {
         requestAnimationFrame(() => dbSI.focus());
     }, { capture: true });
 }
 
 /* ══════════════════════════════════════
-   바인더 검색
+   바인더 검색 (통합)
 ══════════════════════════════════════ */
 {
     const bsModal  = document.getElementById('binder-search-modal');
     const bsInput  = document.getElementById('bs-input');
     const bsGrid   = document.getElementById('bs-grid');
     const bsStatus = document.getElementById('bs-status');
-    const bsChips  = document.querySelectorAll('#bs-filter-chips .sfc');
-    let bsScope    = 'all';
 
-    const BS_PH = {
-        all:  '카드 검색… (비워두면 전체 보기)',
-        name: '카드 이름으로 검색… (예: PIKACHU, MEWTWO)',
-        num:  '카드 번호로 검색… (예: 001, 025, 100)',
-        set:  '세트 코드로 검색… (예: MC, M1, sv1)',
-        page: '페이지 번호로 검색… (예: 1, 3, 5)',
-    };
+    /* URL → 검색용 통합 문자열 생성 */
+    function buildSearchStr(url, sp) {
+        if (!url) return '';
+        if (url.startsWith('data:')) return `로컬 p${sp} page${sp}`;
+        let num = '', name = '', set = '';
 
-    bsChips.forEach(chip => {
-        chip.addEventListener('click', () => {
-            bsChips.forEach(b => b.classList.remove('active'));
-            chip.classList.add('active');
-            bsScope = chip.dataset.scope;
-            bsInput.placeholder = BS_PH[bsScope] || BS_PH.all;
-            bsInput.value = '';
-            buildBsGrid('');
-            bsInput.focus();
-        });
-    });
-
-    /* URL 분해: num / name / set 각각 추출 */
-    function extractCardParts(url) {
-        if (!url || url.startsWith('data:')) return { num:'', name:'로컬', set:'', label:'로컬 이미지' };
         // artofpkm: .../001_P_PIKACHU.jpg
         const m1 = url.match(/\/(\d+)_[PTE]_(.+?)\.(?:jpg|png)/i);
-        if (m1) {
-            const n = m1[1], nm = m1[2].replace(/_/g,' ');
-            return { num: n, name: nm, set: '', label: `${n} ${nm}` };
-        }
+        if (m1) { num = m1[1]; name = m1[2].replace(/_/g,' '); }
+
         // KR CDN: /wmimages/SERIES/SET/SET_NUM.png
         const m2 = url.match(/wmimages\/[^/]+\/([^/]+)\/[^/]+_(\d+)\.png/i);
-        if (m2) return { num: m2[2], name: '', set: m2[1], label: `${m2[1]} ${m2[2]}` };
+        if (m2) { set = m2[1]; num = num || m2[2]; }
+
         // pokemontcg.io: /sv1/1.png
         const m3 = url.match(/pokemontcg\.io\/([^/]+)\/(\d+)/);
-        if (m3) return { num: m3[2], name: '', set: m3[1], label: `${m3[1]} ${m3[2]}` };
-        // fallback
-        const fn = url.split('/').pop().replace(/[?#].*$/, '');
-        return { num: '', name: '', set: '', label: fn };
+        if (m3) { set = set || m3[1]; num = num || m3[2]; }
+
+        const numPad = num ? num.padStart(3,'0') : '';
+        return [set, num, numPad, name,
+                set && numPad ? `${set}${numPad}` : '',
+                set && numPad ? `${set}/${numPad}` : '',
+                `p${sp}`, `page${sp}`].join(' ').toLowerCase();
     }
 
     function buildBsGrid(query) {
-        const q = (query || '').trim().toLowerCase();
+        const q  = (query || '').trim().toLowerCase();
+        const qv = q ? [q, q.padStart && /^\d+$/.test(q) ? q.padStart(3,'0') : ''].filter(Boolean) : [];
         const items = [];
+
         for (let sp = 1; sp <= activeBinder.pages; sp++) {
             for (const side of ['L', 'R']) {
                 const arr = cardData[`${activeBinder.id}_${sp}_${side}`];
                 if (!arr) continue;
-                arr.forEach((url, si) => {
+                arr.forEach(url => {
                     if (!url) return;
-                    const p = extractCardParts(url);
-                    let show = true;
-                    if (q) {
-                        switch (bsScope) {
-                            case 'name': show = p.name.toLowerCase().includes(q); break;
-                            case 'num':  show = p.num.includes(q); break;
-                            case 'set':  show = p.set.toLowerCase().includes(q); break;
-                            case 'page': show = String(sp) === q.replace(/[^0-9]/g,''); break;
-                            default: {
-                                const all = `${p.label} ${p.set} p${sp}`.toLowerCase();
-                                show = all.includes(q);
-                            }
-                        }
+                    const search = buildSearchStr(url, sp);
+                    // 페이지 번호 검색: "3" → p3
+                    const pageQ = q.replace(/[^0-9]/g,'');
+                    const show = !q || qv.some(v => search.includes(v))
+                                     || (pageQ && search.includes(`p${pageQ}`));
+                    if (show) {
+                        const parts = search.match(/^(\S+)\s+(\S+)\s+(\S+)\s+(.+?)\s+/);
+                        const label = parts ? `${parts[1]} ${parts[4]}`.trim() || parts[2]
+                                            : url.split('/').pop().replace(/[?#].*$/,'');
+                        items.push({ sp, url, label });
                     }
-                    if (show) items.push({ sp, url, label: p.label });
                 });
             }
         }
+
         bsStatus.textContent = q ? `검색 결과: ${items.length}장` : `총 ${items.length}장 꽂혀있음`;
         bsGrid.innerHTML = items.length
             ? items.map(it => `
@@ -3271,11 +3265,7 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
                </div>`;
 
         bsGrid.querySelectorAll('.bs-card-item').forEach(el => {
-            el.addEventListener('click', () => {
-                page = +el.dataset.sp;
-                initFill();
-                closeBsModal();
-            });
+            el.addEventListener('click', () => { page = +el.dataset.sp; initFill(); closeBsModal(); });
         });
     }
 
