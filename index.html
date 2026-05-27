@@ -1086,7 +1086,7 @@ const cardData = {};  // key: `${binderId}_${sp}_${side}` → Array(9) of dataUR
 
 function getCards(binderId, sp, side) {
     const key = `${binderId}_${sp}_${side}`;
-    if (!cardData[key]) cardData[key] = Array(9).fill(null);
+    if (!cardData[key]) cardData[key] = Array(12).fill(null);
     return cardData[key];
 }
 
@@ -1950,9 +1950,9 @@ function setDbLang(lang) {
     dbStatus.textContent = '불러오는 중...';
     buildSeriesRow();
     // 첫 번째 시리즈 자동 선택
-    const firstSeries = lang === 'kr' ? KR_SERIES[1].code   // SV
-                      : lang === 'jp' ? JP_SERIES[0].code    // SV
-                      : EN_SERIES[0].code;                   // sv
+    const firstSeries = lang === 'kr' ? KR_SERIES[0].code   // MEGA (최신)
+                      : lang === 'jp' ? JP_SERIES[0].code    // MEGA (최신)
+                      : EN_SERIES[0].code;                   // me (Mega Evolution)
     selectSeries(firstSeries);
 }
 
@@ -2075,14 +2075,23 @@ async function showKrCards(pack) {
             const r = await fetch(`/api/artofpkm/${pack.artofpkm_id}`);
             const j = await r.json();
             if (j.cards && j.cards.length > 0) {
-                // artofpkm 카드 수가 card_list보다 적을 수 있으므로 인덱스 안전 처리
-                thumbUrls = cards.map((_, i) => j.cards[i] ? j.cards[i].thumb : null);
-                fullUrls  = cards.map((_, i) => j.cards[i] ? j.cards[i].full  : null);
+                // artofpkm 카드 수가 card_list보다 적을 수 있으므로
+                // 없는 인덱스는 KR CDN으로 개별 폴백
+                thumbUrls = cards.map((c, i) => {
+                    if (j.cards[i]) return j.cards[i].thumb;
+                    const num = String(c.num).padStart(3, '0');
+                    return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}.png?w=200`;
+                });
+                fullUrls = cards.map((c, i) => {
+                    if (j.cards[i]) return j.cards[i].full;
+                    const num = String(c.num).padStart(3, '0');
+                    return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}.png`;
+                });
             }
         } catch(e) { /* fallthrough to KR CDN */ }
     }
 
-    // Korean CDN fallback
+    // Korean CDN fallback (artofpkm_id 없거나 전체 실패 시)
     if (!thumbUrls) {
         thumbUrls = cards.map(c => {
             const num = String(c.num).padStart(3, '0');
@@ -2349,8 +2358,9 @@ document.getElementById('db-back').addEventListener('click', () => {
     if (dbView === 'cards') {
         dbView = 'packs';
         dbNav.classList.remove('visible');
-        if (dbLang === 'kr') loadKrPacks(dbActiveSeries);
-        else loadEnSets(dbActiveSeries);
+        if (dbLang === 'kr')      loadKrPacks(dbActiveSeries);
+        else if (dbLang === 'jp') loadJpPacks(dbActiveSeries);
+        else                      loadEnSets(dbActiveSeries);
     }
 });
 
