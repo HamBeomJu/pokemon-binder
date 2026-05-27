@@ -25,47 +25,73 @@ const artofpkmCache = {};
 
 // ── Artofpkm helpers ────────────────────────────────────────────────────────
 
-function fetchArtofpkm(setId, cb, attempt) {
+function fetchArtofpkmPage(setId, page, cb, attempt) {
     attempt = attempt || 1;
-    if (artofpkmCache[setId]) return cb(null, artofpkmCache[setId]);
-
     const options = {
         hostname: 'www.artofpkm.com',
-        path: `/sets/${setId}/cards`,
+        path: `/sets/${setId}/cards` + (page > 1 ? `?page=${page}` : ''),
         headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'text/vnd.turbo-stream.html, text/html',
+            'Accept': 'text/html',
         }
     };
-
     const req = https.get(options, (r) => {
         if (r.statusCode === 301 || r.statusCode === 302) {
-            const newId = r.headers.location && r.headers.location.match(/\/sets\/(\d+)\//);
-            if (newId) return fetchArtofpkm(newId[1], cb, attempt);
+            const loc = r.headers.location;
+            const newId = loc && loc.match(/\/sets\/(\d+)\//);
+            if (newId) return fetchArtofpkmPage(newId[1], page, cb, attempt);
             return cb(new Error('redirect failed'));
         }
         let html = '';
         r.setEncoding('utf8');
         r.on('data', chunk => html += chunk);
-        r.on('end', () => {
-            const cards = parseCards(html);
-            // retry once if we got 0 cards (possible rate limit / empty response)
-            if (cards.length === 0 && attempt < 3) {
-                setTimeout(() => fetchArtofpkm(setId, cb, attempt + 1), 2000 * attempt);
-                return;
-            }
-            if (cards.length > 0) artofpkmCache[setId] = cards;
-            cb(null, cards);
-        });
+        r.on('end', () => cb(null, parseCards(html)));
     });
     req.on('error', (e) => {
         if (attempt < 3) {
-            setTimeout(() => fetchArtofpkm(setId, cb, attempt + 1), 2000 * attempt);
+            setTimeout(() => fetchArtofpkmPage(setId, page, cb, attempt + 1), 2000 * attempt);
         } else {
             cb(e);
         }
     });
     req.setTimeout(20000, () => { req.destroy(); });
+}
+
+function fetchArtofpkm(setId, cb) {
+    if (artofpkmCache[setId]) return cb(null, artofpkmCache[setId]);
+    const allCards = [];
+    const seen = new Set();
+
+    function nextPage(page) {
+        if (page > 20) {
+            if (allCards.length > 0) artofpkmCache[setId] = allCards;
+            return cb(null, allCards);
+        }
+        fetchArtofpkmPage(setId, page, (err, cards) => {
+            if (err) {
+                if (allCards.length > 0) {
+                    artofpkmCache[setId] = allCards;
+                    return cb(null, allCards);
+                }
+                return cb(err);
+            }
+            let added = 0;
+            for (const card of cards) {
+                if (!seen.has(card.file)) {
+                    seen.add(card.file);
+                    allCards.push(card);
+                    added++;
+                }
+            }
+            if (added === 0) {
+                if (allCards.length > 0) artofpkmCache[setId] = allCards;
+                return cb(null, allCards);
+            }
+            nextPage(page + 1);
+        });
+    }
+
+    nextPage(1);
 }
 
 function parseCards(html) {

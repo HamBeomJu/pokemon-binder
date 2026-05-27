@@ -27,21 +27,21 @@ function parseCards(html) {
     return cards;
 }
 
-function fetchArtofpkm(setId) {
+function fetchPage(setId, page) {
     return new Promise((resolve, reject) => {
         const options = {
             hostname: 'www.artofpkm.com',
-            path: `/sets/${setId}/cards`,
+            path: `/sets/${setId}/cards` + (page > 1 ? `?page=${page}` : ''),
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Accept': 'text/vnd.turbo-stream.html, text/html',
+                'Accept': 'text/html',
             }
         };
         const req = https.get(options, (r) => {
             if (r.statusCode === 301 || r.statusCode === 302) {
                 const loc = r.headers.location;
                 const newId = loc && loc.match(/\/sets\/(\d+)\//);
-                if (newId) return fetchArtofpkm(newId[1]).then(resolve).catch(reject);
+                if (newId) return fetchPage(newId[1], page).then(resolve).catch(reject);
                 return reject(new Error('redirect failed'));
             }
             let html = '';
@@ -52,6 +52,24 @@ function fetchArtofpkm(setId) {
         req.on('error', reject);
         req.setTimeout(15000, () => { req.destroy(); reject(new Error('timeout')); });
     });
+}
+
+async function fetchArtofpkm(setId) {
+    const allCards = [];
+    const seen = new Set();
+    for (let page = 1; page <= 20; page++) {
+        const cards = await fetchPage(setId, page);
+        let added = 0;
+        for (const card of cards) {
+            if (!seen.has(card.file)) {
+                seen.add(card.file);
+                allCards.push(card);
+                added++;
+            }
+        }
+        if (added === 0) break;
+    }
+    return allCards;
 }
 
 module.exports = async (req, res) => {

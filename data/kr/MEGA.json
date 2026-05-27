@@ -3424,6 +3424,7 @@
             "MEGA"
         ],
         "release_date": "2026-04-25",
+        "artofpkm_id": 585,
         "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/M4.png",
         "image_cover_url": "https://data1.pokemonkorea.co.kr/2026/04/2026-04-03_16-28-57-18746-1775201337.png",
         "card_list_detail": [
@@ -7728,5 +7729,20 @@
                 "rarity": "에너지"
             }
         ]
+    },
+    {
+        "code": "M5",
+        "name": "MEGA 확장팩 「어비스아이」",
+        "type": "pack",
+        "printed_total": "81",
+        "total": 81,
+        "series": [
+            "MEGA"
+        ],
+        "release_date": "2026-07-05",
+        "artofpkm_id": 588,
+        "image_symbol_url": "https://cards.image.pokemonkorea.co.kr/data/images/symbol/M5.png",
+        "image_cover_url": "",
+        "card_list_detail": []
     }
 ]
