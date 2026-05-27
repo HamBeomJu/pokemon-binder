@@ -647,6 +647,19 @@
         }
         .bs-card-item:hover .bs-card-label { opacity: 1; }
 
+        /* ══ 검색 필터 칩 (공용) ══ */
+        .search-filter-chips {
+            display: flex; gap: 5px; padding: 0 20px 9px; flex-shrink: 0; flex-wrap: wrap;
+        }
+        .sfc {
+            padding: 3px 12px; border-radius: 20px; cursor: pointer;
+            font-size: 11px; font-weight: 600; white-space: nowrap;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4); transition: all 0.12s;
+        }
+        .sfc:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.7); }
+        .sfc.active { background: rgba(88,88,255,0.28); border-color: rgba(100,100,255,0.5); color: #c8c8ff; }
+
         /* 슬롯 선택 오버레이 */
         #slot-pick-overlay {
             display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
@@ -1059,6 +1072,13 @@
             <input id="bs-input" type="text" placeholder="카드 검색… (비워두면 전체 보기)" autocomplete="off">
             <button id="bs-close">✕</button>
         </div>
+        <div id="bs-filter-chips" class="search-filter-chips" style="padding-top:8px;border-bottom:1px solid rgba(255,255,255,0.05);">
+            <button class="sfc active" data-scope="all">전체</button>
+            <button class="sfc" data-scope="name">이름</button>
+            <button class="sfc" data-scope="num">번호</button>
+            <button class="sfc" data-scope="set">세트코드</button>
+            <button class="sfc" data-scope="page">페이지</button>
+        </div>
         <div id="bs-status"></div>
         <div id="bs-grid"></div>
     </div>
@@ -1085,6 +1105,12 @@
         <div id="db-search-bar">
             <input id="db-search-input" type="text" placeholder="팩 이름 또는 카드 이름·번호 검색…" autocomplete="off">
             <button id="db-search-clear">✕</button>
+        </div>
+        <div id="db-filter-chips" class="search-filter-chips">
+            <button class="sfc active" data-scope="all">전체</button>
+            <button class="sfc" data-scope="name">이름</button>
+            <button class="sfc" data-scope="num">번호</button>
+            <button class="sfc" data-scope="rarity">레어도</button>
         </div>
         <div id="db-status">시리즈를 선택하세요</div>
         <div id="db-content"></div>
@@ -3091,22 +3117,54 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
    DB 검색
 ══════════════════════════════════════ */
 {
-    const dbSI = document.getElementById('db-search-input');
-    const dbSC = document.getElementById('db-search-clear');
+    const dbSI    = document.getElementById('db-search-input');
+    const dbSC    = document.getElementById('db-search-clear');
+    const dbChips = document.querySelectorAll('#db-filter-chips .sfc');
+    let dbScope   = 'all';
+
+    const DB_PH = {
+        all:    '팩 이름 또는 카드 이름·번호 검색…',
+        name:   '카드 이름으로 검색… (예: 피카츄, PIKACHU)',
+        num:    '카드 번호로 검색… (예: 001, 025)',
+        rarity: '레어도로 검색… (예: RR, SR, HR, AR)',
+    };
+
+    dbChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            dbChips.forEach(b => b.classList.remove('active'));
+            chip.classList.add('active');
+            dbScope = chip.dataset.scope;
+            dbSI.placeholder = DB_PH[dbScope] || DB_PH.all;
+            dbSI.value = '';
+            applyDbFilter();
+            dbSI.focus();
+        });
+    });
 
     function applyDbFilter() {
         const q = dbSI.value.trim().toLowerCase();
         if (dbView === 'cards') {
             let vis = 0, tot = 0;
             dbContent.querySelectorAll('.db-card-item').forEach(el => {
-                const text = (el.querySelector('.db-card-label')?.textContent || '').toLowerCase();
-                const show = !q || text.includes(q);
+                const labelText = (el.querySelector('.db-card-label')?.textContent || '').trim();
+                const parts     = labelText.split(/\s+/);
+                const numPart   = parts[0] || '';
+                const namePart  = parts.slice(1).join(' ');
+                const rarity    = (el.querySelector('.db-card-rarity')?.textContent || '').trim();
+                let show = true;
+                if (q) {
+                    switch (dbScope) {
+                        case 'name':   show = namePart.toLowerCase().includes(q); break;
+                        case 'num':    show = numPart.toLowerCase().includes(q); break;
+                        case 'rarity': show = rarity.toLowerCase().includes(q); break;
+                        default:       show = labelText.toLowerCase().includes(q) || rarity.toLowerCase().includes(q);
+                    }
+                }
                 el.style.display = show ? '' : 'none';
                 tot++; if (show) vis++;
             });
             if (tot) dbStatus.textContent = q ? `검색 결과: ${vis} / ${tot}장` : `총 ${tot}장`;
         } else {
-            // 팩 목록 필터
             dbContent.querySelectorAll('.db-pack-item').forEach(el => {
                 el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
             });
@@ -3130,22 +3188,47 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
     const bsInput  = document.getElementById('bs-input');
     const bsGrid   = document.getElementById('bs-grid');
     const bsStatus = document.getElementById('bs-status');
+    const bsChips  = document.querySelectorAll('#bs-filter-chips .sfc');
+    let bsScope    = 'all';
 
-    /* URL에서 검색 가능한 레이블 추출 */
-    function extractCardLabel(url) {
-        if (!url) return '';
-        if (url.startsWith('data:')) return '로컬 이미지';
+    const BS_PH = {
+        all:  '카드 검색… (비워두면 전체 보기)',
+        name: '카드 이름으로 검색… (예: PIKACHU, MEWTWO)',
+        num:  '카드 번호로 검색… (예: 001, 025, 100)',
+        set:  '세트 코드로 검색… (예: MC, M1, sv1)',
+        page: '페이지 번호로 검색… (예: 1, 3, 5)',
+    };
+
+    bsChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            bsChips.forEach(b => b.classList.remove('active'));
+            chip.classList.add('active');
+            bsScope = chip.dataset.scope;
+            bsInput.placeholder = BS_PH[bsScope] || BS_PH.all;
+            bsInput.value = '';
+            buildBsGrid('');
+            bsInput.focus();
+        });
+    });
+
+    /* URL 분해: num / name / set 각각 추출 */
+    function extractCardParts(url) {
+        if (!url || url.startsWith('data:')) return { num:'', name:'로컬', set:'', label:'로컬 이미지' };
         // artofpkm: .../001_P_PIKACHU.jpg
         const m1 = url.match(/\/(\d+)_[PTE]_(.+?)\.(?:jpg|png)/i);
-        if (m1) return `${m1[1]} ${m1[2].replace(/_/g, ' ')}`;
-        // KR CDN: /MEGA/M1/M1_001.png
-        const m2 = url.match(/\/([A-Z0-9]+[A-Z0-9]*)\/([A-Z0-9]+)_(\d+)\.png/i);
-        if (m2) return `${m2[2]} ${m2[3]}`;
-        // pokemontcg.io: /sv1/1_hires.png
+        if (m1) {
+            const n = m1[1], nm = m1[2].replace(/_/g,' ');
+            return { num: n, name: nm, set: '', label: `${n} ${nm}` };
+        }
+        // KR CDN: /wmimages/SERIES/SET/SET_NUM.png
+        const m2 = url.match(/wmimages\/[^/]+\/([^/]+)\/[^/]+_(\d+)\.png/i);
+        if (m2) return { num: m2[2], name: '', set: m2[1], label: `${m2[1]} ${m2[2]}` };
+        // pokemontcg.io: /sv1/1.png
         const m3 = url.match(/pokemontcg\.io\/([^/]+)\/(\d+)/);
-        if (m3) return `${m3[1]} ${m3[2]}`;
-        // 파일명 fallback
-        return url.split('/').pop().replace(/[?#].*$/, '');
+        if (m3) return { num: m3[2], name: '', set: m3[1], label: `${m3[1]} ${m3[2]}` };
+        // fallback
+        const fn = url.split('/').pop().replace(/[?#].*$/, '');
+        return { num: '', name: '', set: '', label: fn };
     }
 
     function buildBsGrid(query) {
@@ -3157,10 +3240,21 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
                 if (!arr) continue;
                 arr.forEach((url, si) => {
                     if (!url) return;
-                    const label = extractCardLabel(url);
-                    if (!q || label.toLowerCase().includes(q) || url.toLowerCase().includes(q)) {
-                        items.push({ sp, side, si, url, label });
+                    const p = extractCardParts(url);
+                    let show = true;
+                    if (q) {
+                        switch (bsScope) {
+                            case 'name': show = p.name.toLowerCase().includes(q); break;
+                            case 'num':  show = p.num.includes(q); break;
+                            case 'set':  show = p.set.toLowerCase().includes(q); break;
+                            case 'page': show = String(sp) === q.replace(/[^0-9]/g,''); break;
+                            default: {
+                                const all = `${p.label} ${p.set} p${sp}`.toLowerCase();
+                                show = all.includes(q);
+                            }
+                        }
                     }
+                    if (show) items.push({ sp, url, label: p.label });
                 });
             }
         }
@@ -3199,7 +3293,7 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
     document.getElementById('btn-binder-search').addEventListener('click', openBsModal);
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-            if (dbModal.classList.contains('open')) return; // DB 모달 열려있으면 무시
+            if (dbModal.classList.contains('open')) return;
             e.preventDefault();
             bsModal.classList.contains('open') ? closeBsModal() : openBsModal();
         }
