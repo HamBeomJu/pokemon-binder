@@ -20,10 +20,13 @@ const MIME = {
     '.ico' : 'image/x-icon',
 };
 
-// In-memory cache for artofpkm scraped data
+// In-memory cache
 const artofpkmCache = {};
 
-function fetchArtofpkm(setId, cb) {
+// ── Artofpkm helpers ────────────────────────────────────────────────────────
+
+function fetchArtofpkm(setId, cb, attempt) {
+    attempt = attempt || 1;
     if (artofpkmCache[setId]) return cb(null, artofpkmCache[setId]);
 
     const options = {
@@ -36,42 +39,49 @@ function fetchArtofpkm(setId, cb) {
     };
 
     const req = https.get(options, (r) => {
-        // Handle redirects
         if (r.statusCode === 301 || r.statusCode === 302) {
-            return fetchArtofpkmUrl(r.headers.location, cb);
+            const newId = r.headers.location && r.headers.location.match(/\/sets\/(\d+)\//);
+            if (newId) return fetchArtofpkm(newId[1], cb, attempt);
+            return cb(new Error('redirect failed'));
         }
         let html = '';
         r.setEncoding('utf8');
         r.on('data', chunk => html += chunk);
         r.on('end', () => {
             const cards = parseCards(html);
-            artofpkmCache[setId] = cards;
+            // retry once if we got 0 cards (possible rate limit / empty response)
+            if (cards.length === 0 && attempt < 3) {
+                setTimeout(() => fetchArtofpkm(setId, cb, attempt + 1), 2000 * attempt);
+                return;
+            }
+            if (cards.length > 0) artofpkmCache[setId] = cards;
             cb(null, cards);
         });
     });
-    req.on('error', e => cb(e));
-    req.setTimeout(15000, () => { req.destroy(); cb(new Error('timeout')); });
+    req.on('error', (e) => {
+        if (attempt < 3) {
+            setTimeout(() => fetchArtofpkm(setId, cb, attempt + 1), 2000 * attempt);
+        } else {
+            cb(e);
+        }
+    });
+    req.setTimeout(20000, () => { req.destroy(); });
 }
 
 function parseCards(html) {
     const cards = [];
-    // Turbo-stream format: src is absolute URL with filename like 048341_P_NAZONOKUSA.jpg
     const imgRe = /src="(https:\/\/www\.artofpkm\.com\/rails\/active_storage\/[^"]+\/(\d+_[PTE]_[^"\/]+\.jpg))"/g;
-
     const byFile = {};
     let m;
     while ((m = imgRe.exec(html)) !== null) {
         const file = m[2];
         const thumbUrl = m[1];
-        // Derive full-size by converting representation URL to blob URL
         const fullUrl = thumbUrl.replace(
             /\/rails\/active_storage\/representations\/redirect\/([^/]+)\/[^/]+\/(.+)$/,
             '/rails/active_storage/blobs/redirect/$1/$2'
         );
         if (!byFile[file]) byFile[file] = { thumb: thumbUrl, full: fullUrl };
     }
-
-    // Preserve order by finding filenames in document order
     const orderRe = /(\d+_[PTE]_[^"\/\s]+\.jpg)/g;
     const seen = new Set();
     while ((m = orderRe.exec(html)) !== null) {
@@ -85,10 +95,37 @@ function parseCards(html) {
     return cards;
 }
 
-http.createServer((req, res) => {
-    const pathname = url.parse(req.url).pathname;
+// ── pokemontcg.io proxy ─────────────────────────────────────────────────────
 
-    // ── Artofpkm proxy ──────────────────────────────────────────
+function fetchPokemontcg(setId, cb) {
+    const options = {
+        hostname: 'api.pokemontcg.io',
+        path: `/v2/cards?q=set.id:${encodeURIComponent(setId)}&pageSize=250&orderBy=number&select=id,name,images`,
+        headers: {
+            'User-Agent': 'Mozilla/5.0',
+            'Accept': 'application/json',
+        }
+    };
+    const req = https.get(options, (r) => {
+        let body = '';
+        r.setEncoding('utf8');
+        r.on('data', chunk => body += chunk);
+        r.on('end', () => {
+            try { cb(null, JSON.parse(body)); }
+            catch(e) { cb(new Error('parse error')); }
+        });
+    });
+    req.on('error', cb);
+    req.setTimeout(20000, () => { req.destroy(); cb(new Error('timeout')); });
+}
+
+// ── HTTP server ─────────────────────────────────────────────────────────────
+
+http.createServer((req, res) => {
+    const parsed   = url.parse(req.url, true);
+    const pathname = parsed.pathname;
+
+    // Artofpkm proxy
     if (pathname.startsWith('/api/artofpkm/')) {
         const setId = pathname.replace('/api/artofpkm/', '').replace(/\D/g, '');
         if (!setId) { res.writeHead(400); res.end('bad id'); return; }
@@ -109,7 +146,28 @@ http.createServer((req, res) => {
         return;
     }
 
-    // ── Static files ─────────────────────────────────────────────
+    // pokemontcg.io proxy
+    if (pathname === '/api/pokemontcg') {
+        const setId = (parsed.query.setId || '').replace(/[^a-zA-Z0-9_.-]/g, '');
+        if (!setId) { res.writeHead(400); res.end('bad setId'); return; }
+
+        fetchPokemontcg(setId, (err, data) => {
+            if (err) {
+                res.writeHead(502, {'Content-Type':'application/json'});
+                res.end(JSON.stringify({error: err.message}));
+                return;
+            }
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Cache-Control': 'public, max-age=3600',
+            });
+            res.end(JSON.stringify(data));
+        });
+        return;
+    }
+
+    // Static files
     const filePath = path.join(ROOT, pathname === '/' ? 'index.html' : pathname);
     fs.readFile(filePath, (err, data) => {
         if (err) { res.writeHead(404); res.end('Not found'); return; }

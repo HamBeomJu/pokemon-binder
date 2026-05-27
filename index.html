@@ -2244,6 +2244,15 @@ async function showJpCards(pack) {
         renderCards(cards);
     }
 
+    function showRetry(msg) {
+        dbStatus.textContent = msg;
+        dbContent.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(160,200,255,0.7)">
+            <div style="font-size:14px;margin-bottom:16px">${msg}</div>
+            <button onclick="showJpCards(window.__retryPack)" style="padding:8px 20px;background:rgba(100,160,255,0.2);border:1px solid rgba(100,160,255,0.4);border-radius:8px;color:#fff;cursor:pointer;font-size:13px">🔄 재시도</button>
+        </div>`;
+        window.__retryPack = pack;
+    }
+
     if (pack.artofpkm_id) {
         try {
             const r = await fetch(`/api/artofpkm/${pack.artofpkm_id}`);
@@ -2256,10 +2265,11 @@ async function showJpCards(pack) {
                 });
                 renderCards(cards);
             } else {
-                useTcgdex();
+                // artofpkm_id set but returned 0 cards — likely rate-limited, offer retry
+                showRetry('artofpkm 로딩 중... (서버가 응답 중입니다)');
             }
         } catch(e) {
-            useTcgdex();
+            showRetry(`로딩 실패 (${e.message})`);
         }
     } else {
         useTcgdex();
@@ -2285,39 +2295,47 @@ async function loadEnSets(seriesCode) {
                 </div>
             </div>`).join('')}</div>`;
         dbContent.querySelectorAll('.db-pack-item').forEach(el =>
-            el.addEventListener('click', () => showEnCards(el.dataset.id, filtered.find(s => s.id === el.dataset.id)?.name))
+            el.addEventListener('click', () => showEnCards(filtered.find(s => s.id === el.dataset.id)))
         );
     } catch(e) { dbStatus.textContent = '로딩 오류.'; }
 }
 
-async function showEnCards(setId, setName) {
+async function showEnCards(set) {
+    if (!set) return;
     dbView = 'cards';
     dbNav.classList.add('visible');
-    dbNavText.textContent = setName || setId;
+    dbNavText.textContent = set.name;
     dbStatus.textContent = '카드 불러오는 중...';
     dbContent.innerHTML = '';
-    try {
-        const url = `https://api.pokemontcg.io/v2/cards?q=set.id:${setId}&pageSize=250&orderBy=number&select=id,name,images`;
-        if (!dbCache[url]) { const r = await fetch(url); const j = await r.json(); dbCache[url] = j.data || []; }
-        const cards = dbCache[url];
-        const fullUrls = cards.map(c => c.images.large || c.images.small);
-        dbStatus.textContent = `${cards.length}장`;
-        dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => `
-            <div class="db-card-item" data-idx="${i}" title="${c.name}">
-                <img src="${c.images.small}" loading="lazy" alt="${c.name}" onerror="this.parentElement.style.opacity='0.15'">
-                <div class="db-card-label">${c.name}</div>
-                <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
-            </div>`).join('')}</div>`;
-        dbContent.querySelectorAll('.db-card-item').forEach(el => {
-            el.addEventListener('click', e => {
-                if (e.target.closest('.db-add-btn')) {
-                    enterSlotPickMode(fullUrls[+el.dataset.idx]);
-                } else {
-                    openCardModalFromDb(fullUrls, +el.dataset.idx);
-                }
-            });
+
+    const total = set.total || set.printedTotal || 0;
+    const base  = `https://images.pokemontcg.io/${set.id}`;
+    // Generate sequential card numbers 1..total
+    const cards = Array.from({ length: total }, (_, i) => {
+        const n = i + 1;
+        return {
+            thumb: `${base}/${n}.png`,
+            full:  `${base}/${n}_hires.png`,
+            label: String(n)
+        };
+    });
+    const fullUrls = cards.map(c => c.full);
+    dbStatus.textContent = `${total}장`;
+    dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => `
+        <div class="db-card-item" data-idx="${i}" title="${c.label}">
+            <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
+            <div class="db-card-label">${c.label}</div>
+            <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
+        </div>`).join('')}</div>`;
+    dbContent.querySelectorAll('.db-card-item').forEach(el => {
+        el.addEventListener('click', e => {
+            if (e.target.closest('.db-add-btn')) {
+                enterSlotPickMode(fullUrls[+el.dataset.idx]);
+            } else {
+                openCardModalFromDb(fullUrls, +el.dataset.idx);
+            }
         });
-    } catch(e) { dbStatus.textContent = '로딩 오류.'; }
+    });
 }
 
 document.getElementById('btn-card-db').addEventListener('click', openDbModal);
