@@ -554,9 +554,11 @@
 
         /* ══ DB 검색바 ══ */
         #db-search-bar {
-            padding: 8px 20px; display: flex; align-items: center; gap: 8px;
+            padding: 8px 20px; display: none; align-items: center; gap: 8px;
             border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;
         }
+        /* 카드 뷰(nav 표시 중)일 때만 검색창 노출 */
+        #db-nav.visible ~ #db-search-bar { display: flex; }
         #db-search-input {
             flex: 1; background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.12);
@@ -2399,6 +2401,19 @@ async function showJpCards(pack) {
         window.__retryPack = pack;
     }
 
+    // JP MEGA 팩 → KR CDN 코드 매핑 (artofpkm 폴백용)
+    const JP_MEGA_KR = { 'MEGA1a':'M1S', 'MEGA1b':'M1L', 'MEGA2':'M2',
+                          'MEGA2a':'M2a', 'MEGA3':'M3', 'MEGA4':'M4', 'MEGA5':'M5' };
+
+    function useKrCdn(krCode) {
+        const cards = Array.from({ length: total }, (_, i) => {
+            const num = String(i + 1).padStart(3, '0');
+            const base = `https://cards.image.pokemonkorea.co.kr/data/wmimages/MEGA/${krCode}/${krCode}_${num}`;
+            return { thumb: `${base}.png?w=200`, full: `${base}.png`, label: num };
+        });
+        renderCards(cards);
+    }
+
     if (pack.artofpkm_id) {
         try {
             const r = await fetch(`/api/artofpkm/${pack.artofpkm_id}`);
@@ -2411,11 +2426,16 @@ async function showJpCards(pack) {
                 });
                 renderCards(cards);
             } else {
-                // artofpkm_id set but returned 0 cards — likely rate-limited, offer retry
-                showRetry('artofpkm 로딩 중... (서버가 응답 중입니다)');
+                // artofpkm 빈 응답 → KR CDN 또는 tcgdex 폴백
+                const krCode = JP_MEGA_KR[pack.code];
+                if (krCode) useKrCdn(krCode);
+                else useTcgdex();
             }
         } catch(e) {
-            showRetry(`로딩 실패 (${e.message})`);
+            // 연결 오류 → KR CDN 또는 tcgdex 폴백
+            const krCode = JP_MEGA_KR[pack.code];
+            if (krCode) useKrCdn(krCode);
+            else showRetry(`로딩 실패 (${e.message})`);
         }
     } else {
         useTcgdex();
