@@ -2177,6 +2177,8 @@ const RARITY_COLOR = {
 async function showKrCards(pack) {
     dbView = 'cards';
     const series = (pack.series && pack.series[0]) || '';
+    // SM 시리즈는 CDN에 팩코드가 대문자로만 존재 (sm3n → SM3N)
+    const cdnCode = series === 'SM' ? pack.code.toUpperCase() : pack.code;
 
     let cards;
     if (pack.card_list_detail && pack.card_list_detail.length > 0) {
@@ -2211,12 +2213,12 @@ async function showKrCards(pack) {
                 thumbUrls = cards.map((c, i) => {
                     if (j.cards[i]) return j.cards[i].thumb;
                     const num = String(c.num).padStart(3, '0');
-                    return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}.png?w=200`;
+                    return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png?w=200`;
                 });
                 fullUrls = cards.map((c, i) => {
                     if (j.cards[i]) return j.cards[i].full;
                     const num = String(c.num).padStart(3, '0');
-                    return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}.png`;
+                    return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png`;
                 });
             }
         } catch(e) { /* fallthrough to KR CDN */ }
@@ -2226,11 +2228,11 @@ async function showKrCards(pack) {
     if (!thumbUrls) {
         thumbUrls = cards.map(c => {
             const num = String(c.num).padStart(3, '0');
-            return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}.png?w=200`;
+            return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png?w=200`;
         });
         fullUrls = cards.map(c => {
             const num = String(c.num).padStart(3, '0');
-            return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}.png?w=512`;
+            return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png?w=512`;
         });
     }
 
@@ -3222,7 +3224,8 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
 
         dbContent.innerHTML = `<div class="db-card-grid">${shown.map((r, i) => {
             const { pack, card, num, series } = r;
-            const base = `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}`;
+            const cdnC = series === 'SM' ? pack.code.toUpperCase() : pack.code;
+            const base = `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnC}/${cdnC}_${num}`;
             const rarColor = RARITY_COLOR[card.rarity] || '#555';
             const label = `${pack.code}·${num}${card.name ? ' '+card.name : ''}`;
             return `<div class="db-card-item db-srch" data-idx="${i}" data-pack="${pack.code}"
