@@ -741,7 +741,8 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 181
     },
     {
         "code": "bs9",
@@ -1492,7 +1493,8 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 189
     },
     {
         "code": "bs2",
@@ -2243,7 +2245,8 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 150
     },
     {
         "code": "bs3",
@@ -3346,7 +3349,8 @@
                 "rarity": "U",
                 "regulation": "BE"
             }
-        ]
+        ],
+        "artofpkm_id": 156
     },
     {
         "code": "bs5",
@@ -4097,7 +4101,8 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 171
     },
     {
         "code": "bs4",
@@ -4848,7 +4853,8 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 164
     },
     {
         "code": "bs1",
@@ -5972,7 +5978,8 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 147
     },
     {
         "code": "bs7",
@@ -6730,7 +6737,8 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 175
     },
     {
         "code": "bs6",
@@ -7833,7 +7841,8 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 166
     },
     {
         "code": "bs10",
@@ -8584,6 +8593,7 @@
                 "rarity": "U",
                 "regulation": "DP"
             }
-        ]
+        ],
+        "artofpkm_id": 195
     }
 ]

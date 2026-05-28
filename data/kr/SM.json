@@ -4405,7 +4405,8 @@
                 "rarity": "N",
                 "regulation": "BE"
             }
-        ]
+        ],
+        "artofpkm_id": 332
     },
     {
         "code": "sm2l",
@@ -8438,7 +8439,8 @@
                 "rarity": "N",
                 "regulation": "A"
             }
-        ]
+        ],
+        "artofpkm_id": 335
     },
     {
         "code": "sm3h",
@@ -14183,7 +14185,8 @@
                 "rarity": "N",
                 "regulation": "BE"
             }
-        ]
+        ],
+        "artofpkm_id": 341
     },
     {
         "code": "sm4plus",
@@ -18435,7 +18438,8 @@
                 "rarity": "SR",
                 "regulation": "A"
             }
-        ]
+        ],
+        "artofpkm_id": 345
     },
     {
         "code": "sm5s",
@@ -22773,7 +22777,8 @@
                 "rarity": "N",
                 "regulation": "B"
             }
-        ]
+        ],
+        "artofpkm_id": 352
     },
     {
         "code": "sm6",
@@ -26478,7 +26483,8 @@
                 "rarity": "U",
                 "regulation": "A"
             }
-        ]
+        ],
+        "artofpkm_id": 356
     },
     {
         "code": "sm6b",
@@ -28685,7 +28691,8 @@
                 "rarity": "U",
                 "regulation": "A"
             }
-        ]
+        ],
+        "artofpkm_id": 357
     },
     {
         "code": "sm7",
@@ -34107,7 +34114,8 @@
                 "rarity": "SR",
                 "regulation": "B"
             }
-        ]
+        ],
+        "artofpkm_id": 364
     },
     {
         "code": "sm7a",
@@ -37052,7 +37060,8 @@
                 "rarity": "U",
                 "regulation": "B"
             }
-        ]
+        ],
+        "artofpkm_id": 366
     },
     {
         "code": "sm9",
@@ -43517,7 +43526,8 @@
                 "rarity": "SSR",
                 "regulation": "A"
             }
-        ]
+        ],
+        "artofpkm_id": 368
     },
     {
         "code": "sm9a",
@@ -45368,7 +45378,8 @@
                 "rarity": "U",
                 "regulation": "C"
             }
-        ]
+        ],
+        "artofpkm_id": 373
     },
     {
         "code": "sm9b",
@@ -46530,7 +46541,8 @@
                 "rarity": "SR",
                 "regulation": "C"
             }
-        ]
+        ],
+        "artofpkm_id": 376
     },
     {
         "code": "smp2",

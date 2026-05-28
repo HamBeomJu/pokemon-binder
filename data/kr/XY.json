@@ -1178,7 +1178,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 286
     },
     {
         "code": "xy1x",
@@ -2359,7 +2360,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 285
     },
     {
         "code": "xy2",
@@ -3964,7 +3966,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 290
     },
     {
         "code": "xy3",
@@ -5838,7 +5841,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 294
     },
     {
         "code": "xy4",
@@ -7586,7 +7590,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 296
     },
     {
         "code": "xy5g",
@@ -9015,7 +9020,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 299
     },
     {
         "code": "xy5t",
@@ -10444,7 +10450,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 300
     },
     {
         "code": "cp1",
@@ -11034,7 +11041,8 @@
                 "rarity": "U",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 301
     },
     {
         "code": "xy6",
@@ -12685,7 +12693,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 305
     },
     {
         "code": "xy7",
@@ -14390,7 +14399,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 308
     },
     {
         "code": "xy8r",
@@ -15591,7 +15601,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 522
     },
     {
         "code": "xy8b",
@@ -16792,7 +16803,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 521
     },
     {
         "code": "cp2",
@@ -17333,7 +17345,8 @@
                 "rarity": "N",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 309
     },
     {
         "code": "xy9",
@@ -18977,7 +18990,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 526
     },
     {
         "code": "xy10",
@@ -20574,7 +20588,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 528
     },
     {
         "code": "cp3",
@@ -21200,7 +21215,8 @@
                 "rarity": "U",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 527
     },
     {
         "code": "cp4",
@@ -23627,7 +23643,8 @@
                 "rarity": "N",
                 "regulation": "BE"
             }
-        ]
+        ],
+        "artofpkm_id": 531
     },
     {
         "code": "xy11h",
@@ -24712,7 +24729,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 534
     },
     {
         "code": "xy11b",
@@ -25797,7 +25815,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 532
     },
     {
         "code": "cp5",
@@ -26511,7 +26530,8 @@
                 "rarity": "U",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 535
     },
     {
         "code": "cp6",
@@ -28497,7 +28517,8 @@
                 "rarity": "SR",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 536
     },
     {
         "code": "smxy",
@@ -31608,6 +31629,7 @@
                 "rarity": "N",
                 "regulation": "XY"
             }
-        ]
+        ],
+        "artofpkm_id": 537
     }
 ]

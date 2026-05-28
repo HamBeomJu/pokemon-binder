@@ -1026,7 +1026,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 228
     },
     {
         "code": "bw1b",
@@ -2055,7 +2056,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 227
     },
     {
         "code": "bw2",
@@ -3374,7 +3376,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 238
     },
     {
         "code": "bw3h",
@@ -4423,7 +4426,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 241
     },
     {
         "code": "bw3p",
@@ -5472,7 +5476,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 240
     },
     {
         "code": "bw4",
@@ -6844,7 +6849,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 247
     },
     {
         "code": "dc",
@@ -7229,7 +7235,8 @@
                 "rarity": "N",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 248
     },
     {
         "code": "bw5e",
@@ -8247,7 +8254,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 251
     },
     {
         "code": "bw5t",
@@ -9265,7 +9273,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 250
     },
     {
         "code": "bw6f",
@@ -10447,7 +10456,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 257
     },
     {
         "code": "bw6c",
@@ -11629,7 +11639,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 259
     },
     {
         "code": "bw7",
@@ -13061,7 +13072,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 261
     },
     {
         "code": "bw8s",
@@ -14116,7 +14128,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 269
     },
     {
         "code": "bw8v",
@@ -15170,7 +15183,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 271
     },
     {
         "code": "sc",
@@ -15668,7 +15682,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 274
     },
     {
         "code": "bw9",
@@ -17195,7 +17210,8 @@
                 "rarity": "SR",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 272
     },
     {
         "code": "ebb",
@@ -18994,6 +19010,7 @@
                 "rarity": "N",
                 "regulation": "BW"
             }
-        ]
+        ],
+        "artofpkm_id": 277
     }
 ]
