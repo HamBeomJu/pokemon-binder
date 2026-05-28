@@ -1,5 +1,25 @@
 const https = require('https');
+const fs    = require('fs');
+const path  = require('path');
+const os    = require('os');
 
+// ── 디스크 캐시 (Vercel /tmp, 24시간) ─────────────────────────────────────
+const CACHE_DIR = path.join(os.tmpdir(), 'artofpkm_cache');
+try { fs.mkdirSync(CACHE_DIR, { recursive: true }); } catch(e) {}
+
+function cacheGet(key) {
+    try {
+        const f = path.join(CACHE_DIR, key + '.json');
+        const stat = fs.statSync(f);
+        if (Date.now() - stat.mtimeMs < 86400000) return JSON.parse(fs.readFileSync(f, 'utf8'));
+    } catch(e) {}
+    return null;
+}
+function cacheSet(key, data) {
+    try { fs.writeFileSync(path.join(CACHE_DIR, key + '.json'), JSON.stringify(data)); } catch(e) {}
+}
+
+// ── 카드 파싱 ───────────────────────────────────────────────────────────────
 function parseCards(html) {
     const cards = [];
     const imgRe = /src="(https:\/\/www\.artofpkm\.com\/rails\/active_storage\/[^"]+\/(\d+_[PTE]_[^"\/]+\.jpg))"/g;
@@ -27,6 +47,7 @@ function parseCards(html) {
     return cards;
 }
 
+// ── 단일 페이지 fetch ────────────────────────────────────────────────────────
 function fetchPage(setId, page) {
     return new Promise((resolve, reject) => {
         const options = {
@@ -54,32 +75,52 @@ function fetchPage(setId, page) {
     });
 }
 
+// ── 전체 세트 fetch (병렬 배치) ──────────────────────────────────────────────
 async function fetchArtofpkm(setId) {
     const allCards = [];
     const seen = new Set();
-    for (let page = 1; page <= 20; page++) {
-        const cards = await fetchPage(setId, page);
-        let added = 0;
-        for (const card of cards) {
-            if (!seen.has(card.file)) {
-                seen.add(card.file);
-                allCards.push(card);
-                added++;
+    const BATCH = 5; // 5페이지씩 병렬
+
+    for (let batch = 0; batch < 4; batch++) {         // 최대 20페이지
+        const pages = Array.from({ length: BATCH }, (_, i) => batch * BATCH + i + 1);
+        const results = await Promise.all(pages.map(p => fetchPage(setId, p).catch(() => [])));
+        let addedInBatch = 0;
+        for (const cards of results) {
+            for (const card of cards) {
+                if (!seen.has(card.file)) {
+                    seen.add(card.file);
+                    allCards.push(card);
+                    addedInBatch++;
+                }
             }
         }
-        if (added === 0) break;
+        if (addedInBatch === 0) break;   // 이 배치에서 새 카드 없음 → 끝
     }
     return allCards;
 }
 
+// ── Vercel 핸들러 ────────────────────────────────────────────────────────────
 module.exports = async (req, res) => {
     const setId = (req.query.id || '').replace(/\D/g, '');
     if (!setId) { res.status(400).json({ error: 'bad id' }); return; }
-    try {
-        const cards = await fetchArtofpkm(setId);
+
+    // 캐시 확인
+    const cached = cacheGet(setId);
+    if (cached) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Cache-Control', 'public, max-age=86400');
-        res.json({ cards });
+        res.setHeader('X-Cache', 'HIT');
+        res.json(cached);
+        return;
+    }
+
+    try {
+        const cards = await fetchArtofpkm(setId);
+        const payload = { cards };
+        cacheSet(setId, payload);
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        res.json(payload);
     } catch (e) {
         res.status(502).json({ error: e.message });
     }

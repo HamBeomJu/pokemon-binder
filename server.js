@@ -3,6 +3,7 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const url   = require('url');
+const zlib  = require('zlib');
 
 const PORT = process.env.PORT || 3000;
 const ROOT = path.join(__dirname);
@@ -57,41 +58,36 @@ function fetchArtofpkmPage(setId, page, cb, attempt) {
     req.setTimeout(20000, () => { req.destroy(); });
 }
 
-function fetchArtofpkm(setId, cb) {
-    if (artofpkmCache[setId]) return cb(null, artofpkmCache[setId]);
+// Promise 래퍼
+function fetchArtofpkmPageP(setId, page) {
+    return new Promise((resolve) => {
+        fetchArtofpkmPage(setId, page, (err, cards) => resolve(err ? [] : cards));
+    });
+}
+
+async function fetchArtofpkmAsync(setId) {
+    if (artofpkmCache[setId]) return artofpkmCache[setId];
     const allCards = [];
     const seen = new Set();
+    const BATCH = 5;
 
-    function nextPage(page) {
-        if (page > 20) {
-            if (allCards.length > 0) artofpkmCache[setId] = allCards;
-            return cb(null, allCards);
-        }
-        fetchArtofpkmPage(setId, page, (err, cards) => {
-            if (err) {
-                if (allCards.length > 0) {
-                    artofpkmCache[setId] = allCards;
-                    return cb(null, allCards);
-                }
-                return cb(err);
-            }
-            let added = 0;
+    for (let batch = 0; batch < 4; batch++) {
+        const pages = Array.from({ length: BATCH }, (_, i) => batch * BATCH + i + 1);
+        const results = await Promise.all(pages.map(p => fetchArtofpkmPageP(setId, p)));
+        let added = 0;
+        for (const cards of results) {
             for (const card of cards) {
-                if (!seen.has(card.file)) {
-                    seen.add(card.file);
-                    allCards.push(card);
-                    added++;
-                }
+                if (!seen.has(card.file)) { seen.add(card.file); allCards.push(card); added++; }
             }
-            if (added === 0) {
-                if (allCards.length > 0) artofpkmCache[setId] = allCards;
-                return cb(null, allCards);
-            }
-            nextPage(page + 1);
-        });
+        }
+        if (added === 0) break;
     }
+    if (allCards.length > 0) artofpkmCache[setId] = allCards;
+    return allCards;
+}
 
-    nextPage(1);
+function fetchArtofpkm(setId, cb) {
+    fetchArtofpkmAsync(setId).then(cards => cb(null, cards)).catch(e => cb(e));
 }
 
 function parseCards(html) {
@@ -193,13 +189,32 @@ http.createServer((req, res) => {
         return;
     }
 
-    // Static files
+    // Static files (gzip for JSON/HTML)
     const filePath = path.join(ROOT, pathname === '/' ? 'index.html' : pathname);
     fs.readFile(filePath, (err, data) => {
         if (err) { res.writeHead(404); res.end('Not found'); return; }
         const ext = path.extname(filePath).toLowerCase();
-        res.writeHead(200, { 'Content-Type': MIME[ext] || 'text/plain' });
-        res.end(data);
+        const mime = MIME[ext] || 'text/plain';
+        const acceptsGzip = /gzip/.test(req.headers['accept-encoding'] || '');
+        // JSON/HTML만 압축 (이미지는 제외)
+        if (acceptsGzip && (ext === '.json' || ext === '.html' || ext === '.js' || ext === '.css')) {
+            zlib.gzip(data, (zerr, compressed) => {
+                if (zerr) {
+                    res.writeHead(200, { 'Content-Type': mime });
+                    res.end(data);
+                    return;
+                }
+                res.writeHead(200, {
+                    'Content-Type': mime,
+                    'Content-Encoding': 'gzip',
+                    'Vary': 'Accept-Encoding',
+                });
+                res.end(compressed);
+            });
+        } else {
+            res.writeHead(200, { 'Content-Type': mime });
+            res.end(data);
+        }
     });
 
 }).listen(PORT, () => {

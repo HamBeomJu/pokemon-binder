@@ -2168,8 +2168,20 @@ async function selectSeries(code) {
 
 async function loadKrPacks(seriesCode) {
     try {
-        const url = `/data/kr/${seriesCode}.json`;
-        if (!dbCache[url]) { const r = await fetch(url); dbCache[url] = await r.json(); }
+        // _meta.json = card_list_detail 없는 슬림 파일 (23KB vs 1.8MB)
+        const metaUrl = `/data/kr/${seriesCode}_meta.json`;
+        const fullUrl = `/data/kr/${seriesCode}.json`;
+        const url = metaUrl;
+        if (!dbCache[url]) {
+            const r = await fetch(url);
+            // _meta.json이 없으면 full JSON으로 폴백
+            if (!r.ok) {
+                if (!dbCache[fullUrl]) { const r2 = await fetch(fullUrl); dbCache[fullUrl] = await r2.json(); }
+                dbCache[url] = dbCache[fullUrl];
+            } else {
+                dbCache[url] = await r.json();
+            }
+        }
         const raw = dbCache[url];
         const allPacks = Array.isArray(raw) ? raw : Object.values(raw);
         // 팩 코드 기준 중복 제거만 (소드/실드처럼 이미지 같아도 다른 팩이면 유지)
@@ -2210,6 +2222,12 @@ async function loadKrPacks(seriesCode) {
             const pack = packs.find(p => p.code === el.dataset.code);
             if (pack) el.addEventListener('click', () => showKrCards(pack));
         });
+        // 팩 목록 렌더 후 full JSON을 백그라운드에서 프리패치 (카드 클릭 시 즉시 응답)
+        if (!dbCache[fullUrl]) {
+            setTimeout(() => {
+                fetch(fullUrl).then(r => r.json()).then(data => { dbCache[fullUrl] = data; }).catch(() => {});
+            }, 300);
+        }
     } catch(e) { dbStatus.textContent = '로딩 오류. 잠시 후 다시 시도하세요.'; }
 }
 
@@ -2236,6 +2254,23 @@ async function showKrCards(pack) {
     const series = (pack.series && pack.series[0]) || '';
     // SM 시리즈는 CDN에 팩코드가 대문자로만 존재 (sm3n → SM3N)
     const cdnCode = series === 'SM' ? pack.code.toUpperCase() : pack.code;
+
+    // card_list_detail이 없으면 full JSON lazy 로드 후 교체
+    if (!pack.card_list_detail && series) {
+        dbNav.classList.add('visible');
+        dbNavText.textContent = pack.name;
+        dbStatus.textContent = '카드 데이터 로딩 중…';
+        const fullUrl = `/data/kr/${series}.json`;
+        if (!dbCache[fullUrl]) {
+            try { const r = await fetch(fullUrl); if (r.ok) dbCache[fullUrl] = await r.json(); }
+            catch(e) { /* 무시 */ }
+        }
+        if (dbCache[fullUrl]) {
+            const allPacks = Array.isArray(dbCache[fullUrl]) ? dbCache[fullUrl] : Object.values(dbCache[fullUrl]);
+            const fullPack = allPacks.find(p => p.code === pack.code);
+            if (fullPack) pack = fullPack;
+        }
+    }
 
     let cards;
     if (pack.card_list_detail && pack.card_list_detail.length > 0) {
