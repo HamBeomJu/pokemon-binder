@@ -757,6 +757,46 @@
         .modal-nav:hover { background: rgba(255,255,255,0.16); color: #fff; border-color: rgba(255,255,255,0.3); transform: scale(1.08); }
         .modal-nav:disabled { opacity: 0.12; cursor: default; pointer-events: none; transform: none; }
 
+        /* ── CARD MEMO PANEL ── */
+        #card-modal-memo {
+            width: 220px; flex-shrink: 0;
+            background: rgba(18,18,28,0.85);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 16px 15px 12px;
+            display: none; flex-direction: column; gap: 11px;
+            max-height: 480px; overflow-y: auto;
+        }
+        #card-modal.open #card-modal-memo.visible { display: flex; }
+        #card-modal-memo h4 {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.35); text-transform: uppercase; margin: 0;
+        }
+        .memo-field { display: flex; flex-direction: column; gap: 4px; }
+        .memo-field label {
+            font-size: 11px; color: rgba(255,255,255,0.42);
+        }
+        .memo-field input, .memo-field textarea {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: rgba(255,255,255,0.88); font-size: 13px;
+            padding: 7px 10px; outline: none; resize: vertical;
+            font-family: inherit; width: 100%; box-sizing: border-box;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .memo-field input:focus, .memo-field textarea:focus {
+            border-color: rgba(110,110,255,0.55);
+            background: rgba(255,255,255,0.09);
+        }
+        .memo-field textarea { min-height: 76px; }
+        #memo-save-hint {
+            font-size: 10px; color: rgba(255,255,255,0.18);
+            text-align: right; transition: color 0.3s; letter-spacing: 0.03em;
+        }
+        #memo-save-hint.saved { color: rgba(90,220,110,0.75); }
+        @media (max-width: 740px) { #card-modal-memo { display: none !important; } }
+
         /* ══ PAGE NAV ══ */
         .page-nav { display: flex; align-items: center; gap: 14px; }
         .nav-arrow {
@@ -1135,6 +1175,22 @@
             <button id="card-modal-close">✕</button>
             <div id="card-modal-counter"></div>
         </div>
+        <div id="card-modal-memo">
+            <h4>📝 메모</h4>
+            <div class="memo-field">
+                <label>💰 가격</label>
+                <input type="text" id="memo-price" placeholder="예: 15,000원" autocomplete="off">
+            </div>
+            <div class="memo-field">
+                <label>🌐 판매 사이트</label>
+                <input type="text" id="memo-site" placeholder="네이버, 당근, eBay…" autocomplete="off">
+            </div>
+            <div class="memo-field">
+                <label>📋 메모</label>
+                <textarea id="memo-note" placeholder="상태, 그레이딩, 기타…"></textarea>
+            </div>
+            <div id="memo-save-hint">자동 저장</div>
+        </div>
         <button class="modal-nav" id="modal-next">&#8250;</button>
     </div>
 </div>
@@ -1212,6 +1268,7 @@ document.getElementById('sz-fit').addEventListener('click', autoFit);
    CARD DATA STORE
 ══════════════════════════════════════ */
 const cardData = {};  // key: `${binderId}_${sp}_${side}` → Array(9) of dataURL|null
+const memoData = {};  // key: `${binderId}_${sp}_${side}_${idx}` → { price, site, note }
 
 function getCards(binderId, sp, side) {
     const key = `${binderId}_${sp}_${side}`;
@@ -2548,6 +2605,7 @@ function saveToLocalStorage() {
             if (f.some(Boolean)) slim[k] = f;
         });
         localStorage.setItem('pb_cards', JSON.stringify(slim));
+        if (Object.keys(memoData).length) localStorage.setItem('pb_memos', JSON.stringify(memoData));
     } catch(e) { console.warn('localStorage 저장 실패:', e); }
 }
 
@@ -2568,6 +2626,8 @@ function loadFromLocalStorage() {
         }
         if (rawC) Object.assign(cardData, JSON.parse(rawC));
         if (rawS) Object.assign(stickerData, JSON.parse(rawS));
+        const rawM = localStorage.getItem('pb_memos');
+        if (rawM) Object.assign(memoData, JSON.parse(rawM));
     } catch(e) { console.warn('localStorage 로드 실패:', e); }
 }
 
@@ -2762,6 +2822,7 @@ const modalBackdrop = document.getElementById('card-modal-backdrop');
 const modalPrev     = document.getElementById('modal-prev');
 const modalNext     = document.getElementById('modal-next');
 const modalCounter  = document.getElementById('card-modal-counter');
+const modalMemo     = document.getElementById('card-modal-memo');
 
 let modalCardList = [];  // flat list of all filled pockets in current binder
 let modalCardIdx  = 0;
@@ -2796,7 +2857,54 @@ function setModalScale(s) {
     modalImg.style.transform = 'none';
 }
 
+/* ── 메모 로드/저장 ── */
+let memoSaveTimer;
+function memoKey(card) {
+    if (!card || card.sp == null) return null;
+    return `${activeBinder.id}_${card.sp}_${card.side}_${card.idx}`;
+}
+function loadMemo(card) {
+    const key = memoKey(card);
+    if (!key) { modalMemo.classList.remove('visible'); return; }
+    modalMemo.classList.add('visible');
+    const m = memoData[key] || {};
+    document.getElementById('memo-price').value = m.price || '';
+    document.getElementById('memo-site').value  = m.site  || '';
+    document.getElementById('memo-note').value  = m.note  || '';
+    const hint = document.getElementById('memo-save-hint');
+    hint.textContent = '자동 저장'; hint.classList.remove('saved');
+}
+function flushMemo() {
+    clearTimeout(memoSaveTimer);
+    const card = modalCardList[modalCardIdx];
+    const key  = memoKey(card);
+    if (!key) return;
+    const price = document.getElementById('memo-price').value.trim();
+    const site  = document.getElementById('memo-site').value.trim();
+    const note  = document.getElementById('memo-note').value.trim();
+    if (price || site || note) memoData[key] = { price, site, note };
+    else delete memoData[key];
+    saveToLocalStorage();
+}
+function saveMemoWithFeedback() {
+    flushMemo();
+    const hint = document.getElementById('memo-save-hint');
+    hint.textContent = '저장됨 ✓'; hint.classList.add('saved');
+    setTimeout(() => { hint.textContent = '자동 저장'; hint.classList.remove('saved'); }, 1500);
+}
+['memo-price','memo-site','memo-note'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+        clearTimeout(memoSaveTimer);
+        memoSaveTimer = setTimeout(saveMemoWithFeedback, 900);
+    });
+    // 포커스 잃으면 즉시 저장
+    document.getElementById(id).addEventListener('blur', saveMemoWithFeedback);
+});
+// 메모 패널 클릭 시 이벤트 버블링 차단 (배경 클릭→닫힘 방지)
+modalMemo.addEventListener('click', e => e.stopPropagation());
+
 function showModalCard(pos) {
+    flushMemo();  // 이전 카드 메모 저장
     modalImg.style.opacity = '0';
     setTimeout(() => {
         modalImg.src = modalCardList[pos].src;
@@ -2805,6 +2913,7 @@ function showModalCard(pos) {
         modalCounter.textContent = `${pos + 1} / ${modalCardList.length}`;
         modalPrev.disabled = pos === 0;
         modalNext.disabled = pos === modalCardList.length - 1;
+        loadMemo(modalCardList[pos]);
     }, 80);
 }
 
@@ -2821,8 +2930,10 @@ function openCardModal(src, sp, side, idx) {
     modalNext.disabled = modalCardIdx === modalCardList.length - 1;
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
+    loadMemo(modalCardList[modalCardIdx]);
 }
 function closeCardModal() {
+    flushMemo();
     modal.classList.remove('open');
     document.body.style.overflow = '';
     setModalScale(1);
@@ -2840,6 +2951,7 @@ function openCardModalFromDb(imgUrls, startIdx) {
     modalNext.disabled = startIdx === imgUrls.length - 1;
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
+    loadMemo(modalCardList[startIdx]);  // DB 카드는 sp 없어 메모 패널 숨겨짐
 }
 
 modalClose.addEventListener('click', closeCardModal);
