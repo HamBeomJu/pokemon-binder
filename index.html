@@ -554,11 +554,9 @@
 
         /* ══ DB 검색바 ══ */
         #db-search-bar {
-            padding: 8px 20px; display: none; align-items: center; gap: 8px;
+            padding: 8px 20px; display: flex; align-items: center; gap: 8px;
             border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;
         }
-        /* 카드 뷰(nav 표시 중)일 때만 검색창 노출 */
-        #db-nav.visible ~ #db-search-bar { display: flex; }
         #db-search-input {
             flex: 1; background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.12);
@@ -1098,7 +1096,7 @@
             <span id="db-nav-text"></span>
         </div>
         <div id="db-search-bar">
-            <input id="db-search-input" type="text" placeholder="이름, 번호, 레어도, 세트코드… 뭐든 입력하세요" autocomplete="off">
+            <input id="db-search-input" type="text" placeholder="캐릭터 이름, 카드 번호로 전체 검색…" autocomplete="off">
             <button id="db-search-clear">✕</button>
         </div>
         <div id="db-status">시리즈를 선택하세요</div>
@@ -2517,13 +2515,18 @@ document.querySelectorAll('.db-lang-btn').forEach(b =>
     b.addEventListener('click', () => setDbLang(b.dataset.lang))
 );
 document.getElementById('db-back').addEventListener('click', () => {
-    if (dbView === 'cards') {
+    if (dbView === 'cards' || dbView === 'search') {
         dbView = 'packs';
         dbNav.classList.remove('visible');
         const _dsi = document.getElementById('db-search-input'); if (_dsi) _dsi.value = '';
-        if (dbLang === 'kr')      loadKrPacks(dbActiveSeries);
-        else if (dbLang === 'jp') loadJpPacks(dbActiveSeries);
-        else                      loadEnSets(dbActiveSeries);
+        if (dbActiveSeries) {
+            if (dbLang === 'kr')      loadKrPacks(dbActiveSeries);
+            else if (dbLang === 'jp') loadJpPacks(dbActiveSeries);
+            else                      loadEnSets(dbActiveSeries);
+        } else {
+            dbContent.innerHTML = '';
+            dbStatus.textContent = '시리즈를 선택하세요';
+        }
     }
 });
 
@@ -3138,28 +3141,21 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
 {
     const dbSI = document.getElementById('db-search-input');
     const dbSC = document.getElementById('db-search-clear');
+    let dbSearchTimer;
 
-    /* 검색어 → 매칭 조건 배열 반환
-       groups: AND 조건. 각 그룹은 OR 대안 목록. */
+    /* 검색어 → 매칭 그룹 배열 (AND-of-ORs) */
     function buildMatchGroups(q) {
         if (!q) return [];
-
         const sp = q.split('/').map(p => p.trim()).filter(Boolean);
-
         if (sp.length >= 2) {
             const first = sp[0];
-            // "m1s092/063" → 세트+번호/토탈
             const snM = first.match(/^([a-z][a-z0-9]*)(\d+)$/i);
             if (snM) {
                 const [, set, num] = snM;
                 const np = num.padStart(3,'0');
                 return [[set], [num, np, set+num, set+np]];
             }
-            // "092/063" → 번호/토탈 → 앞 번호만
-            if (sp.every(p => /^\d+$/.test(p))) {
-                return [[sp[0], sp[0].padStart(3,'0')]];
-            }
-            // "mc/766" → 세트코드/번호
+            if (sp.every(p => /^\d+$/.test(p))) return [[sp[0], sp[0].padStart(3,'0')]];
             const alphas = sp.filter(p => /[a-z]/i.test(p));
             const nums   = sp.filter(p => /^\d+$/.test(p));
             if (alphas.length && nums.length) {
@@ -3168,23 +3164,102 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
             }
             return [[q]];
         }
-
-        // "mc766" / "m1s092" → 세트+번호 직결
         const snM = q.match(/^([a-z][a-z0-9]*)(\d+)$/i);
-        if (snM) {
-            const [, set, num] = snM;
-            return [[q, set+num.padStart(3,'0')]];
-        }
-        // 순수 숫자
+        if (snM) { const [, set, num] = snM; return [[q, set+num.padStart(3,'0')]]; }
         if (/^\d+$/.test(q)) return [[q, q.padStart(3,'0')]];
-        // 텍스트 (이름, 레어도 등)
         return [[q]];
     }
 
+    /* ── KR 전체 검색 ───────────────────────── */
+    async function runKrGlobalSearch(q) {
+        dbView = 'search';
+        dbNav.classList.add('visible');
+        dbNavText.textContent = `"${q}" 전체 검색 중…`;
+        dbStatus.textContent = '로딩 중…';
+        dbContent.innerHTML = '';
+
+        // 모든 KR 시리즈 JSON 병렬 로드 (캐시 활용)
+        await Promise.all(KR_SERIES.map(async s => {
+            const url = `/data/kr/${s.code}.json`;
+            if (!dbCache[url]) {
+                try { const r = await fetch(url); if (r.ok) dbCache[url] = await r.json(); }
+                catch(e) { /* 무시 */ }
+            }
+        }));
+
+        const groups = buildMatchGroups(q);
+        const results = [];
+
+        for (const s of KR_SERIES) {
+            const url = `/data/kr/${s.code}.json`;
+            if (!dbCache[url]) continue;
+            const raw   = dbCache[url];
+            const packs = Array.isArray(raw) ? raw : Object.values(raw);
+            for (const pack of packs) {
+                if (!pack.card_list_detail) continue;
+                const series = (pack.series && pack.series[0]) || s.code;
+                for (const card of pack.card_list_detail) {
+                    const num = String(card.num).padStart(3,'0');
+                    const haystack = [pack.code, num, card.num, card.name||'', card.rarity||''].join(' ').toLowerCase();
+                    const ok = groups.every(grp => grp.some(v => haystack.includes(v)));
+                    if (ok) results.push({ pack, card, num, series });
+                }
+            }
+        }
+
+        dbNavText.textContent = `"${q}" 전체 검색`;
+
+        if (results.length === 0) {
+            dbContent.innerHTML = `<div style="padding:48px;text-align:center;color:rgba(255,255,255,0.28);font-size:13px">검색 결과가 없습니다</div>`;
+            dbStatus.textContent = `검색 결과: 0장`;
+            return;
+        }
+
+        const shown = results.slice(0, 300);
+        const more  = results.length - shown.length;
+        dbStatus.textContent = `검색 결과: ${results.length}장${more > 0 ? ' (상위 300장 표시)' : ''}`;
+
+        dbContent.innerHTML = `<div class="db-card-grid">${shown.map((r, i) => {
+            const { pack, card, num, series } = r;
+            const base = `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${pack.code}/${pack.code}_${num}`;
+            const rarColor = RARITY_COLOR[card.rarity] || '#555';
+            const label = `${pack.code}·${num}${card.name ? ' '+card.name : ''}`;
+            return `<div class="db-card-item db-srch" data-idx="${i}" data-pack="${pack.code}"
+                data-search="${[pack.code,num,card.name||'',card.rarity||''].join(' ').toLowerCase()}"
+                title="${pack.name} ${num}${card.name?' '+card.name:''}${card.rarity?' ['+card.rarity+']':''}">
+                <img src="${base}.png?w=200" loading="lazy" alt="${card.name||num}"
+                    onerror="this.src='${base}.png';this.onerror=function(){this.parentElement.style.opacity='0.15'}">
+                ${card.rarity?`<div class="db-card-rarity" style="background:${rarColor};color:#fff;opacity:1">${card.rarity}</div>`:''}
+                <div class="db-card-label" style="opacity:1">${label}</div>
+            </div>`;
+        }).join('')}${more>0?`<div style="grid-column:1/-1;padding:12px;text-align:center;color:rgba(255,255,255,0.28);font-size:11.5px">… ${more}장 더 있습니다. 검색어를 좁혀보세요.</div>`:''}</div>`;
+
+        // 클릭 → 해당 팩의 카드뷰 열기
+        dbContent.querySelectorAll('.db-srch').forEach(el => {
+            el.addEventListener('click', async e => {
+                if (e.target.closest('.db-add-btn')) return;
+                const packCode = el.dataset.pack;
+                let foundPack = null;
+                for (const s of KR_SERIES) {
+                    const url = `/data/kr/${s.code}.json`;
+                    if (!dbCache[url]) continue;
+                    const raw = dbCache[url];
+                    const packs = Array.isArray(raw) ? raw : Object.values(raw);
+                    foundPack = packs.find(p => p.code === packCode);
+                    if (foundPack) break;
+                }
+                if (foundPack) { dbSI.value = ''; await showKrCards(foundPack); }
+            });
+        });
+    }
+
+    /* ── 통합 필터 ──────────────────────────── */
     function applyDbFilter() {
         const raw = dbSI.value.trim();
         const q   = raw.toLowerCase();
+        clearTimeout(dbSearchTimer);
 
+        // ① 팩 내부 카드뷰: 즉시 필터
         if (dbView === 'cards') {
             const groups = buildMatchGroups(q);
             let vis = 0, tot = 0;
@@ -3192,15 +3267,39 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
                 const search = (el.dataset.search || '').toLowerCase();
                 const rarity = (el.querySelector('.db-card-rarity')?.textContent || '').toLowerCase();
                 const all    = search + ' ' + rarity;
-                // 모든 그룹이 만족되어야 show (AND)
                 const show   = !q || groups.every(grp => grp.some(v => all.includes(v)));
                 el.style.display = show ? '' : 'none';
                 tot++; if (show) vis++;
             });
             if (tot) dbStatus.textContent = q ? `검색 결과: ${vis} / ${tot}장` : `총 ${tot}장`;
+            return;
+        }
+
+        // ② 검색어 지움: 팩 목록으로 복귀
+        if (!q) {
+            if (dbView === 'search') {
+                dbView = 'packs';
+                dbNav.classList.remove('visible');
+                if (dbActiveSeries) {
+                    if (dbLang === 'kr')      loadKrPacks(dbActiveSeries);
+                    else if (dbLang === 'jp') loadJpPacks(dbActiveSeries);
+                    else                      loadEnSets(dbActiveSeries);
+                } else { dbContent.innerHTML = ''; dbStatus.textContent = '시리즈를 선택하세요'; }
+            } else {
+                dbContent.querySelectorAll('.db-pack-item').forEach(el => el.style.display = '');
+                if (dbActiveSeries) dbStatus.textContent = dbContent.querySelectorAll('.db-pack-item').length + '개 팩';
+            }
+            return;
+        }
+
+        // ③ 팩 뷰 / 검색 뷰에서 텍스트 입력
+        if (dbLang === 'kr') {
+            // KR: 전체 카드 검색 (디바운스 250ms)
+            dbSearchTimer = setTimeout(() => runKrGlobalSearch(q), 250);
         } else {
+            // JP/EN: 팩 이름 필터
             dbContent.querySelectorAll('.db-pack-item').forEach(el => {
-                el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+                el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
             });
         }
     }
