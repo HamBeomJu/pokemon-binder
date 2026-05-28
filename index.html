@@ -2100,6 +2100,7 @@ function buildSeriesRow() {
 async function selectSeries(code) {
     dbActiveSeries = code; dbView = 'packs';
     dbNav.classList.remove('visible');
+    const _dsi2 = document.getElementById('db-search-input'); if (_dsi2) _dsi2.value = '';
     buildSeriesRow();
     dbContent.innerHTML = '';
     dbStatus.textContent = '불러오는 중...';
@@ -3294,8 +3295,16 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
 
         // ③ 팩 뷰 / 검색 뷰에서 텍스트 입력
         if (dbLang === 'kr') {
-            // KR: 전체 카드 검색 (디바운스 250ms)
-            dbSearchTimer = setTimeout(() => runKrGlobalSearch(q), 250);
+            if (q.length >= 2) {
+                // 2글자 이상: 전체 카드 검색 (디바운스 250ms)
+                dbSearchTimer = setTimeout(() => runKrGlobalSearch(q), 250);
+            } else if (dbView === 'search') {
+                // 1글자로 줄어든 경우 → 팩 목록으로 복귀
+                dbView = 'packs';
+                dbNav.classList.remove('visible');
+                if (dbActiveSeries) loadKrPacks(dbActiveSeries);
+                else { dbContent.innerHTML = ''; dbStatus.textContent = '시리즈를 선택하세요'; }
+            }
         } else {
             // JP/EN: 팩 이름 필터
             dbContent.querySelectorAll('.db-pack-item').forEach(el => {
@@ -3309,6 +3318,13 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
     document.getElementById('btn-card-db').addEventListener('click', () => {
         requestAnimationFrame(() => dbSI.focus());
     }, { capture: true });
+
+    // 카드뷰 진입/탈출 시 placeholder 자동 전환
+    new MutationObserver(() => {
+        dbSI.placeholder = (dbView === 'cards')
+            ? '이 팩 내 이름·번호·레어도 검색…'
+            : '캐릭터 이름, 카드 번호로 전체 검색…';
+    }).observe(document.getElementById('db-nav'), { attributes: true, attributeFilter: ['class'] });
 }
 
 /* ══════════════════════════════════════
