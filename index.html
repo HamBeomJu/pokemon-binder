@@ -551,6 +551,42 @@
         }
         .db-card-item:hover .db-add-btn { opacity: 1; pointer-events: auto; }
         .db-add-btn:hover { background: rgba(60,220,100,0.95); }
+        /* ♥ 위시리스트 버튼 */
+        .db-wish-btn {
+            position: absolute; top: 5px; left: 5px;
+            width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.45); font-size: 11px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.13s; font-family: inherit;
+            opacity: 0; pointer-events: none; z-index: 3; line-height: 1;
+        }
+        .db-card-item:hover .db-wish-btn { opacity: 1; pointer-events: auto; }
+        .db-wish-btn:hover { background: rgba(220,50,80,0.7); border-color: rgba(255,100,120,0.6); color: #fff; transform: scale(1.15); }
+        .db-card-item.wishlisted .db-wish-btn { opacity: 1; pointer-events: auto; background: rgba(220,50,80,0.85); border-color: rgba(255,120,140,0.7); color: #fff; }
+        /* 위시리스트 탭 버튼 */
+        #db-wish-tab {
+            margin-left: auto; padding: 4px 12px; border-radius: 20px;
+            background: rgba(220,50,80,0.15); border: 1px solid rgba(220,50,80,0.3);
+            color: rgba(255,150,170,0.7); font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: all 0.13s; display: flex; align-items: center; gap: 5px;
+        }
+        #db-wish-tab:hover { background: rgba(220,50,80,0.3); color: #fff; }
+        #db-wish-tab.active { background: rgba(220,50,80,0.45); border-color: rgba(255,100,130,0.7); color: #fff; }
+        #db-wish-count {
+            background: rgba(220,50,80,0.7); color: #fff;
+            border-radius: 10px; padding: 0 5px; font-size: 10px; font-weight: 700; min-width: 14px; text-align: center;
+            display: none;
+        }
+        #db-wish-count.has-items { display: inline-block; }
+        /* 위시리스트 카드에 팩명 표시 */
+        .db-wish-pack-label {
+            position: absolute; top: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.72); font-size: 7.5px; color: rgba(255,200,150,0.9);
+            padding: 2px 4px; text-align: center; opacity: 0; transition: opacity 0.12s;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .db-card-item:hover .db-wish-pack-label { opacity: 1; }
 
         /* ══ DB 검색바 ══ */
         #db-search-bar {
@@ -1128,6 +1164,7 @@
                 <button class="db-lang-btn" data-lang="jp">🇯🇵 일판</button>
                 <button class="db-lang-btn" data-lang="en">🇺🇸 영판</button>
             </div>
+            <button id="db-wish-tab">♥ 위시<span id="db-wish-count"></span></button>
             <button id="db-close">✕</button>
         </div>
         <div id="db-series-row"></div>
@@ -2032,6 +2069,88 @@ let dbView       = 'packs';
 let dbActiveSeries = null;
 const dbCache    = {};
 
+/* ══ 위시리스트 ══ */
+let wishlistData = [];   // [{key, pack_code, series, num, name, rarity, thumb, full, pack_name}]
+
+function wishKey(packCode, num) { return packCode + '_' + String(num).padStart(3,'0'); }
+
+function isWishlisted(packCode, num) {
+    return wishlistData.some(w => w.key === wishKey(packCode, num));
+}
+
+function toggleWishlist(item) {
+    const k = item.key;
+    const idx = wishlistData.findIndex(w => w.key === k);
+    if (idx >= 0) {
+        wishlistData.splice(idx, 1);
+    } else {
+        wishlistData.push(item);
+    }
+    updateWishCount();
+    saveToLocalStorage();
+    return idx < 0; // true = 추가됨
+}
+
+function updateWishCount() {
+    const el = document.getElementById('db-wish-count');
+    if (!el) return;
+    const n = wishlistData.length;
+    el.textContent = n;
+    el.classList.toggle('has-items', n > 0);
+    document.getElementById('db-wish-tab').classList.toggle('active', dbView === 'wishlist');
+}
+
+function showWishlist() {
+    dbView = 'wishlist';
+    dbNav.classList.remove('visible');
+    document.getElementById('db-wish-tab').classList.add('active');
+    document.querySelectorAll('.db-lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.db-series-btn').forEach(b => b.classList.remove('active'));
+    dbActiveSeries = null;
+    const srch = document.getElementById('db-search-input'); if (srch) srch.value = '';
+
+    if (wishlistData.length === 0) {
+        dbStatus.textContent = '위시리스트가 비어있어요';
+        dbContent.innerHTML = `<div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,0.25);font-size:13px">
+            <div style="font-size:36px;margin-bottom:16px">♥</div>
+            카드 DB에서 ♥를 눌러 추가해보세요
+        </div>`;
+        return;
+    }
+
+    dbStatus.textContent = `위시리스트 ${wishlistData.length}장`;
+    dbContent.innerHTML = `<div class="db-card-grid">${wishlistData.map((w, i) => {
+        const rarColor = RARITY_COLOR[w.rarity] || 'rgba(255,255,255,0.3)';
+        const rarBadge = w.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${w.rarity}</div>` : '';
+        return `
+        <div class="db-card-item wishlisted" data-widx="${i}"
+             title="${w.pack_code} ${w.num} ${w.name}${w.rarity?' ['+w.rarity+']':''}">
+            <img src="${w.thumb||''}" loading="lazy" alt="${w.name||w.num}" onerror="this.parentElement.style.opacity='0.15'">
+            ${rarBadge}
+            <div class="db-wish-pack-label">${w.pack_code}·${w.num}</div>
+            <div class="db-card-label">${w.num}  ${w.name||''}</div>
+            <button class="db-wish-btn" title="위시리스트 제거">♥</button>
+            <button class="db-add-btn" data-widx="${i}">+ 바인더</button>
+        </div>`;
+    }).join('')}</div>`;
+
+    // 이벤트
+    dbContent.querySelectorAll('.db-card-item').forEach(el => {
+        const i = +el.dataset.widx;
+        el.addEventListener('click', e => {
+            if (e.target.closest('.db-wish-btn')) {
+                toggleWishlist(wishlistData[i]);   // 제거
+                showWishlist();                     // 뷰 갱신
+            } else if (e.target.closest('.db-add-btn')) {
+                enterSlotPickMode(wishlistData[i].full || wishlistData[i].thumb);
+            } else {
+                const fullUrls = wishlistData.map(w => w.full || w.thumb);
+                openCardModalFromDb(fullUrls, i);
+            }
+        });
+    });
+}
+
 const KR_SERIES = [
     { code: 'MEGA', label: 'MEGA', sub: '메가시리즈' },
     { code: 'SV',   label: 'SV',   sub: '스칼렛&바이올렛' },
@@ -2118,6 +2237,7 @@ const EN_KR_NAMES = {
 
 function openDbModal() {
     dbModal.classList.add('open');
+    updateWishCount();
     const prevLang   = dbLang || 'kr';
     const prevSeries = dbActiveSeries;
     setDbLang(prevLang);
@@ -2334,22 +2454,41 @@ async function showKrCards(pack) {
         const rarBadge = c.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${c.rarity}</div>` : '';
         const imgSrc = thumbUrls[i] || '';
         const numPad = String(c.num).padStart(3,'0');
+        const wk = wishKey(pack.code, numPad);
+        const wished = isWishlisted(pack.code, numPad);
         const _ds = [pack.code, numPad, c.num, c.name||'', c.rarity||'',
                      `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
         return `
-        <div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.name}${c.rarity ? ' ['+c.rarity+']' : ''}">
+        <div class="db-card-item${wished?' wishlisted':''}" data-idx="${i}" data-wkey="${wk}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.name}${c.rarity ? ' ['+c.rarity+']' : ''}">
             <img src="${imgSrc}" loading="lazy" alt="${c.name}" onerror="this.parentElement.style.opacity='0.15'">
             ${rarBadge}
             <div class="db-card-label">${numPad}  ${c.name}</div>
+            <button class="db-wish-btn" title="${wished?'위시리스트 제거':'위시리스트 추가'}">♥</button>
             <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
         </div>`;
     }).join('')}</div>`;
     dbContent.querySelectorAll('.db-card-item').forEach(el => {
         el.addEventListener('click', e => {
-            if (e.target.closest('.db-add-btn')) {
-                enterSlotPickMode(fullUrls[+el.dataset.idx]);
+            const idx = +el.dataset.idx;
+            if (e.target.closest('.db-wish-btn')) {
+                const numPad = String(cards[idx].num).padStart(3,'0');
+                const added = toggleWishlist({
+                    key:       wishKey(pack.code, numPad),
+                    pack_code: pack.code,
+                    pack_name: pack.name,
+                    series:    series,
+                    num:       numPad,
+                    name:      cards[idx].name || '',
+                    rarity:    cards[idx].rarity || '',
+                    thumb:     thumbUrls[idx] || '',
+                    full:      fullUrls[idx]  || '',
+                });
+                el.classList.toggle('wishlisted', added);
+                e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
+            } else if (e.target.closest('.db-add-btn')) {
+                enterSlotPickMode(fullUrls[idx]);
             } else {
-                openCardModalFromDb(fullUrls, +el.dataset.idx);
+                openCardModalFromDb(fullUrls, idx);
             }
         });
     });
@@ -2605,10 +2744,23 @@ async function showEnCards(set) {
 document.getElementById('btn-card-db').addEventListener('click', openDbModal);
 document.getElementById('db-close').addEventListener('click', closeDbModal);
 document.getElementById('db-backdrop').addEventListener('click', closeDbModal);
-// 언어 탭 버튼이 있을 때만 이벤트 등록 (현재 한판만 활성화)
+// 언어 탭 버튼
 document.querySelectorAll('.db-lang-btn').forEach(b =>
     b.addEventListener('click', () => setDbLang(b.dataset.lang))
 );
+// 위시리스트 탭
+document.getElementById('db-wish-tab').addEventListener('click', () => {
+    if (dbView === 'wishlist') {
+        // 위시리스트에서 나가면 이전 시리즈 복귀
+        dbView = 'packs';
+        document.getElementById('db-wish-tab').classList.remove('active');
+        document.querySelectorAll('.db-lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === dbLang));
+        if (dbActiveSeries) selectSeries(dbActiveSeries);
+        else { dbContent.innerHTML = ''; dbStatus.textContent = '시리즈를 선택하세요'; }
+    } else {
+        showWishlist();
+    }
+});
 document.getElementById('db-back').addEventListener('click', () => {
     if (dbView === 'cards' || dbView === 'search') {
         dbView = 'packs';
@@ -2641,6 +2793,8 @@ function saveToLocalStorage() {
         });
         localStorage.setItem('pb_cards', JSON.stringify(slim));
         if (Object.keys(memoData).length) localStorage.setItem('pb_memos', JSON.stringify(memoData));
+        if (wishlistData.length) localStorage.setItem('pb_wishlist', JSON.stringify(wishlistData));
+        else localStorage.removeItem('pb_wishlist');
     } catch(e) { console.warn('localStorage 저장 실패:', e); }
 }
 
@@ -2663,6 +2817,8 @@ function loadFromLocalStorage() {
         if (rawS) Object.assign(stickerData, JSON.parse(rawS));
         const rawM = localStorage.getItem('pb_memos');
         if (rawM) Object.assign(memoData, JSON.parse(rawM));
+        const rawW = localStorage.getItem('pb_wishlist');
+        if (rawW) { wishlistData.length = 0; JSON.parse(rawW).forEach(w => wishlistData.push(w)); updateWishCount(); }
     } catch(e) { console.warn('localStorage 로드 실패:', e); }
 }
 
