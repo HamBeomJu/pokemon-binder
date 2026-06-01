@@ -1273,75 +1273,106 @@
         /* ══ 가계부 패널 ══ */
         #ledger-panel {
             display: flex; flex-direction: column;
-            flex: 1; overflow: hidden;
-            background: #08080f;
+            flex: 1; overflow: hidden; background: #08080f;
         }
         #ledger-header {
-            padding: 16px 24px 14px;
+            padding: 14px 24px 12px;
             border-bottom: 1px solid rgba(255,255,255,0.06);
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; gap: 12px;
             background: #0c0c18; flex-shrink: 0;
         }
-        #ledger-title { font-size: 15px; font-weight: 700; flex: 1; letter-spacing: -0.02em; }
+        #ledger-title { font-size: 14px; font-weight: 700; flex: 1; letter-spacing: -0.02em; }
 
-        /* 요약 카드 */
+        /* 요약 바 */
         #ledger-summary {
-            display: flex; gap: 10px; padding: 16px 24px 12px;
-            flex-shrink: 0; flex-wrap: wrap;
+            display: flex; gap: 0; padding: 0; flex-shrink: 0;
+            background: #0a0a16; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .ls-card {
-            flex: 1; min-width: 120px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 10px; padding: 13px 15px;
+            flex: 1; padding: 12px 16px; border-right: 1px solid rgba(255,255,255,0.05);
         }
-        .ls-label { font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.35); margin-bottom: 7px; letter-spacing: 0.03em; text-transform: uppercase; }
-        .ls-val { font-size: 17px; font-weight: 700; color: #fff; }
+        .ls-card:last-child { border-right: none; }
+        .ls-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3); margin-bottom: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+        .ls-val { font-size: 15px; font-weight: 700; color: #fff; }
         .ls-buy-color { color: #ff8060; }
         .ls-sell-color { color: #50e880; }
 
         /* 툴바 */
-        #ledger-toolbar { padding: 0 24px 12px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
+        #ledger-toolbar {
+            padding: 10px 20px; flex-shrink: 0;
+            display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
         #ledger-add-btn {
             padding: 7px 15px; border-radius: 8px;
             background: rgba(88,88,255,0.18); border: 1px solid rgba(88,88,255,0.35);
             color: #a0a0ff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.13s;
         }
         #ledger-add-btn:hover { background: rgba(88,88,255,0.35); color: #fff; }
-        #ledger-month-label { font-size: 11px; color: rgba(255,255,255,0.3); }
+        /* 필터 탭 */
+        .ledger-filter-btn {
+            padding: 5px 13px; border-radius: 20px; font-size: 11.5px; font-weight: 600;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+            color: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.13s;
+        }
+        .ledger-filter-btn:hover { color: rgba(255,255,255,0.8); }
+        .ledger-filter-btn.active { background: rgba(88,88,255,0.2); border-color: rgba(88,88,255,0.4); color: #c0c0ff; }
+        #ledger-count { font-size: 11px; color: rgba(255,255,255,0.25); margin-left: auto; }
 
-        /* 테이블 */
-        #ledger-table-wrap { flex: 1; overflow-y: auto; padding: 0 24px 24px; }
-        #ledger-table-wrap::-webkit-scrollbar { width: 4px; }
-        #ledger-table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
-        #ledger-table { width: 100%; border-collapse: collapse; }
-        #ledger-table th {
-            text-align: left; font-size: 10.5px; font-weight: 600;
-            color: rgba(255,255,255,0.3); padding: 8px 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-            white-space: nowrap; letter-spacing: 0.04em; text-transform: uppercase;
+        /* 카드 그리드 */
+        #ledger-grid-wrap { flex: 1; overflow-y: auto; padding: 20px 24px; }
+        #ledger-grid-wrap::-webkit-scrollbar { width: 4px; }
+        #ledger-grid-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+        #ledger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
         }
-        #ledger-table td {
-            padding: 10px 10px; font-size: 13px;
-            border-bottom: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.8);
+        /* 거래 카드 */
+        .lc-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px; overflow: hidden;
+            display: flex; flex-direction: column;
+            transition: all 0.18s; cursor: default;
         }
-        #ledger-table tr:hover td { background: rgba(255,255,255,0.02); }
-        .lt-date { color: rgba(255,255,255,0.38) !important; font-size: 12px !important; white-space: nowrap; }
-        .lt-card { font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .lt-type-badge { padding: 2px 9px; border-radius: 4px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .lc-card:hover { border-color: rgba(255,255,255,0.14); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .lc-img-wrap {
+            width: 100%; aspect-ratio: 3/4;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(88,88,255,0.05));
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .lc-img-wrap img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+        .lc-img-placeholder { font-size: 40px; opacity: 0.25; }
+        .lc-type-badge {
+            position: absolute; top: 8px; left: 8px;
+            padding: 3px 9px; border-radius: 6px; font-size: 10px; font-weight: 700;
+            backdrop-filter: blur(8px);
+        }
+        .lc-buy  { background: rgba(255,100,60,0.75); color: #fff; }
+        .lc-sell { background: rgba(40,200,100,0.75); color: #fff; }
+        .lc-body { padding: 12px 13px 6px; flex: 1; }
+        .lc-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lc-price { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .lc-buy-price  { color: #ff8060; }
+        .lc-sell-price { color: #50e880; }
+        .lc-date { font-size: 11px; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+        .lc-memo { font-size: 11px; color: rgba(255,255,255,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lc-footer {
+            padding: 8px 13px 10px; display: flex; gap: 6px;
+            border-top: 1px solid rgba(255,255,255,0.05); margin-top: 8px;
+        }
+        .lc-del {
+            flex: 1; padding: 6px; border-radius: 7px; font-size: 11px; font-weight: 600;
+            background: none; border: 1px solid rgba(255,60,60,0.25);
+            color: rgba(255,100,100,0.5); cursor: pointer; transition: all 0.12s;
+        }
+        .lc-del:hover { background: rgba(255,60,60,0.15); color: #ff6060; border-color: rgba(255,60,60,0.5); }
+        #ledger-empty { padding: 80px 0; text-align: center; color: rgba(255,255,255,0.2); font-size: 13px; line-height: 2; }
+        /* 구버전 테이블 스타일 잔재 */
         .lt-buy  { background: rgba(255,120,80,0.15); color: #ff8060; }
         .lt-sell { background: rgba(80,232,128,0.15); color: #50e880; }
-        .lt-price-buy  { color: #ff8060; font-weight: 600; white-space: nowrap; }
-        .lt-price-sell { color: #50e880; font-weight: 600; white-space: nowrap; }
-        .lt-memo { color: rgba(255,255,255,0.35) !important; font-size: 12px !important; }
-        .lt-del {
-            width: 22px; height: 22px; border-radius: 50%;
-            background: none; border: none; color: rgba(255,255,255,0.18);
-            cursor: pointer; font-size: 14px; line-height: 1; padding: 0;
-            display: flex; align-items: center; justify-content: center; transition: all 0.12s;
-        }
-        .lt-del:hover { background: rgba(255,60,60,0.2); color: #ff6060; }
-        #ledger-empty { padding: 60px 0; text-align: center; color: rgba(255,255,255,0.2); font-size: 13px; line-height: 1.8; }
 
         /* 거래 추가 모달 */
         #ledger-add-modal {
@@ -1551,23 +1582,13 @@
             </div>
             <div id="ledger-toolbar">
                 <button id="ledger-add-btn">＋ 거래 추가</button>
-                <span id="ledger-month-label"></span>
+                <button class="ledger-filter-btn active" data-filter="all">전체</button>
+                <button class="ledger-filter-btn" data-filter="buy">구매</button>
+                <button class="ledger-filter-btn" data-filter="sell">판매</button>
+                <span id="ledger-count"></span>
             </div>
-            <div id="ledger-table-wrap">
-                <table id="ledger-table">
-                    <thead>
-                        <tr>
-                            <th>날짜</th>
-                            <th>카드명</th>
-                            <th>유형</th>
-                            <th>금액</th>
-                            <th>메모</th>
-                            <th class="lt-img-cell">사진</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="ledger-tbody"></tbody>
-                </table>
+            <div id="ledger-grid-wrap">
+                <div id="ledger-grid"></div>
             </div>
         </div>
     </div>
@@ -3478,6 +3499,8 @@ function getLedgerMonth() {
     return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
 }
 
+let ledgerFilter = 'all';
+
 function renderLedger() {
     const thisMonth = getLedgerMonth();
     let monthBuy = 0, monthSell = 0, totalBuy = 0, totalSell = 0;
@@ -3495,40 +3518,49 @@ function renderLedger() {
     document.getElementById('ls-total-sell').textContent = fmtMoney(totalSell);
 
     const mnEl = document.getElementById('ls-month-net');
-    mnEl.textContent  = (monthNet >= 0 ? '+' : '-') + fmtMoney(monthNet);
-    mnEl.style.color  = monthNet > 0 ? '#50e880' : monthNet < 0 ? '#ff6060' : 'rgba(255,255,255,0.7)';
+    mnEl.textContent = (monthNet >= 0 ? '+' : '-') + fmtMoney(monthNet);
+    mnEl.style.color = monthNet > 0 ? '#50e880' : monthNet < 0 ? '#ff6060' : 'rgba(255,255,255,0.7)';
 
     const tnEl = document.getElementById('ls-total-net');
-    tnEl.textContent  = (totalNet >= 0 ? '+' : '-') + fmtMoney(totalNet);
-    tnEl.style.color  = totalNet > 0 ? '#50e880' : totalNet < 0 ? '#ff6060' : 'rgba(255,255,255,0.7)';
+    tnEl.textContent = (totalNet >= 0 ? '+' : '-') + fmtMoney(totalNet);
+    tnEl.style.color = totalNet > 0 ? '#50e880' : totalNet < 0 ? '#ff6060' : 'rgba(255,255,255,0.7)';
 
-    const now = new Date();
-    document.getElementById('ledger-month-label').textContent =
-        `${now.getFullYear()}년 ${now.getMonth()+1}월 기준`;
+    // 카드 그리드 렌더
+    const grid   = document.getElementById('ledger-grid');
+    const sorted = [...ledgerData]
+        .filter(t => ledgerFilter === 'all' || t.type === ledgerFilter)
+        .sort((a, b) => (b.date||'').localeCompare(a.date||''));
 
-    // 테이블
-    const tbody  = document.getElementById('ledger-tbody');
-    const sorted = [...ledgerData].sort((a, b) => (b.date||'').localeCompare(a.date||''));
+    document.getElementById('ledger-count').textContent = `총 ${sorted.length}건`;
+
     if (sorted.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6"><div id="ledger-empty">거래 내역이 없습니다<br><small style="font-size:11px;opacity:0.6">＋ 거래 추가 버튼으로 카드 구매/판매를 기록해보세요</small></div></td></tr>`;
+        grid.innerHTML = `<div id="ledger-empty" style="grid-column:1/-1">거래 내역이 없습니다<br><small style="font-size:11px;opacity:0.6">＋ 거래 추가 버튼으로 카드 구매/판매를 기록해보세요</small></div>`;
         return;
     }
-    tbody.innerHTML = sorted.map(t => {
+
+    grid.innerHTML = sorted.map(t => {
         const isBuy = t.type === 'buy';
-        const imgCell = t.image
-            ? `<img class="lt-img-thumb" src="${t.image}" title="클릭해서 크게보기" onclick="window.open('${t.image}','_blank')">`
-            : `<span style="color:rgba(255,255,255,0.15);font-size:11px">−</span>`;
-        return `<tr>
-            <td class="lt-date">${t.date||'-'}</td>
-            <td class="lt-card">${t.cardName||'-'}</td>
-            <td><span class="lt-type-badge ${isBuy?'lt-buy':'lt-sell'}">${isBuy?'구매':'판매'}</span></td>
-            <td class="${isBuy?'lt-price-buy':'lt-price-sell'}">${isBuy?'−':'+'}${fmtMoney(t.price)}</td>
-            <td class="lt-memo">${t.memo||''}</td>
-            <td class="lt-img-cell">${imgCell}</td>
-            <td><button class="lt-del" data-id="${t.id}">×</button></td>
-        </tr>`;
+        const imgHtml = t.image
+            ? `<img src="${t.image}" onclick="window.open('${t.image}','_blank')" title="클릭해서 크게보기">`
+            : `<div class="lc-img-placeholder">🃏</div>`;
+        return `<div class="lc-card">
+            <div class="lc-img-wrap">
+                ${imgHtml}
+                <span class="lc-type-badge ${isBuy ? 'lc-buy' : 'lc-sell'}">${isBuy ? '구매' : '판매'}</span>
+            </div>
+            <div class="lc-body">
+                <div class="lc-name">${t.cardName || '카드명 없음'}</div>
+                <div class="lc-price ${isBuy ? 'lc-buy-price' : 'lc-sell-price'}">${isBuy ? '−' : '+'}${fmtMoney(t.price)}</div>
+                <div class="lc-date">📅 ${t.date || '-'}</div>
+                ${t.memo ? `<div class="lc-memo">💬 ${t.memo}</div>` : ''}
+            </div>
+            <div class="lc-footer">
+                <button class="lc-del" data-id="${t.id}">삭제</button>
+            </div>
+        </div>`;
     }).join('');
-    tbody.querySelectorAll('.lt-del').forEach(btn =>
+
+    grid.querySelectorAll('.lc-del').forEach(btn =>
         btn.addEventListener('click', () => {
             const id = +btn.dataset.id;
             const idx = ledgerData.findIndex(t => t.id === id);
@@ -3536,6 +3568,16 @@ function renderLedger() {
         })
     );
 }
+
+/* 필터 버튼 */
+document.querySelectorAll('.ledger-filter-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.ledger-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        ledgerFilter = btn.dataset.filter;
+        renderLedger();
+    })
+);
 
 function openLedger()  { switchTab('ledger'); }
 function closeLedger() { switchTab('binder'); }
