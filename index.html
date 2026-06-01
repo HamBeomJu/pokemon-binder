@@ -1430,10 +1430,18 @@
         .ldm-row { display: flex; flex-direction: column; gap: 3px; }
         .ldm-row-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.05em; }
         .ldm-row-val { font-size: 13px; color: rgba(255,255,255,0.85); }
+        #ldm-edit, #ldm-del {
+            flex: 1; padding: 9px; border-radius: 9px; font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: all 0.13s;
+        }
+        #ldm-edit {
+            background: rgba(88,88,255,0.15); border: 1px solid rgba(88,88,255,0.3);
+            color: #a0a0ff;
+        }
+        #ldm-edit:hover { background: rgba(88,88,255,0.3); color: #fff; }
         #ldm-del {
-            margin-top: auto; padding: 9px; border-radius: 9px; font-size: 12px; font-weight: 600;
             background: none; border: 1px solid rgba(255,60,60,0.25);
-            color: rgba(255,100,100,0.5); cursor: pointer; transition: all 0.13s;
+            color: rgba(255,100,100,0.5);
         }
         #ldm-del:hover { background: rgba(255,60,60,0.15); color: #ff6060; border-color: rgba(255,60,60,0.5); }
 
@@ -1692,7 +1700,10 @@
                 <span class="ldm-row-label">메모</span>
                 <span class="ldm-row-val" id="ldm-memo"></span>
             </div>
-            <button id="ldm-del">🗑 삭제</button>
+            <div style="display:flex;gap:8px;margin-top:auto">
+                <button id="ldm-edit">✏️ 수정</button>
+                <button id="ldm-del">🗑 삭제</button>
+            </div>
         </div>
     </div>
 </div>
@@ -3692,6 +3703,11 @@ function closeLedgerDetail() {
 
 document.getElementById('ldm-close').addEventListener('click', closeLedgerDetail);
 document.getElementById('ldm-backdrop').addEventListener('click', closeLedgerDetail);
+document.getElementById('ldm-edit').addEventListener('click', () => {
+    const id = ldmCurrentId;
+    closeLedgerDetail();
+    openLedgerAddModal(id);
+});
 document.getElementById('ldm-del').addEventListener('click', () => {
     if (ldmCurrentId == null) return;
     const idx = ledgerData.findIndex(t => t.id === ldmCurrentId);
@@ -3727,20 +3743,42 @@ document.querySelectorAll('.main-tab').forEach(btn =>
 
 document.getElementById('btn-ledger').addEventListener('click', openLedger);
 
-/* 거래 추가 모달 */
-document.getElementById('ledger-add-btn').addEventListener('click', () => {
-    document.getElementById('la-date').value = new Date().toISOString().split('T')[0];
-    document.getElementById('la-card').value  = '';
-    document.getElementById('la-price').value = '';
-    document.getElementById('la-memo').value  = '';
-    document.getElementById('la-img-preview').innerHTML = '';
-    document.getElementById('la-img-hint').style.display = '';
-    ledgerAddImg  = null;
-    ledgerAddType = 'buy';
-    document.querySelectorAll('.la-type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === 'buy'));
+/* 거래 추가/수정 모달 */
+let ledgerEditId = null; // null=추가모드, id=수정모드
+
+function openLedgerAddModal(editId = null) {
+    ledgerEditId = editId;
+    const t = editId != null ? ledgerData.find(x => x.id === editId) : null;
+
+    document.getElementById('la-date').value  = t ? t.date  : new Date().toISOString().split('T')[0];
+    document.getElementById('la-card').value  = t ? t.cardName : '';
+    document.getElementById('la-price').value = t ? t.price : '';
+    document.getElementById('la-memo').value  = t ? (t.memo || '') : '';
+
+    // 이미지
+    ledgerAddImg = t?.image || null;
+    const preview = document.getElementById('la-img-preview');
+    const hint    = document.getElementById('la-img-hint');
+    if (ledgerAddImg) {
+        preview.innerHTML = `<img src="${ledgerAddImg}" onclick="ledgerAddImg=null;this.parentElement.innerHTML='';document.getElementById('la-img-hint').style.display=''">`;
+        hint.style.display = 'none';
+    } else {
+        preview.innerHTML = '';
+        hint.style.display = '';
+    }
+
+    ledgerAddType = t ? t.type : 'buy';
+    document.querySelectorAll('.la-type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === ledgerAddType));
+
+    // 헤더 타이틀 & 버튼 텍스트
+    document.querySelector('#ledger-add-header span').textContent = t ? '거래 수정' : '거래 추가';
+    document.getElementById('la-submit').textContent = t ? '수정 완료' : '저장';
+
     document.getElementById('ledger-add-modal').classList.add('open');
     setTimeout(() => document.getElementById('la-card').focus(), 50);
-});
+}
+
+document.getElementById('ledger-add-btn').addEventListener('click', () => openLedgerAddModal());
 
 /* 드롭존 클릭 → 파일 선택 */
 document.getElementById('la-img-drop').addEventListener('click', e => {
@@ -3751,9 +3789,10 @@ document.getElementById('la-img-input').addEventListener('change', e => {
     if (e.target.files?.[0]) ledgerHandleImgDrop({ dataTransfer: { files: e.target.files }, preventDefault: ()=>{} });
 });
 
-document.getElementById('ledger-add-close').addEventListener('click', () =>
-    document.getElementById('ledger-add-modal').classList.remove('open')
-);
+document.getElementById('ledger-add-close').addEventListener('click', () => {
+    ledgerEditId = null;
+    document.getElementById('ledger-add-modal').classList.remove('open');
+});
 
 document.querySelectorAll('.la-type-btn').forEach(btn =>
     btn.addEventListener('click', () => {
@@ -3773,7 +3812,15 @@ document.getElementById('la-submit').addEventListener('click', () => {
         else document.getElementById('la-price').focus();
         return;
     }
-    ledgerData.push({ id: ledgerNextId++, date, cardName, type: ledgerAddType, price, memo, image: ledgerAddImg || null });
+    if (ledgerEditId != null) {
+        // 수정 모드
+        const t = ledgerData.find(x => x.id === ledgerEditId);
+        if (t) { t.date = date; t.cardName = cardName; t.type = ledgerAddType; t.price = price; t.memo = memo; t.image = ledgerAddImg || t.image || null; }
+        ledgerEditId = null;
+    } else {
+        // 추가 모드
+        ledgerData.push({ id: ledgerNextId++, date, cardName, type: ledgerAddType, price, memo, image: ledgerAddImg || null });
+    }
     document.getElementById('ledger-add-modal').classList.remove('open');
     renderLedger();
     saveToLocalStorage();
