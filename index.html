@@ -14,9 +14,16 @@
             --gap: 9px;
             --pp: 16px;
             --sp: 12px;
-            /* 12포켓: 4열이 3열과 같은 총 너비 유지 */
-            --pw12: calc((var(--pw) * 3 - var(--gap)) / 4);
-            --ph12: calc(var(--pw12) * 88 / 63);
+            /* NxN 포켓 — 3열 총 너비(3*pw + 2*gap) 기준으로 각 N열 크기 산출 */
+            --pw2: calc((var(--pw) * 3 + var(--gap)) / 2);
+            --ph2: calc(var(--pw2) * 88 / 63);
+            /* 3x3 = --pw (기본값) */
+            --pw4: calc((var(--pw) * 3 - var(--gap)) / 4);
+            --ph4: calc(var(--pw4) * 88 / 63);
+            --pw5: calc((var(--pw) * 3 - var(--gap) * 2) / 5);
+            --ph5: calc(var(--pw5) * 88 / 63);
+            --pw6: calc((var(--pw) * 3 - var(--gap) * 3) / 6);
+            --ph6: calc(var(--pw6) * 88 / 63);
             /* 탑로더: 3×3이지만 포켓이 더 큰 카드용 (1.15× 크기) */
             --pwTL: calc(var(--pw) * 1.15);
             --phTL: calc(var(--pwTL) * 91 / 67);
@@ -130,6 +137,26 @@
 
         /* ══ MAIN ══ */
         .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+        /* ── 메인 탭 바 ── */
+        .main-tabs {
+            flex-shrink: 0; display: flex; align-items: center; gap: 2px;
+            padding: 0 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: #0b0b17;
+        }
+        .main-tab {
+            padding: 11px 16px; font-size: 12.5px; font-weight: 600;
+            color: rgba(255,255,255,0.35); cursor: pointer; border: none;
+            background: none; border-bottom: 2px solid transparent;
+            margin-bottom: -1px; transition: all 0.14s; letter-spacing: 0.01em;
+        }
+        .main-tab:hover { color: rgba(255,255,255,0.7); }
+        .main-tab.active { color: #fff; border-bottom-color: #6060ff; }
+
+        /* ── 탭 콘텐츠 ── */
+        .tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+        .tab-content.active { display: flex; }
 
         /* Topbar */
         .topbar {
@@ -259,14 +286,26 @@
             grid-template-columns: repeat(3, var(--pw));
             gap: var(--gap);
         }
-        /* 12포켓 */
-        .pocket-grid.grid-12 {
-            grid-template-columns: repeat(4, var(--pw12));
-        }
-        .pocket-grid.grid-12 .pocket {
-            width: var(--pw12) !important;
-            height: var(--ph12) !important;
-        }
+        /* 2x2 */
+        .pocket-grid.grid-2x2 { grid-template-columns: repeat(2, var(--pw2)); }
+        .pocket-grid.grid-2x2 .pocket { width: var(--pw2) !important; height: var(--ph2) !important; }
+        /* 4x4 */
+        .pocket-grid.grid-4x4 { grid-template-columns: repeat(4, var(--pw4)); }
+        .pocket-grid.grid-4x4 .pocket { width: var(--pw4) !important; height: var(--ph4) !important; }
+        /* 5x5 */
+        .pocket-grid.grid-5x5 { grid-template-columns: repeat(5, var(--pw5)); }
+        .pocket-grid.grid-5x5 .pocket { width: var(--pw5) !important; height: var(--ph5) !important; }
+        .pocket-grid.grid-5x5 .pocket-remove,
+        .pocket-grid.grid-5x5 .pocket-owned-btn,
+        .pocket-grid.grid-5x5 .pocket-wish-btn { width: 15px; height: 15px; font-size: 9px; }
+        .pocket-grid.grid-5x5 .pocket-add-icon { font-size: 15px; }
+        /* 6x6 */
+        .pocket-grid.grid-6x6 { grid-template-columns: repeat(6, var(--pw6)); }
+        .pocket-grid.grid-6x6 .pocket { width: var(--pw6) !important; height: var(--ph6) !important; }
+        .pocket-grid.grid-6x6 .pocket-remove,
+        .pocket-grid.grid-6x6 .pocket-owned-btn,
+        .pocket-grid.grid-6x6 .pocket-wish-btn { width: 13px; height: 13px; font-size: 8px; }
+        .pocket-grid.grid-6x6 .pocket-add-icon { font-size: 13px; }
         /* 탑로더 */
         .pocket-grid.grid-tl {
             grid-template-columns: repeat(3, var(--pwTL));
@@ -374,6 +413,42 @@
             opacity: 0; transition: opacity 0.12s;
         }
         .pocket.has-card:hover .pocket-remove { opacity: 1; }
+
+        /* ── 보유 상태 배지 ── */
+        .pocket-owned-btn {
+            position: absolute; bottom: 5px; left: 4px;
+            width: 18px; height: 18px;
+            background: rgba(0,0,0,0.72); border: none; border-radius: 50%;
+            font-size: 10px; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10;
+            opacity: 0; transition: opacity 0.12s, color 0.12s;
+            color: rgba(255,255,255,0.45);
+        }
+        .pocket.has-card:hover .pocket-owned-btn { opacity: 1; }
+        .pocket.p-owned   .pocket-owned-btn { opacity: 1; color: #50e880; }
+        .pocket.p-notowned .pocket-owned-btn { opacity: 1; color: #ff6060; }
+        /* 위시리스트 추가 버튼 (top-left) */
+        .pocket-wish-btn {
+            position: absolute; top: 8px; left: 4px;
+            width: 18px; height: 18px;
+            background: rgba(0,0,0,0.72); border: none; border-radius: 50%;
+            font-size: 11px; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10;
+            opacity: 0; transition: opacity 0.12s, color 0.12s;
+            color: rgba(255,255,255,0.4);
+        }
+        .pocket.has-card:hover .pocket-wish-btn { opacity: 1; }
+        .pocket.p-wished .pocket-wish-btn { opacity: 1; color: #ff80c0; }
+        /* 위시 테두리 */
+        .pocket.wish-border {
+            outline: 2.5px solid rgba(255,130,190,0.9);
+            outline-offset: -2px;
+        }
+        /* 위시 테두리 모드 토글 버튼 활성화 */
+        #btn-wish-border.active { background: rgba(255,100,180,0.2) !important; color: #ff90c0 !important; border-color: rgba(255,100,180,0.4) !important; }
+
         .pocket.drag-over {
             background: rgba(88,88,255,0.22) !important;
             border-color: rgba(100,100,255,0.7) !important;
@@ -416,77 +491,100 @@
         #db-modal.open { display: flex; }
         #db-backdrop {
             position: absolute; inset: 0;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+            background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
         }
         #db-box {
             position: relative; z-index: 1;
-            background: #0e0e1c; border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; width: min(980px, 96vw); height: 88vh;
+            background: #0a0a16; border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px; width: min(1060px, 96vw); height: 90vh;
             display: flex; flex-direction: column;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.85); overflow: hidden;
+            box-shadow: 0 50px 120px rgba(0,0,0,0.9); overflow: hidden;
         }
+        /* ── DB 헤더 ── */
         #db-header {
-            padding: 15px 20px 13px;
+            padding: 16px 22px 14px;
             border-bottom: 1px solid rgba(255,255,255,0.06);
-            display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+            display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+            background: #0d0d1a;
         }
-        #db-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); flex-shrink: 0; }
-        #db-lang-tabs { display: flex; gap: 6px; }
+        #db-title {
+            font-size: 14px; font-weight: 800; color: #fff; flex-shrink: 0;
+            letter-spacing: -0.02em;
+        }
+        #db-lang-tabs { display: flex; gap: 5px; }
         .db-lang-btn {
-            padding: 4px 16px; border-radius: 20px;
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-            color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 600;
-            cursor: pointer; transition: all 0.13s; line-height: 1.5;
+            padding: 5px 18px; border-radius: 30px;
+            background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.38); font-size: 12px; font-weight: 700;
+            cursor: pointer; transition: all 0.14s; letter-spacing: 0.01em;
         }
-        .db-lang-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.75); }
-        .db-lang-btn.active { background: rgba(88,88,255,0.35); border-color: rgba(110,110,255,0.6); color: #fff; }
+        .db-lang-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.8); }
+        .db-lang-btn.active {
+            background: linear-gradient(135deg,rgba(88,88,255,0.5),rgba(140,60,255,0.4));
+            border-color: rgba(120,100,255,0.7); color: #fff;
+            box-shadow: 0 2px 12px rgba(88,88,255,0.3);
+        }
         #db-close {
-            margin-left: auto; width: 28px; height: 28px; flex-shrink: 0;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            margin-left: auto; width: 30px; height: 30px; flex-shrink: 0;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 50%; color: rgba(255,255,255,0.5); font-size: 14px;
             display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: all 0.14s;
         }
-        #db-close:hover { background: rgba(255,60,60,0.5); color: #fff; }
+        #db-close:hover { background: rgba(255,60,60,0.55); color: #fff; border-color: transparent; transform: scale(1.08); }
+        /* ── 시리즈 버튼 행 ── */
         #db-series-row {
-            display: flex; gap: 6px; padding: 10px 20px;
+            display: flex; gap: 6px; padding: 10px 22px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
             flex-shrink: 0; flex-wrap: wrap; align-items: center;
+            background: #0c0c18;
         }
         .db-series-btn {
-            padding: 5px 13px; border-radius: 7px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.45); font-size: 11.5px; font-weight: 600;
-            cursor: pointer; transition: all 0.12s; white-space: nowrap;
+            padding: 5px 14px; border-radius: 8px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.4); font-size: 11.5px; font-weight: 700;
+            cursor: pointer; transition: all 0.13s; white-space: nowrap;
         }
-        .db-series-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.75); }
-        .db-series-btn.active { background: rgba(88,88,255,0.3); border-color: rgba(100,100,255,0.5); color: #fff; }
+        .db-series-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.18); }
+        .db-series-btn.active {
+            background: rgba(88,88,255,0.25); border-color: rgba(100,100,255,0.55); color: #c0c0ff;
+            box-shadow: 0 0 10px rgba(88,88,255,0.15);
+        }
+        /* ── 내비 (뒤로/팩명) ── */
         #db-nav {
-            display: none; align-items: center; gap: 8px;
-            padding: 8px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            flex-shrink: 0;
+            display: none; align-items: center; gap: 10px;
+            padding: 8px 22px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0; background: #0c0c18;
         }
         #db-nav.visible { display: flex; }
         #db-back {
-            padding: 4px 11px; border-radius: 6px; font-size: 11.5px;
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-            color: rgba(255,255,255,0.6); cursor: pointer; transition: all 0.12s; flex-shrink: 0;
+            padding: 5px 13px; border-radius: 8px; font-size: 12px; font-weight: 600;
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.65); cursor: pointer; transition: all 0.13s; flex-shrink: 0;
+            display: flex; align-items: center; gap: 4px;
         }
-        #db-back:hover { background: rgba(255,255,255,0.12); color: #fff; }
-        #db-nav-text { font-size: 11.5px; color: rgba(255,255,255,0.4); }
+        #db-back:hover { background: rgba(255,255,255,0.13); color: #fff; }
+        #db-nav-text { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.55); }
+        /* ── 상태/결과 수 ── */
         #db-status {
-            padding: 8px 20px 4px; font-size: 11.5px;
-            color: rgba(255,255,255,0.28); flex-shrink: 0;
+            padding: 8px 22px 4px; font-size: 11px; font-weight: 500;
+            color: rgba(255,255,255,0.25); flex-shrink: 0; letter-spacing: 0.02em;
         }
-        #db-content { flex: 1; overflow-y: auto; padding: 12px 20px 20px; }
-        /* 팩 그리드 */
-        .db-pack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 10px; }
+        #db-content { flex: 1; overflow-y: auto; padding: 14px 22px 24px; }
+        #db-content::-webkit-scrollbar { width: 4px; }
+        #db-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+        /* ── 팩 그리드 ── */
+        .db-pack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 12px; }
         .db-pack-item {
-            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.15s;
+            background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.18s;
             display: flex; flex-direction: column;
         }
-        .db-pack-item:hover { border-color: rgba(88,88,255,0.5); transform: translateY(-3px);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.5); }
+        .db-pack-item:hover {
+            border-color: rgba(100,100,255,0.55); transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.55), 0 0 0 1px rgba(100,100,255,0.2);
+            background: rgba(255,255,255,0.055);
+        }
         .db-pack-cover-wrap { position: relative; flex-shrink: 0; }
         .db-pack-cover {
             width: 100%; aspect-ratio: 16/9; object-fit: cover;
@@ -494,88 +592,158 @@
         }
         .db-pack-cover-placeholder {
             width: 100%; aspect-ratio: 16/9;
-            background: rgba(255,255,255,0.04);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px;
+            background: linear-gradient(135deg,rgba(255,255,255,0.04),rgba(88,88,255,0.06));
+            display: flex; align-items: center; justify-content: center; font-size: 32px;
         }
         .db-pack-symbol-badge {
-            position: absolute; bottom: 6px; right: 6px;
-            width: 34px; height: 34px;
-            background: rgba(0,0,0,0.72); border-radius: 50%;
-            border: 1.5px solid rgba(255,255,255,0.15);
+            position: absolute; bottom: 7px; right: 7px;
+            width: 32px; height: 32px;
+            background: rgba(0,0,0,0.75); border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.18);
             padding: 4px; object-fit: contain;
         }
-        .db-pack-info { padding: 9px 10px 10px; display: flex; flex-direction: column; gap: 3px; }
-        .db-pack-name { font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.9); line-height: 1.4; }
-        .db-pack-code { font-size: 9.5px; font-weight: 700; color: rgba(140,140,255,0.7); letter-spacing: 0.04em; }
-        .db-pack-meta { font-size: 10px; color: rgba(255,255,255,0.32); line-height: 1.5; }
-        /* 카드 그리드 */
-        .db-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-        .db-card-item {
-            border-radius: 7px; overflow: hidden; cursor: pointer;
-            border: 2px solid transparent; transition: all 0.13s;
-            aspect-ratio: 63 / 88; background: rgba(255,255,255,0.04); position: relative;
+        .db-pack-info { padding: 10px 11px 11px; display: flex; flex-direction: column; gap: 3px; }
+        .db-pack-name { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.92); line-height: 1.4; }
+        .db-pack-code {
+            font-size: 9.5px; font-weight: 800; color: rgba(140,140,255,0.8);
+            letter-spacing: 0.06em; text-transform: uppercase;
         }
-        .db-card-item:hover { border-color: rgba(100,100,255,0.6); transform: scale(1.04); }
+        .db-pack-meta { font-size: 10px; color: rgba(255,255,255,0.28); line-height: 1.6; }
+        /* 팩 수집/위시 배지 */
+        .db-pack-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
+        .db-pack-badge {
+            font-size: 9px; padding: 1px 6px; border-radius: 10px; font-weight: 600; line-height: 1.7;
+        }
+        .db-pack-badge-owned { background: rgba(80,232,128,0.15); color: #50e880; }
+        .db-pack-badge-wish  { background: rgba(255,128,192,0.15); color: #ff80c0; }
+        /* 팩 진행 바 */
+        .db-pack-progress { height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; margin: 6px 0 0; overflow: hidden; }
+        .db-pack-progress-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,#50e880,#30c060); }
+        /* 검색/위시 지역·그룹 헤더 */
+        .search-region-header, .wish-group-header {
+            grid-column: 1/-1; padding: 8px 4px 5px;
+            font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 2px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .search-region-header { color: rgba(255,255,255,0.38); margin-top: 8px; }
+        .wish-group-header { color: rgba(255,200,120,0.7); border-color: rgba(255,200,120,0.15); }
+        .search-region-count, .wish-group-count { font-weight:400; color:rgba(255,255,255,0.22); font-size:10px; }
+        /* 사이드바 통계 */
+        #sidebar-stats {
+            padding: 6px 12px 5px; font-size: 10px; color: rgba(255,255,255,0.22);
+            display: flex; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .ss-val { color: rgba(255,255,255,0.5); font-weight: 600; }
+        /* 카드 모달 카드 정보 */
+        #card-modal-info {
+            position: absolute; bottom: -46px; left: 0; right: 0;
+            font-size: 10px; color: rgba(255,255,255,0.38); text-align: center;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            pointer-events: none; display: none;
+        }
+        #card-modal-info.visible { display: block; }
+        /* 미보유 카드 사선 오버레이 */
+        .pocket-notowned-overlay {
+            position: absolute; inset: 0; z-index: 4; pointer-events: none;
+            background: repeating-linear-gradient(
+                -45deg, transparent 0, transparent 6px,
+                rgba(255,50,50,0.12) 6px, rgba(255,50,50,0.12) 8px
+            );
+        }
+        /* ── 카드 그리드 ── */
+        .db-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+            gap: 12px;
+        }
+        .db-card-item {
+            border-radius: 10px; overflow: hidden; cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.06);
+            transition: all 0.16s; background: rgba(255,255,255,0.03);
+            position: relative; display: flex; flex-direction: column;
+        }
+        .db-card-item:hover {
+            border-color: rgba(110,110,255,0.65);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(100,100,255,0.15);
+        }
+        /* 카드 이미지 영역 */
+        .db-card-img-wrap {
+            aspect-ratio: 63/88; overflow: hidden; position: relative; flex-shrink: 0;
+        }
         .db-card-item img {
             width: 100%; height: 100%; object-fit: cover; display: block;
-            background: linear-gradient(110deg, #1a1a2e 30%, #23234a 50%, #1a1a2e 70%);
+            background: linear-gradient(110deg, #12122a 30%, #1e1e40 50%, #12122a 70%);
             background-size: 200% 100%;
-            animation: db-shimmer 1.4s infinite;
+            animation: db-shimmer 1.5s infinite; transition: transform 0.18s;
         }
+        .db-card-item:hover img { transform: scale(1.04); }
         .db-card-item img[src] { animation: none; background: none; }
         @keyframes db-shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        /* 카드 하단 정보 — 항상 표시 (Collectr 스타일) */
         .db-card-label {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: rgba(0,0,0,0.75); font-size: 8.5px; color: rgba(255,255,255,0.85);
-            padding: 3px 4px; text-align: center; opacity: 0; transition: opacity 0.12s;
+            padding: 6px 8px 7px;
+            background: #0d0d1e;
+            font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.82);
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            line-height: 1.4;
         }
-        .db-card-item:hover .db-card-label { opacity: 1; }
+        /* 레어도 뱃지 — 항상 표시 */
         .db-card-rarity {
-            position: absolute; top: 5px; right: 5px;
-            font-size: 8px; font-weight: 700; letter-spacing: 0.04em;
-            background: rgba(0,0,0,0.72); border: 1px solid;
-            border-radius: 4px; padding: 1px 5px; line-height: 1.5;
-            opacity: 0; transition: opacity 0.12s;
+            position: absolute; top: 6px; right: 6px;
+            font-size: 8px; font-weight: 800; letter-spacing: 0.03em;
+            background: rgba(0,0,0,0.78); border: 1px solid;
+            border-radius: 5px; padding: 2px 5px; line-height: 1.5;
         }
-        .db-card-item:hover .db-card-rarity { opacity: 1; }
-        /* DB 카드 → 바인더에 추가 버튼 */
+        /* 호버 오버레이 */
+        .db-card-item:hover .db-card-img-wrap::after {
+            content: ''; position: absolute; inset: 0;
+            background: rgba(88,88,255,0.08);
+        }
+        /* + 바인더 버튼 */
         .db-add-btn {
-            position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
-            background: rgba(60,180,100,0.85); border: 1px solid rgba(80,220,120,0.7);
-            color: #fff; border-radius: 5px; padding: 3px 10px;
-            font-size: 10px; font-weight: 700; cursor: pointer; font-family: inherit;
-            white-space: nowrap; opacity: 0; transition: opacity 0.12s;
-            pointer-events: none; z-index: 2;
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(135deg,rgba(40,180,100,0.92),rgba(30,160,90,0.92));
+            border: none; color: #fff; padding: 7px 10px;
+            font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit;
+            white-space: nowrap; opacity: 0; transition: opacity 0.14s;
+            pointer-events: none; z-index: 4; text-align: center;
+            backdrop-filter: blur(4px);
         }
         .db-card-item:hover .db-add-btn { opacity: 1; pointer-events: auto; }
-        .db-add-btn:hover { background: rgba(60,220,100,0.95); }
+        .db-add-btn:hover { background: linear-gradient(135deg,rgba(50,210,110,0.97),rgba(40,190,100,0.97)); }
         /* ♥ 위시리스트 버튼 */
         .db-wish-btn {
-            position: absolute; top: 5px; left: 5px;
-            width: 22px; height: 22px; border-radius: 50%;
-            background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.45); font-size: 11px;
+            position: absolute; top: 6px; left: 6px;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: rgba(0,0,0,0.65); border: 1.5px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.5); font-size: 12px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.13s; font-family: inherit;
-            opacity: 0; pointer-events: none; z-index: 3; line-height: 1;
+            cursor: pointer; transition: all 0.14s; font-family: inherit;
+            opacity: 0; pointer-events: none; z-index: 5; line-height: 1;
         }
         .db-card-item:hover .db-wish-btn { opacity: 1; pointer-events: auto; }
-        .db-wish-btn:hover { background: rgba(220,50,80,0.7); border-color: rgba(255,100,120,0.6); color: #fff; transform: scale(1.15); }
-        .db-card-item.wishlisted .db-wish-btn { opacity: 1; pointer-events: auto; background: rgba(220,50,80,0.85); border-color: rgba(255,120,140,0.7); color: #fff; }
+        .db-wish-btn:hover { background: rgba(220,50,80,0.8); border-color: rgba(255,100,130,0.8); color: #fff; transform: scale(1.18); }
+        .db-card-item.wishlisted .db-wish-btn { opacity: 1; pointer-events: auto; background: rgba(220,50,80,0.88); border-color: rgba(255,100,130,0.8); color: #fff; }
         /* 위시리스트 탭 버튼 */
         #db-wish-tab {
-            margin-left: auto; padding: 4px 12px; border-radius: 20px;
-            background: rgba(220,50,80,0.15); border: 1px solid rgba(220,50,80,0.3);
-            color: rgba(255,150,170,0.7); font-size: 12px; font-weight: 600;
-            cursor: pointer; transition: all 0.13s; display: flex; align-items: center; gap: 5px;
+            margin-left: auto; padding: 5px 14px; border-radius: 20px;
+            background: rgba(220,50,80,0.12); border: 1.5px solid rgba(220,50,80,0.28);
+            color: rgba(255,160,175,0.75); font-size: 12px; font-weight: 700;
+            cursor: pointer; transition: all 0.14s; display: flex; align-items: center; gap: 6px;
+            letter-spacing: 0.01em;
         }
-        #db-wish-tab:hover { background: rgba(220,50,80,0.3); color: #fff; }
-        #db-wish-tab.active { background: rgba(220,50,80,0.45); border-color: rgba(255,100,130,0.7); color: #fff; }
+        #db-wish-tab:hover { background: rgba(220,50,80,0.28); color: #fff; border-color: rgba(255,100,130,0.5); }
+        #db-wish-tab.active {
+            background: linear-gradient(135deg,rgba(220,50,80,0.4),rgba(180,30,60,0.35));
+            border-color: rgba(255,100,130,0.75); color: #fff;
+            box-shadow: 0 2px 12px rgba(220,50,80,0.25);
+        }
         #db-wish-count {
-            background: rgba(220,50,80,0.7); color: #fff;
-            border-radius: 10px; padding: 0 5px; font-size: 10px; font-weight: 700; min-width: 14px; text-align: center;
+            background: rgba(220,50,80,0.75); color: #fff;
+            border-radius: 10px; padding: 0 6px; font-size: 10px; font-weight: 800; min-width: 16px; text-align: center;
             display: none;
         }
         #db-wish-count.has-items { display: inline-block; }
@@ -590,28 +758,58 @@
 
         /* ══ DB 검색바 ══ */
         #db-search-bar {
-            padding: 8px 20px; display: flex; align-items: center; gap: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;
+            padding: 12px 22px 8px; display: flex; align-items: center; gap: 10px;
+            flex-shrink: 0; background: #0a0a16;
         }
         #db-search-input {
-            flex: 1; background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 7px; padding: 6px 12px 6px 32px;
-            color: #fff; font-size: 12px; font-family: inherit;
-            outline: none; transition: border-color 0.12s;
-            background-image: url("data:image/svg+xml,%3Csvg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.28)' stroke-width='2.5' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: 10px center;
+            flex: 1; background: rgba(255,255,255,0.07);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 10px; padding: 9px 14px 9px 38px;
+            color: #fff; font-size: 13px; font-family: inherit;
+            outline: none; transition: all 0.15s;
+            background-image: url("data:image/svg+xml,%3Csvg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.28)' stroke-width='2.5' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: 12px center;
         }
-        #db-search-input::placeholder { color: rgba(255,255,255,0.22); }
-        #db-search-input:focus { border-color: rgba(88,88,255,0.55); }
+        #db-search-input::placeholder { color: rgba(255,255,255,0.2); }
+        #db-search-input:focus {
+            border-color: rgba(100,100,255,0.65);
+            background-color: rgba(255,255,255,0.09);
+            box-shadow: 0 0 0 3px rgba(88,88,255,0.12);
+        }
         #db-search-clear {
-            width: 24px; height: 24px; flex-shrink: 0;
-            background: none; border: none; cursor: pointer; border-radius: 50%;
-            color: rgba(255,255,255,0.3); font-size: 12px;
+            width: 28px; height: 28px; flex-shrink: 0;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer; border-radius: 50%;
+            color: rgba(255,255,255,0.35); font-size: 12px;
             display: flex; align-items: center; justify-content: center;
-            transition: color 0.12s, background 0.12s; line-height: 1;
+            transition: all 0.13s; line-height: 1;
         }
-        #db-search-clear:hover { background: rgba(255,60,60,0.2); color: rgba(255,120,120,0.9); }
+        #db-search-clear:hover { background: rgba(255,60,60,0.25); color: rgba(255,120,120,0.95); border-color: rgba(255,60,60,0.4); }
+        /* 검색 언어 필터 — Collectr 스타일 pill 버튼 */
+        #db-search-lang-filter {
+            padding: 0 22px 10px; display: flex; gap: 6px; flex-shrink: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: #0a0a16;
+        }
+        .db-slang-btn {
+            padding: 4px 15px; border-radius: 20px;
+            background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.09);
+            color: rgba(255,255,255,0.38); font-size: 11.5px; font-weight: 700;
+            cursor: pointer; transition: all 0.13s; line-height: 1.7; letter-spacing: 0.01em;
+        }
+        .db-slang-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.2); }
+        .db-slang-btn.active {
+            background: linear-gradient(135deg,rgba(88,88,255,0.3),rgba(140,60,255,0.2));
+            border-color: rgba(120,100,255,0.65); color: #c0b8ff;
+            box-shadow: 0 2px 10px rgba(88,88,255,0.2);
+        }
+        /* 검색 결과 지역 뱃지 */
+        .db-region-badge {
+            position: absolute; top: 6px; left: 6px;
+            background: rgba(0,0,0,0.78); border-radius: 5px;
+            font-size: 10px; padding: 1px 5px; pointer-events: none; z-index: 5;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
         /* ══ 바인더 검색 모달 ══ */
         #binder-search-modal {
@@ -716,6 +914,8 @@
         body.slot-pick-mode .pocket:not(.has-card):hover {
             outline-color: rgba(80,255,140,1); background: rgba(60,200,100,0.12);
         }
+        /* 슬롯 선택 모드에서 pocket-menu가 클릭을 가로막지 않도록 */
+        body.slot-pick-mode .pocket-menu { pointer-events: none; }
         /* 사이드바 DB 버튼 */
         .sidebar-db-btn {
             margin: 0 6px 6px; padding: 9px 12px;
@@ -775,6 +975,23 @@
             cursor: pointer; transition: all 0.14s; z-index: 2;
         }
         #card-modal-close:hover { background: rgba(220,50,50,0.9); color: #fff; border-color: transparent; }
+
+        /* 모달 액션 버튼 (위시/보유) */
+        .modal-action-btn {
+            position: absolute; bottom: 10px;
+            width: 34px; height: 34px;
+            background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 50%; font-size: 17px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.14s; z-index: 3;
+            color: rgba(255,255,255,0.55);
+        }
+        .modal-action-btn:hover { background: rgba(0,0,0,0.92); color: #fff; transform: scale(1.12); }
+        #modal-wish-btn  { left: 10px; }
+        #modal-owned-btn { right: 10px; }
+        #modal-wish-btn.wished   { color: #ff80c0; border-color: rgba(255,130,190,0.55); }
+        #modal-owned-btn.m-owned    { color: #50e880; border-color: rgba(80,232,128,0.55); }
+        #modal-owned-btn.m-notowned { color: #ff6060; border-color: rgba(255,96,96,0.55); }
 
         #card-modal-counter {
             position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
@@ -1041,6 +1258,141 @@
         .sticker-ok:hover { background:#7070ff; }
         .sticker-cx { flex:1; padding:6px; font-size:11.5px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:7px; color:rgba(255,255,255,0.45); cursor:pointer; }
         .sticker-cx:hover { color:rgba(255,255,255,0.75); }
+
+        /* ══ 가계부 사이드바 버튼 ══ */
+        .sidebar-ledger-btn {
+            display: flex; align-items: center; gap: 7px;
+            width: calc(100% - 12px); margin: 3px 6px 0;
+            padding: 8px 12px; border-radius: 8px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.5); font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: all 0.13s; text-align: left;
+        }
+        .sidebar-ledger-btn:hover { background: rgba(80,232,128,0.12); border-color: rgba(80,232,128,0.3); color: #50e880; }
+
+        /* ══ 가계부 패널 ══ */
+        #ledger-panel {
+            display: flex; flex-direction: column;
+            flex: 1; overflow: hidden;
+            background: #08080f;
+        }
+        #ledger-header {
+            padding: 16px 24px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 10px;
+            background: #0c0c18; flex-shrink: 0;
+        }
+        #ledger-title { font-size: 15px; font-weight: 700; flex: 1; letter-spacing: -0.02em; }
+
+        /* 요약 카드 */
+        #ledger-summary {
+            display: flex; gap: 10px; padding: 16px 24px 12px;
+            flex-shrink: 0; flex-wrap: wrap;
+        }
+        .ls-card {
+            flex: 1; min-width: 120px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px; padding: 13px 15px;
+        }
+        .ls-label { font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.35); margin-bottom: 7px; letter-spacing: 0.03em; text-transform: uppercase; }
+        .ls-val { font-size: 17px; font-weight: 700; color: #fff; }
+        .ls-buy-color { color: #ff8060; }
+        .ls-sell-color { color: #50e880; }
+
+        /* 툴바 */
+        #ledger-toolbar { padding: 0 24px 12px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
+        #ledger-add-btn {
+            padding: 7px 15px; border-radius: 8px;
+            background: rgba(88,88,255,0.18); border: 1px solid rgba(88,88,255,0.35);
+            color: #a0a0ff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.13s;
+        }
+        #ledger-add-btn:hover { background: rgba(88,88,255,0.35); color: #fff; }
+        #ledger-month-label { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+        /* 테이블 */
+        #ledger-table-wrap { flex: 1; overflow-y: auto; padding: 0 24px 24px; }
+        #ledger-table-wrap::-webkit-scrollbar { width: 4px; }
+        #ledger-table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+        #ledger-table { width: 100%; border-collapse: collapse; }
+        #ledger-table th {
+            text-align: left; font-size: 10.5px; font-weight: 600;
+            color: rgba(255,255,255,0.3); padding: 8px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            white-space: nowrap; letter-spacing: 0.04em; text-transform: uppercase;
+        }
+        #ledger-table td {
+            padding: 10px 10px; font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.8);
+        }
+        #ledger-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .lt-date { color: rgba(255,255,255,0.38) !important; font-size: 12px !important; white-space: nowrap; }
+        .lt-card { font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .lt-type-badge { padding: 2px 9px; border-radius: 4px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .lt-buy  { background: rgba(255,120,80,0.15); color: #ff8060; }
+        .lt-sell { background: rgba(80,232,128,0.15); color: #50e880; }
+        .lt-price-buy  { color: #ff8060; font-weight: 600; white-space: nowrap; }
+        .lt-price-sell { color: #50e880; font-weight: 600; white-space: nowrap; }
+        .lt-memo { color: rgba(255,255,255,0.35) !important; font-size: 12px !important; }
+        .lt-del {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: none; border: none; color: rgba(255,255,255,0.18);
+            cursor: pointer; font-size: 14px; line-height: 1; padding: 0;
+            display: flex; align-items: center; justify-content: center; transition: all 0.12s;
+        }
+        .lt-del:hover { background: rgba(255,60,60,0.2); color: #ff6060; }
+        #ledger-empty { padding: 60px 0; text-align: center; color: rgba(255,255,255,0.2); font-size: 13px; line-height: 1.8; }
+
+        /* 거래 추가 모달 */
+        #ledger-add-modal {
+            display: none; position: fixed; inset: 0; z-index: 300;
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+            align-items: center; justify-content: center;
+        }
+        #ledger-add-modal.open { display: flex; }
+        #ledger-add-box {
+            background: #0e0e1c; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; width: 380px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.85);
+        }
+        #ledger-add-header {
+            padding: 15px 18px 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 14px; font-weight: 700;
+        }
+        #ledger-add-close {
+            width: 26px; height: 26px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4); font-size: 13px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #ledger-add-close:hover { background: rgba(255,60,60,0.4); color: #fff; }
+        #ledger-add-form { padding: 18px; display: flex; flex-direction: column; gap: 13px; }
+        .la-row { display: flex; flex-direction: column; gap: 5px; }
+        .la-row label { font-size: 11px; color: rgba(255,255,255,0.4); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+        .la-row input {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 9px 11px; color: #fff; font-size: 13px; outline: none;
+            transition: border-color 0.13s;
+        }
+        .la-row input:focus { border-color: rgba(88,88,255,0.5); background: rgba(88,88,255,0.06); }
+        .la-type-btns { display: flex; gap: 6px; }
+        .la-type-btn {
+            flex: 1; padding: 8px; border-radius: 8px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 700;
+            cursor: pointer; transition: all 0.13s;
+        }
+        .la-type-btn[data-type="buy"].active  { background: rgba(255,120,80,0.2); border-color: rgba(255,120,80,0.45); color: #ff8060; }
+        .la-type-btn[data-type="sell"].active { background: rgba(80,232,128,0.2); border-color: rgba(80,232,128,0.45); color: #50e880; }
+        #la-submit {
+            margin-top: 2px; padding: 11px;
+            background: rgba(88,88,255,0.28); border: 1px solid rgba(88,88,255,0.5);
+            border-radius: 9px; color: #fff; font-size: 13px; font-weight: 700;
+            cursor: pointer; transition: all 0.13s;
+        }
+        #la-submit:hover { background: rgba(88,88,255,0.5); }
     </style>
 </head>
 <body>
@@ -1060,6 +1412,12 @@
     <div style="border-top:1px solid rgba(255,255,255,0.05);margin-top:6px;padding-top:8px;">
         <div class="sidebar-label" style="padding-top:6px;">카드 데이터</div>
         <button class="sidebar-db-btn" id="btn-card-db">🗃️ 카드 DB 브라우저</button>
+        <button class="sidebar-ledger-btn" id="btn-ledger">📒 가계부</button>
+    </div>
+    <div id="sidebar-stats">
+        <span>📦 <span class="ss-val" id="ss-cards">0</span>장</span>
+        <span>♥ <span class="ss-val" id="ss-wish">0</span>개</span>
+        <span>✓ <span class="ss-val" id="ss-owned">0</span>보유</span>
     </div>
     <div class="sidebar-footer">
         <div class="avatar">?</div>
@@ -1070,6 +1428,14 @@
 
 <!-- ══ MAIN ══ -->
 <div class="main">
+    <!-- 탭 바 -->
+    <div class="main-tabs">
+        <button class="main-tab active" data-tab="binder">🃏 바인더</button>
+        <button class="main-tab" data-tab="ledger">📒 가계부</button>
+    </div>
+
+    <!-- 바인더 탭 -->
+    <div class="tab-content active" id="tab-binder">
     <div class="topbar">
         <span class="tb-title" id="tb-title"></span>
         <span class="tb-badge" id="tb-badge" title="클릭해서 변경"></span>
@@ -1080,6 +1446,7 @@
             <button class="sz-btn" id="sz-up">+</button>
             <button class="sz-btn" id="sz-fit" title="화면에 맞춤" style="font-size:12px;">⊡</button>
             <button class="sz-btn" id="btn-binder-search" title="바인더 카드 검색 (Ctrl+F)" style="font-size:12px;">🔍</button>
+            <button class="sz-btn" id="btn-wish-border" title="위시 테두리 표시 (위시리스트 카드 하이라이트)" style="font-size:13px;">♥</button>
         </div>
     </div>
 
@@ -1137,6 +1504,61 @@
             <button class="pg-add-btn" id="pg-add" title="페이지 추가">＋</button>
         </div>
     </div>
+    </div><!-- /tab-binder -->
+
+    <!-- 가계부 탭 -->
+    <div class="tab-content" id="tab-ledger">
+        <div id="ledger-panel">
+            <div id="ledger-header">
+                <span id="ledger-title">📒 가계부</span>
+            </div>
+            <div id="ledger-summary">
+                <div class="ls-card">
+                    <div class="ls-label">이달 지출</div>
+                    <div class="ls-val ls-buy-color" id="ls-month-buy">₩0</div>
+                </div>
+                <div class="ls-card">
+                    <div class="ls-label">이달 수입</div>
+                    <div class="ls-val ls-sell-color" id="ls-month-sell">₩0</div>
+                </div>
+                <div class="ls-card">
+                    <div class="ls-label">이달 손익</div>
+                    <div class="ls-val" id="ls-month-net">₩0</div>
+                </div>
+                <div class="ls-card">
+                    <div class="ls-label">전체 투자</div>
+                    <div class="ls-val ls-buy-color" id="ls-total-buy">₩0</div>
+                </div>
+                <div class="ls-card">
+                    <div class="ls-label">전체 회수</div>
+                    <div class="ls-val ls-sell-color" id="ls-total-sell">₩0</div>
+                </div>
+                <div class="ls-card">
+                    <div class="ls-label">전체 손익</div>
+                    <div class="ls-val" id="ls-total-net">₩0</div>
+                </div>
+            </div>
+            <div id="ledger-toolbar">
+                <button id="ledger-add-btn">＋ 거래 추가</button>
+                <span id="ledger-month-label"></span>
+            </div>
+            <div id="ledger-table-wrap">
+                <table id="ledger-table">
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>카드명</th>
+                            <th>유형</th>
+                            <th>금액</th>
+                            <th>메모</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledger-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- 바인더 검색 모달 -->
@@ -1173,8 +1595,14 @@
             <span id="db-nav-text"></span>
         </div>
         <div id="db-search-bar">
-            <input id="db-search-input" type="text" placeholder="캐릭터 이름, 카드 번호로 전체 검색…" autocomplete="off">
+            <input id="db-search-input" type="text" placeholder="이름·번호·세트코드로 검색…" autocomplete="off">
             <button id="db-search-clear">✕</button>
+        </div>
+        <div id="db-search-lang-filter">
+            <button class="db-slang-btn active" data-slang="all">전체</button>
+            <button class="db-slang-btn" data-slang="kr">🇰🇷 한글판</button>
+            <button class="db-slang-btn" data-slang="jp">🇯🇵 일판</button>
+            <button class="db-slang-btn" data-slang="en">🇺🇸 영판</button>
         </div>
         <div id="db-status">시리즈를 선택하세요</div>
         <div id="db-content"></div>
@@ -1211,6 +1639,9 @@
             <img id="card-modal-img" src="" alt="카드 확대">
             <button id="card-modal-close">✕</button>
             <div id="card-modal-counter"></div>
+            <button class="modal-action-btn" id="modal-wish-btn"  title="위시리스트 추가">♡</button>
+            <button class="modal-action-btn" id="modal-owned-btn" title="보유 상태">○</button>
+            <div id="card-modal-info"></div>
         </div>
         <div id="card-modal-memo">
             <h4>📝 메모</h4>
@@ -1253,8 +1684,8 @@ try {
 ══════════════════════════════════════ */
 let nextId = 4;
 const BINDERS = [
-    { id: 1, name: '스칼렛 & 바이올렛', color: '#6060ff', pages: 5, type: '9포켓' },
-    { id: 2, name: '소드 & 실드',       color: '#40b080', pages: 4, type: '9포켓' },
+    { id: 1, name: '스칼렛 & 바이올렛', color: '#6060ff', pages: 5, type: '3x3' },
+    { id: 2, name: '소드 & 실드',       color: '#40b080', pages: 4, type: '3x3' },
     { id: 3, name: '탑로더 컬렉션',     color: '#e06040', pages: 3, type: '탑로더' },
 ];
 let activeBinder = BINDERS[0];
@@ -1320,18 +1751,21 @@ const fileInput = document.createElement('input');
 fileInput.type = 'file'; fileInput.accept = 'image/*';
 fileInput.multiple = true; fileInput.style.display = 'none';
 document.body.appendChild(fileInput);
-let pendingSlot   = null;
-let pendingDbCard = null; // DB에서 선택한 카드 URL — 슬롯 클릭 대기 중
+let pendingSlot        = null;
+let pendingDbCard      = null; // DB에서 선택한 카드 URL — 슬롯 클릭 대기 중
+let pendingDbCardMeta  = null; // DB 카드 메타데이터 {pack_code, num}
 
-function enterSlotPickMode(url) {
-    pendingDbCard = url;
+function enterSlotPickMode(url, meta) {
+    pendingDbCard     = url;
+    pendingDbCardMeta = meta || null;
     document.body.classList.add('slot-pick-mode');
     document.getElementById('slot-pick-overlay').classList.add('show');
     closeDbModal();
 }
 
 function exitSlotPickMode() {
-    pendingDbCard = null;
+    pendingDbCard     = null;
+    pendingDbCardMeta = null;
     document.body.classList.remove('slot-pick-mode');
     document.getElementById('slot-pick-overlay').classList.remove('show');
 }
@@ -1354,9 +1788,15 @@ fileInput.addEventListener('change', () => {
 
 /* 클릭한 슬롯부터 순서대로 채울 슬롯 목록 생성 */
 function getBinderConfig(type) {
-    if (type === '12포켓') return { cols: 4, count: 12, gridClass: 'grid-12' };
+    if (type === '2x2')   return { cols: 2, count: 4,  gridClass: 'grid-2x2' };
+    if (type === '4x4')   return { cols: 4, count: 16, gridClass: 'grid-4x4' };
+    if (type === '5x5')   return { cols: 5, count: 25, gridClass: 'grid-5x5' };
+    if (type === '6x6')   return { cols: 6, count: 36, gridClass: 'grid-6x6' };
     if (type === '탑로더') return { cols: 3, count: 9,  gridClass: 'grid-tl' };
-    return                        { cols: 3, count: 9,  gridClass: '' };
+    // 구버전 호환
+    if (type === '12포켓') return { cols: 4, count: 12, gridClass: 'grid-4x4' };
+    if (type === '6x6포켓') return { cols: 6, count: 36, gridClass: 'grid-6x6' };
+    return                        { cols: 3, count: 9,  gridClass: '' }; // 3x3 / 9포켓 기본값
 }
 
 function buildSlots(startSp, startSide, startIdx, count) {
@@ -1403,10 +1843,24 @@ document.addEventListener('drop',     e => e.preventDefault());
 ══════════════════════════════════════ */
 function makePocket(binderId, sp, side, idx) {
     const src = getCards(binderId, sp, side)[idx];
+    const key = `${binderId}_${sp}_${side}`;
     if (src) {
-        return `<div class="pocket has-card" data-sp="${sp}" data-side="${side}" data-idx="${idx}">
+        // 보유 상태 클래스 & 아이콘
+        const owned    = (ownedData[key] || [])[idx];
+        const ownedCls = owned === true ? ' p-owned' : (owned === false ? ' p-notowned' : '');
+        const ownedIcon = owned === true ? '✓' : (owned === false ? '✗' : '○');
+        // 위시 상태 — URL로 단순 매칭 (수동 업로드 카드 포함)
+        const wished    = wishlistData.some(w => w.full === src || w.thumb === src);
+        const wishedCls = wished ? ' p-wished' : '';
+        const wishIcon  = wished ? '♥' : '♡';
+        const wishCls   = (wishBorderMode && wished) ? ' wish-border' : '';
+        const notOwnedOverlay = owned === false ? '<div class="pocket-notowned-overlay"></div>' : '';
+        return `<div class="pocket has-card${ownedCls}${wishedCls}${wishCls}" data-sp="${sp}" data-side="${side}" data-idx="${idx}">
             <img src="${src}" class="pocket-img" draggable="false">
+            ${notOwnedOverlay}
             <button class="pocket-remove" title="카드 제거">×</button>
+            <button class="pocket-wish-btn" title="${wished?'위시리스트 제거':'위시리스트 추가'}">${wishIcon}</button>
+            <button class="pocket-owned-btn" title="보유 상태 토글">${ownedIcon}</button>
             <div class="pocket-glare"></div>
         </div>`;
     }
@@ -1458,7 +1912,13 @@ function fillPage(gridId, sp, side) {
             pocket.addEventListener('click', e => {
                 if (!pendingDbCard) return;
                 if (e.target.closest('.pocket-menu')) return;
+                const k = `${activeBinder.id}_${pSp}_${pSide}`;
                 getCards(activeBinder.id, pSp, pSide)[idx] = pendingDbCard;
+                // DB 카드 메타 저장 (위시 테두리 매칭용)
+                if (pendingDbCardMeta) {
+                    if (!cardMeta[k]) cardMeta[k] = [];
+                    cardMeta[k][idx] = pendingDbCardMeta;
+                }
                 saveToLocalStorage();
                 if (typeof sbSaveCard === 'function') sbSaveCard(activeBinder.id, pSp, pSide, idx, pendingDbCard);
                 refreshSpread();
@@ -1469,16 +1929,74 @@ function fillPage(gridId, sp, side) {
         const removeBtn = pocket.querySelector('.pocket-remove');
         if (removeBtn) removeBtn.addEventListener('click', e => {
             e.stopPropagation();
+            const k = `${activeBinder.id}_${pSp}_${pSide}`;
             getCards(activeBinder.id, pSp, pSide)[idx] = null;
+            // 관련 메타도 제거
+            if (cardMeta[k]) cardMeta[k][idx] = null;
+            if (ownedData[k]) ownedData[k][idx] = null;
             refreshSpread();
             saveToLocalStorage();
             if (typeof sbDeleteCard === 'function') sbDeleteCard(activeBinder.id, pSp, pSide, idx);
         });
 
+        /* 우클릭 → 카드 제거 */
+        pocket.addEventListener('contextmenu', e => {
+            if (!pocket.classList.contains('has-card')) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const k = `${activeBinder.id}_${pSp}_${pSide}`;
+            getCards(activeBinder.id, pSp, pSide)[idx] = null;
+            if (cardMeta[k]) cardMeta[k][idx] = null;
+            if (ownedData[k]) ownedData[k][idx] = null;
+            refreshSpread();
+            saveToLocalStorage();
+            if (typeof sbDeleteCard === 'function') sbDeleteCard(activeBinder.id, pSp, pSide, idx);
+        });
+
+        /* ♥ 위시리스트 토글 버튼 (URL 기반 매칭 — 모든 카드) */
+        const wishBtn = pocket.querySelector('.pocket-wish-btn');
+        if (wishBtn) wishBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            const src = getCards(activeBinder.id, pSp, pSide)[idx];
+            if (!src) return;
+            const existIdx = wishlistData.findIndex(w => w.full === src || w.thumb === src);
+            if (existIdx >= 0) {
+                wishlistData.splice(existIdx, 1);
+            } else {
+                // URL 기반으로 위시리스트 추가 (카드DB 메타가 있으면 사용)
+                const k  = `${activeBinder.id}_${pSp}_${pSide}`;
+                const m  = (cardMeta[k] || [])[idx];
+                const wk = m ? wishKey(m.pack_code, m.num) : ('url_' + src.slice(-40));
+                wishlistData.push({ key: wk,
+                    pack_code: m ? m.pack_code : '', num: m ? m.num : '',
+                    pack_name: '', series: '', name: '', rarity: '',
+                    thumb: src, full: src });
+            }
+            updateWishCount();
+            saveToLocalStorage();
+            refreshSpread();
+        });
+
+        /* 보유 상태 토글 버튼 */
+        const ownedBtn = pocket.querySelector('.pocket-owned-btn');
+        if (ownedBtn) ownedBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            const k = `${activeBinder.id}_${pSp}_${pSide}`;
+            if (!ownedData[k]) ownedData[k] = [];
+            const cur = ownedData[k][idx];
+            // null → true(보유) → false(미보유) → null(미설정) 순환
+            ownedData[k][idx] = (cur === undefined || cur === null) ? true : (cur === true ? false : null);
+            refreshSpread();
+            saveToLocalStorage();
+            updateSidebarStats();
+        });
+
         /* left-click on card → zoom modal */
         if (pocket.classList.contains('has-card')) {
             pocket.addEventListener('click', e => {
-                if (e.target.closest('.pocket-remove')) return;
+                if (e.target.closest('.pocket-remove'))    return;
+                if (e.target.closest('.pocket-owned-btn')) return;
+                if (e.target.closest('.pocket-wish-btn'))  return;
                 const src = getCards(activeBinder.id, pSp, pSide)[idx];
                 if (src) openCardModal(src, pSp, pSide, idx);
             });
@@ -1593,6 +2111,10 @@ function renderSidebar() {
                 initFill();
                 renderSticker();
             }
+            // 관련 데이터 정리
+            const prefix = String(id) + '_';
+            Object.keys(ownedData).filter(k => k.startsWith(prefix)).forEach(k => delete ownedData[k]);
+            Object.keys(cardMeta).filter(k => k.startsWith(prefix)).forEach(k => delete cardMeta[k]);
             renderSidebar();
             if (typeof sbDeleteBinder === 'function') sbDeleteBinder(id);
             saveToLocalStorage();
@@ -1616,7 +2138,7 @@ function switchBinder(id) {
 /* ══════════════════════════════════════
    TOPBAR
 ══════════════════════════════════════ */
-const TYPES = ['9포켓', '12포켓', '탑로더'];
+const TYPES = ['2x2', '3x3', '4x4', '5x5', '6x6', '탑로더'];
 
 function countFilledCards() {
     let n = 0;
@@ -1726,7 +2248,7 @@ document.getElementById('btn-add-binder').addEventListener('click', () => {
         name: '새 바인더',
         color: colors[BINDERS.length % colors.length],
         pages: 3,
-        type: '9포켓'
+        type: '3x3'
     };
     BINDERS.push(newB);
     renderSidebar();
@@ -2070,9 +2592,38 @@ let dbActiveSeries = null;
 const dbCache    = {};
 
 /* ══ 위시리스트 ══ */
-let wishlistData = [];   // [{key, pack_code, series, num, name, rarity, thumb, full, pack_name}]
+let wishlistData   = [];  // [{key, pack_code, series, num, name, rarity, thumb, full, pack_name}]
+let ownedData      = {};  // ownedData[binderId_sp_side][idx] = null/true/false
+let cardMeta       = {};  // cardMeta[binderId_sp_side][idx]  = {pack_code, num} | null
+let wishBorderMode = false;
 
 function wishKey(packCode, num) { return packCode + '_' + String(num).padStart(3,'0'); }
+
+/* ── 팩별 수집/위시 통계 헬퍼 ── */
+function getPackInBinderCount(packCode) {
+    let n = 0;
+    Object.values(cardMeta).forEach(arr => {
+        if (!arr) return;
+        arr.forEach(m => { if (m && m.pack_code === packCode) n++; });
+    });
+    return n;
+}
+function getPackWishCount(packCode) {
+    return wishlistData.filter(w => w.pack_code === packCode).length;
+}
+
+/* ── 사이드바 통계 업데이트 ── */
+function updateSidebarStats() {
+    const totalCards = Object.values(cardData).reduce((s, a) => s + (a ? a.filter(Boolean).length : 0), 0);
+    let ownedCount = 0;
+    Object.values(ownedData).forEach(arr => { if (arr) arr.forEach(v => { if (v === true) ownedCount++; }); });
+    const el1 = document.getElementById('ss-cards');
+    const el2 = document.getElementById('ss-wish');
+    const el3 = document.getElementById('ss-owned');
+    if (el1) el1.textContent = totalCards;
+    if (el2) el2.textContent = wishlistData.length;
+    if (el3) el3.textContent = ownedCount;
+}
 
 function isWishlisted(packCode, num) {
     return wishlistData.some(w => w.key === wishKey(packCode, num));
@@ -2088,6 +2639,7 @@ function toggleWishlist(item) {
     }
     updateWishCount();
     saveToLocalStorage();
+    updateSidebarStats();
     return idx < 0; // true = 추가됨
 }
 
@@ -2119,20 +2671,36 @@ function showWishlist() {
     }
 
     dbStatus.textContent = `위시리스트 ${wishlistData.length}장`;
-    dbContent.innerHTML = `<div class="db-card-grid">${wishlistData.map((w, i) => {
-        const rarColor = RARITY_COLOR[w.rarity] || 'rgba(255,255,255,0.3)';
-        const rarBadge = w.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${w.rarity}</div>` : '';
-        return `
-        <div class="db-card-item wishlisted" data-widx="${i}"
-             title="${w.pack_code} ${w.num} ${w.name}${w.rarity?' ['+w.rarity+']':''}">
-            <img src="${w.thumb||''}" loading="lazy" alt="${w.name||w.num}" onerror="this.parentElement.style.opacity='0.15'">
-            ${rarBadge}
-            <div class="db-wish-pack-label">${w.pack_code}·${w.num}</div>
-            <div class="db-card-label">${w.num}  ${w.name||''}</div>
-            <button class="db-wish-btn" title="위시리스트 제거">♥</button>
-            <button class="db-add-btn" data-widx="${i}">+ 바인더</button>
-        </div>`;
-    }).join('')}</div>`;
+    // 팩별 그룹화
+    const groups = {};
+    const groupOrder = [];
+    wishlistData.forEach((w, i) => {
+        const key = w.pack_code || '기타';
+        if (!groups[key]) { groups[key] = []; groupOrder.push(key); }
+        groups[key].push({ w, i });
+    });
+    let html = '<div class="db-card-grid">';
+    groupOrder.forEach(packCode => {
+        const items = groups[packCode];
+        const label = items[0].w.pack_name ? `${packCode} · ${items[0].w.pack_name}` : packCode;
+        html += `<div class="wish-group-header">${label} <span class="wish-group-count">${items.length}장</span></div>`;
+        items.forEach(({ w, i }) => {
+            const rarColor = RARITY_COLOR[w.rarity] || 'rgba(255,255,255,0.3)';
+            const rarBadge = w.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${w.rarity}</div>` : '';
+            html += `
+            <div class="db-card-item wishlisted" data-widx="${i}"
+                 title="${w.pack_code} ${w.num} ${w.name}${w.rarity?' ['+w.rarity+']':''}">
+                <img src="${w.thumb||''}" loading="lazy" alt="${w.name||w.num}" onerror="this.parentElement.style.opacity='0.15'">
+                ${rarBadge}
+                <div class="db-wish-pack-label">${w.pack_code}·${w.num}</div>
+                <div class="db-card-label">${w.num}  ${w.name||''}</div>
+                <button class="db-wish-btn" title="위시리스트 제거">♥</button>
+                <button class="db-add-btn" data-widx="${i}">+ 바인더</button>
+            </div>`;
+        });
+    });
+    html += '</div>';
+    dbContent.innerHTML = html;
 
     // 이벤트
     dbContent.querySelectorAll('.db-card-item').forEach(el => {
@@ -2142,7 +2710,8 @@ function showWishlist() {
                 toggleWishlist(wishlistData[i]);   // 제거
                 showWishlist();                     // 뷰 갱신
             } else if (e.target.closest('.db-add-btn')) {
-                enterSlotPickMode(wishlistData[i].full || wishlistData[i].thumb);
+                const w = wishlistData[i];
+                enterSlotPickMode(w.full || w.thumb, {pack_code: w.pack_code, num: w.num});
             } else {
                 const fullUrls = wishlistData.map(w => w.full || w.thumb);
                 openCardModalFromDb(fullUrls, i);
@@ -2238,6 +2807,9 @@ const EN_KR_NAMES = {
 function openDbModal() {
     dbModal.classList.add('open');
     updateWishCount();
+    // 검색 인덱스 미리 로드 (백그라운드)
+    const _idxUrl = '/data/kr/search_index.json';
+    if (!dbCache[_idxUrl]) fetch(_idxUrl).then(r=>r.json()).then(d=>{dbCache[_idxUrl]=d;}).catch(()=>{});
     const prevLang   = dbLang || 'kr';
     const prevSeries = dbActiveSeries;
     setDbLang(prevLang);
@@ -2319,7 +2891,17 @@ async function loadKrPacks(seriesCode) {
                 return da > db2 ? -1 : da < db2 ? 1 : 0;
             });
         dbStatus.textContent = `${packs.length}개 팩`;
-        dbContent.innerHTML = `<div class="db-pack-grid">${packs.map(p => `
+        dbContent.innerHTML = `<div class="db-pack-grid">${packs.map(p => {
+            const total = p.printed_total || p.total || 0;
+            const inBinder = getPackInBinderCount(p.code);
+            const inWish   = getPackWishCount(p.code);
+            const pct = total > 0 ? Math.round(inBinder / total * 100) : 0;
+            const badges = (inBinder > 0 || inWish > 0) ? `<div class="db-pack-badges">
+                ${inBinder > 0 ? `<span class="db-pack-badge db-pack-badge-owned">📂 ${inBinder}장</span>` : ''}
+                ${inWish   > 0 ? `<span class="db-pack-badge db-pack-badge-wish">♥ ${inWish}개</span>` : ''}
+            </div>` : '';
+            const progressBar = inBinder > 0 ? `<div class="db-pack-progress"><div class="db-pack-progress-fill" style="width:${pct}%"></div></div>` : '';
+            return `
             <div class="db-pack-item" data-code="${p.code}">
                 <div class="db-pack-cover-wrap">
                     ${p.image_cover_url
@@ -2333,11 +2915,13 @@ async function loadKrPacks(seriesCode) {
                     <div class="db-pack-code">${p.code}</div>
                     <div class="db-pack-name">${p.name}</div>
                     <div class="db-pack-meta">
-                        📅 ${p.release_date || '?'}&nbsp;&nbsp;🃏 ${p.printed_total || p.total || '?'}장
+                        📅 ${p.release_date || '?'}&nbsp;&nbsp;🃏 ${total || '?'}장
                         ${p.price ? `<br>💰 ${p.price}` : ''}
                     </div>
+                    ${badges}${progressBar}
                 </div>
-            </div>`).join('')}</div>`;
+            </div>`;
+        }).join('')}</div>`;
         dbContent.querySelectorAll('.db-pack-item').forEach(el => {
             const pack = packs.find(p => p.code === el.dataset.code);
             if (pack) el.addEventListener('click', () => showKrCards(pack));
@@ -2413,40 +2997,15 @@ async function showKrCards(pack) {
     dbNavText.textContent = pack.name;
     dbStatus.textContent = '카드 불러오는 중...';
 
-    // artofpkm 이미지 시도
-    let thumbUrls, fullUrls;
-    if (pack.artofpkm_id) {
-        try {
-            const r = await fetch(`/api/artofpkm/${pack.artofpkm_id}`);
-            const j = await r.json();
-            if (j.cards && j.cards.length > 0) {
-                // artofpkm 카드 수가 card_list보다 적을 수 있으므로
-                // 없는 인덱스는 KR CDN으로 개별 폴백
-                thumbUrls = cards.map((c, i) => {
-                    if (j.cards[i]) return j.cards[i].thumb;
-                    const num = String(c.num).padStart(3, '0');
-                    return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png?w=200`;
-                });
-                fullUrls = cards.map((c, i) => {
-                    if (j.cards[i]) return j.cards[i].full;
-                    const num = String(c.num).padStart(3, '0');
-                    return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png`;
-                });
-            }
-        } catch(e) { /* fallthrough to KR CDN */ }
-    }
-
-    // Korean CDN fallback (artofpkm_id 없거나 전체 실패 시)
-    if (!thumbUrls) {
-        thumbUrls = cards.map(c => {
-            const num = String(c.num).padStart(3, '0');
-            return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png?w=200`;
-        });
-        fullUrls = cards.map(c => {
-            const num = String(c.num).padStart(3, '0');
-            return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png?w=512`;
-        });
-    }
+    // KR CDN 이미지 (항상 한국판 이미지 사용 — artofpkm은 일본판이라 제거)
+    const thumbUrls = cards.map(c => {
+        const num = String(c.num).padStart(3, '0');
+        return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png?w=200`;
+    });
+    const fullUrls = cards.map(c => {
+        const num = String(c.num).padStart(3, '0');
+        return `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnCode}/${cdnCode}_${num}.png?w=512`;
+    });
 
     dbStatus.textContent = `총 ${pack.printed_total || pack.total || cards.length}종 · ${cards.length}장 표시`;
     dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => {
@@ -2486,7 +3045,8 @@ async function showKrCards(pack) {
                 el.classList.toggle('wishlisted', added);
                 e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
             } else if (e.target.closest('.db-add-btn')) {
-                enterSlotPickMode(fullUrls[idx]);
+                const numPad2 = String(cards[idx].num).padStart(3,'0');
+                enterSlotPickMode(fullUrls[idx], {pack_code: pack.code, num: numPad2});
             } else {
                 openCardModalFromDb(fullUrls, idx);
             }
@@ -2557,6 +3117,12 @@ async function loadJpPacks(seriesCode) {
             const symBadge = symUrl
                 ? `<img class="db-pack-symbol-badge" src="${symUrl}" onerror="this.style.display='none'">`
                 : '';
+            const jInBinder = getPackInBinderCount(p.code);
+            const jInWish   = getPackWishCount(p.code);
+            const jBadges = (jInBinder > 0 || jInWish > 0) ? `<div class="db-pack-badges">
+                ${jInBinder > 0 ? `<span class="db-pack-badge db-pack-badge-owned">📂 ${jInBinder}장</span>` : ''}
+                ${jInWish   > 0 ? `<span class="db-pack-badge db-pack-badge-wish">♥ ${jInWish}개</span>` : ''}
+            </div>` : '';
             return `
             <div class="db-pack-item" data-code="${p.code}" style="cursor:pointer">
                 <div class="db-pack-cover-wrap">${coverHtml}${symBadge}</div>
@@ -2566,6 +3132,7 @@ async function loadJpPacks(seriesCode) {
                     ${p.name_kr ? `<div style="font-size:9px;color:rgba(255,200,120,0.7);margin-top:1px;line-height:1.3">${p.name_kr}</div>` : ''}
                     <div class="db-pack-code">${p.code}</div>
                     <div class="db-pack-meta">${p.release_date || ''}<br>🖨 ${p.printed_total}종 · 총 ${p.total}장</div>
+                    ${jBadges}
                 </div>
             </div>`;
         }).join('')}</div>`;
@@ -2612,41 +3179,28 @@ async function showJpCards(pack) {
         });
     }
 
-    function useTcgdex() {
+    // Limitless TCG CDN — JP 전 시리즈 커버 (SV/S/SM/XY/BW)
+    function useLimitless() {
+        const base = `https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpc/${pack.code}`;
         const cards = Array.from({ length: total }, (_, i) => {
-            const num = String(i + 1).padStart(3, '0');
+            const num = i + 1; // zero-padding 없음
             return {
-                thumb: `https://assets.tcgdex.net/ja/${serie}/${pack.code}/${num}/low.webp`,
-                full:  `https://assets.tcgdex.net/ja/${serie}/${pack.code}/${num}/high.webp`,
-                label: num
+                thumb: `${base}/${pack.code}_${num}_R_JP_SM.png`,
+                full:  `${base}/${pack.code}_${num}_R_JP_LG.png`,
+                label: String(num).padStart(3, '0')
             };
         });
         renderCards(cards);
     }
 
-    function showRetry(msg) {
-        dbStatus.textContent = msg;
-        dbContent.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(160,200,255,0.7)">
-            <div style="font-size:14px;margin-bottom:16px">${msg}</div>
-            <button onclick="showJpCards(window.__retryPack)" style="padding:8px 20px;background:rgba(100,160,255,0.2);border:1px solid rgba(100,160,255,0.4);border-radius:8px;color:#fff;cursor:pointer;font-size:13px">🔄 재시도</button>
-        </div>`;
-        window.__retryPack = pack;
-    }
-
-    // JP MEGA 팩 → KR CDN 코드 매핑 (artofpkm 폴백용)
-    const JP_MEGA_KR = { 'MEGA1a':'M1S', 'MEGA1b':'M1L', 'MEGA2':'M2',
-                          'MEGA2a':'M2a', 'MEGA3':'M3', 'MEGA4':'M4', 'MEGA5':'M5' };
-
-    function useKrCdn(krCode) {
-        const cards = Array.from({ length: total }, (_, i) => {
-            const num = String(i + 1).padStart(3, '0');
-            const base = `https://cards.image.pokemonkorea.co.kr/data/wmimages/MEGA/${krCode}/${krCode}_${num}`;
-            return { thumb: `${base}.png?w=200`, full: `${base}.png`, label: num };
-        });
-        renderCards(cards);
-    }
-
-    if (pack.artofpkm_id) {
+    // Limitless CDN 먼저 (빠른 CDN) — SV/S/SM/XY/BW 대부분 커버
+    // artofpkm은 Limitless가 없는 팩(MEGA 등)에만 폴백
+    const LIMITLESS_SERIES = new Set(['SV','S','SM','XY','BW']);
+    const jpSerie = pack.tcgdex_serie || serie;
+    if (LIMITLESS_SERIES.has(jpSerie)) {
+        useLimitless();
+    } else if (pack.artofpkm_id) {
+        // MEGA 등 Limitless 미커버 시리즈 → artofpkm
         try {
             const r = await fetch(`/api/artofpkm/${pack.artofpkm_id}`);
             const j = await r.json();
@@ -2658,19 +3212,13 @@ async function showJpCards(pack) {
                 });
                 renderCards(cards);
             } else {
-                // artofpkm 빈 응답 → KR CDN 또는 tcgdex 폴백
-                const krCode = JP_MEGA_KR[pack.code];
-                if (krCode) useKrCdn(krCode);
-                else useTcgdex();
+                useLimitless();
             }
         } catch(e) {
-            // 연결 오류 → KR CDN 또는 tcgdex 폴백
-            const krCode = JP_MEGA_KR[pack.code];
-            if (krCode) useKrCdn(krCode);
-            else showRetry(`로딩 실패 (${e.message})`);
+            useLimitless();
         }
     } else {
-        useTcgdex();
+        useLimitless();
     }
 }
 
@@ -2795,6 +3343,16 @@ function saveToLocalStorage() {
         if (Object.keys(memoData).length) localStorage.setItem('pb_memos', JSON.stringify(memoData));
         if (wishlistData.length) localStorage.setItem('pb_wishlist', JSON.stringify(wishlistData));
         else localStorage.removeItem('pb_wishlist');
+        // 보유 상태
+        if (Object.keys(ownedData).length) localStorage.setItem('pb_owned', JSON.stringify(ownedData));
+        else localStorage.removeItem('pb_owned');
+        // 카드 메타 (위시 테두리 매칭용)
+        const slimMeta = {};
+        Object.entries(cardMeta).forEach(([k, arr]) => { if (arr && arr.some(Boolean)) slimMeta[k] = arr; });
+        if (Object.keys(slimMeta).length) localStorage.setItem('pb_card_meta', JSON.stringify(slimMeta));
+        else localStorage.removeItem('pb_card_meta');
+        if (ledgerData.length) localStorage.setItem('pb_ledger', JSON.stringify({ data: ledgerData, nextId: ledgerNextId }));
+        else localStorage.removeItem('pb_ledger');
     } catch(e) { console.warn('localStorage 저장 실패:', e); }
 }
 
@@ -2819,8 +3377,148 @@ function loadFromLocalStorage() {
         if (rawM) Object.assign(memoData, JSON.parse(rawM));
         const rawW = localStorage.getItem('pb_wishlist');
         if (rawW) { wishlistData.length = 0; JSON.parse(rawW).forEach(w => wishlistData.push(w)); updateWishCount(); }
+        const rawO  = localStorage.getItem('pb_owned');
+        if (rawO)  Object.assign(ownedData, JSON.parse(rawO));
+        const rawCM = localStorage.getItem('pb_card_meta');
+        if (rawCM) Object.assign(cardMeta, JSON.parse(rawCM));
+        const rawL = localStorage.getItem('pb_ledger');
+        if (rawL) { const d = JSON.parse(rawL); ledgerData.length = 0; (d.data||[]).forEach(t => ledgerData.push(t)); ledgerNextId = d.nextId || ledgerData.length + 1; }
     } catch(e) { console.warn('localStorage 로드 실패:', e); }
+    updateSidebarStats();
 }
+
+/* ══════════════════════════════════════
+   가계부 (LEDGER)
+══════════════════════════════════════ */
+let ledgerData   = [];
+let ledgerNextId = 1;
+let ledgerAddType = 'buy';
+
+function fmtMoney(n) {
+    return '₩' + Math.abs(Math.round(n)).toLocaleString('ko-KR');
+}
+
+function getLedgerMonth() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+}
+
+function renderLedger() {
+    const thisMonth = getLedgerMonth();
+    let monthBuy = 0, monthSell = 0, totalBuy = 0, totalSell = 0;
+    for (const t of ledgerData) {
+        const p = +t.price || 0;
+        if (t.type === 'buy')  { totalBuy  += p; if ((t.date||'').startsWith(thisMonth)) monthBuy  += p; }
+        else                   { totalSell += p; if ((t.date||'').startsWith(thisMonth)) monthSell += p; }
+    }
+    const monthNet = monthSell - monthBuy;
+    const totalNet = totalSell - totalBuy;
+
+    document.getElementById('ls-month-buy').textContent  = fmtMoney(monthBuy);
+    document.getElementById('ls-month-sell').textContent = fmtMoney(monthSell);
+    document.getElementById('ls-total-buy').textContent  = fmtMoney(totalBuy);
+    document.getElementById('ls-total-sell').textContent = fmtMoney(totalSell);
+
+    const mnEl = document.getElementById('ls-month-net');
+    mnEl.textContent  = (monthNet >= 0 ? '+' : '-') + fmtMoney(monthNet);
+    mnEl.style.color  = monthNet > 0 ? '#50e880' : monthNet < 0 ? '#ff6060' : 'rgba(255,255,255,0.7)';
+
+    const tnEl = document.getElementById('ls-total-net');
+    tnEl.textContent  = (totalNet >= 0 ? '+' : '-') + fmtMoney(totalNet);
+    tnEl.style.color  = totalNet > 0 ? '#50e880' : totalNet < 0 ? '#ff6060' : 'rgba(255,255,255,0.7)';
+
+    const now = new Date();
+    document.getElementById('ledger-month-label').textContent =
+        `${now.getFullYear()}년 ${now.getMonth()+1}월 기준`;
+
+    // 테이블
+    const tbody  = document.getElementById('ledger-tbody');
+    const sorted = [...ledgerData].sort((a, b) => (b.date||'').localeCompare(a.date||''));
+    if (sorted.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6"><div id="ledger-empty">거래 내역이 없습니다<br><small style="font-size:11px;opacity:0.6">＋ 거래 추가 버튼으로 카드 구매/판매를 기록해보세요</small></div></td></tr>`;
+        return;
+    }
+    tbody.innerHTML = sorted.map(t => {
+        const isBuy = t.type === 'buy';
+        return `<tr>
+            <td class="lt-date">${t.date||'-'}</td>
+            <td class="lt-card">${t.cardName||'-'}</td>
+            <td><span class="lt-type-badge ${isBuy?'lt-buy':'lt-sell'}">${isBuy?'구매':'판매'}</span></td>
+            <td class="${isBuy?'lt-price-buy':'lt-price-sell'}">${isBuy?'−':'+'}${fmtMoney(t.price)}</td>
+            <td class="lt-memo">${t.memo||''}</td>
+            <td><button class="lt-del" data-id="${t.id}">×</button></td>
+        </tr>`;
+    }).join('');
+    tbody.querySelectorAll('.lt-del').forEach(btn =>
+        btn.addEventListener('click', () => {
+            const id = +btn.dataset.id;
+            const idx = ledgerData.findIndex(t => t.id === id);
+            if (idx >= 0) { ledgerData.splice(idx, 1); renderLedger(); saveToLocalStorage(); }
+        })
+    );
+}
+
+function openLedger()  { switchTab('ledger'); }
+function closeLedger() { switchTab('binder'); }
+
+/* ── 탭 전환 ── */
+function switchTab(name) {
+    document.querySelectorAll('.main-tab').forEach(t =>
+        t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.tab-content').forEach(c =>
+        c.classList.toggle('active', c.id === 'tab-' + name));
+    if (name === 'ledger') renderLedger();
+}
+document.querySelectorAll('.main-tab').forEach(btn =>
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab))
+);
+
+document.getElementById('btn-ledger').addEventListener('click', openLedger);
+
+/* 거래 추가 모달 */
+document.getElementById('ledger-add-btn').addEventListener('click', () => {
+    document.getElementById('la-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('la-card').value  = '';
+    document.getElementById('la-price').value = '';
+    document.getElementById('la-memo').value  = '';
+    ledgerAddType = 'buy';
+    document.querySelectorAll('.la-type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === 'buy'));
+    document.getElementById('ledger-add-modal').classList.add('open');
+    setTimeout(() => document.getElementById('la-card').focus(), 50);
+});
+
+document.getElementById('ledger-add-close').addEventListener('click', () =>
+    document.getElementById('ledger-add-modal').classList.remove('open')
+);
+
+document.querySelectorAll('.la-type-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+        ledgerAddType = btn.dataset.type;
+        document.querySelectorAll('.la-type-btn').forEach(b =>
+            b.classList.toggle('active', b.dataset.type === ledgerAddType));
+    })
+);
+
+document.getElementById('la-submit').addEventListener('click', () => {
+    const date     = document.getElementById('la-date').value;
+    const cardName = document.getElementById('la-card').value.trim();
+    const price    = +document.getElementById('la-price').value;
+    const memo     = document.getElementById('la-memo').value.trim();
+    if (!cardName || !price) {
+        if (!cardName) document.getElementById('la-card').focus();
+        else document.getElementById('la-price').focus();
+        return;
+    }
+    ledgerData.push({ id: ledgerNextId++, date, cardName, type: ledgerAddType, price, memo });
+    document.getElementById('ledger-add-modal').classList.remove('open');
+    renderLedger();
+    saveToLocalStorage();
+});
+
+/* Enter 키로 저장 */
+document.getElementById('la-memo').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('la-submit').click();
+});
 
 /* ══════════════════════════════════════
    PAGE INDICATOR (클릭해서 페이지 이동)
@@ -3105,6 +3803,7 @@ function showModalCard(pos) {
         modalPrev.disabled = pos === 0;
         modalNext.disabled = pos === modalCardList.length - 1;
         loadMemo(modalCardList[pos]);
+        updateModalActions();
     }, 80);
 }
 
@@ -3122,6 +3821,7 @@ function openCardModal(src, sp, side, idx) {
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
     loadMemo(modalCardList[modalCardIdx]);
+    updateModalActions();
 }
 function closeCardModal() {
     flushMemo();
@@ -3129,6 +3829,83 @@ function closeCardModal() {
     document.body.style.overflow = '';
     setModalScale(1);
 }
+
+/* ── 모달 액션 버튼 상태 업데이트 ── */
+function updateModalActions() {
+    const card    = modalCardList[modalCardIdx];
+    const wishBtn = document.getElementById('modal-wish-btn');
+    const ownedBtn= document.getElementById('modal-owned-btn');
+    if (!card) return;
+
+    // 위시리스트 (URL 매칭)
+    const src    = card.src;
+    const wished = wishlistData.some(w => w.full === src || w.thumb === src);
+    wishBtn.textContent = wished ? '♥' : '♡';
+    wishBtn.classList.toggle('wished', wished);
+    wishBtn.title = wished ? '위시리스트 제거' : '위시리스트 추가';
+
+    // 보유 상태 (바인더 카드만)
+    const infoEl = document.getElementById('card-modal-info');
+    if (card.sp != null) {
+        const k   = `${activeBinder.id}_${card.sp}_${card.side}`;
+        const own = (ownedData[k] || [])[card.idx];
+        ownedBtn.style.display = '';
+        ownedBtn.textContent   = own === true ? '✓' : (own === false ? '✗' : '○');
+        ownedBtn.className     = 'modal-action-btn' + (own === true ? ' m-owned' : (own === false ? ' m-notowned' : ''));
+        ownedBtn.title = own === true ? '보유중 → 클릭시 미보유' : (own === false ? '미보유 → 클릭시 초기화' : '보유 상태 미설정');
+        // 카드 정보 표시
+        if (infoEl) {
+            const meta = (cardMeta[k] || [])[card.idx];
+            if (meta) {
+                const wi = wishlistData.find(w => w.key === wishKey(meta.pack_code, meta.num));
+                const name = wi ? wi.name : '';
+                const rarity = wi ? wi.rarity : '';
+                infoEl.textContent = [meta.pack_code, meta.num, name, rarity ? `[${rarity}]` : ''].filter(Boolean).join('  ');
+                infoEl.classList.add('visible');
+            } else {
+                infoEl.classList.remove('visible');
+            }
+        }
+    } else {
+        ownedBtn.style.display = 'none';
+        if (infoEl) infoEl.classList.remove('visible');
+    }
+}
+
+document.getElementById('modal-wish-btn').addEventListener('click', () => {
+    const card = modalCardList[modalCardIdx];
+    if (!card) return;
+    const src      = card.src;
+    const existIdx = wishlistData.findIndex(w => w.full === src || w.thumb === src);
+    if (existIdx >= 0) {
+        wishlistData.splice(existIdx, 1);
+    } else {
+        const k  = card.sp != null ? `${activeBinder.id}_${card.sp}_${card.side}` : null;
+        const m  = k ? (cardMeta[k] || [])[card.idx] : null;
+        const wk = m ? wishKey(m.pack_code, m.num) : ('url_' + src.slice(-40));
+        wishlistData.push({ key: wk,
+            pack_code: m ? m.pack_code : '', num: m ? m.num : '',
+            pack_name: '', series: '', name: '', rarity: '',
+            thumb: src, full: src });
+    }
+    updateWishCount();
+    saveToLocalStorage();
+    refreshSpread();
+    updateModalActions();
+});
+
+document.getElementById('modal-owned-btn').addEventListener('click', () => {
+    const card = modalCardList[modalCardIdx];
+    if (!card || card.sp == null) return;
+    const k = `${activeBinder.id}_${card.sp}_${card.side}`;
+    if (!ownedData[k]) ownedData[k] = [];
+    const cur = ownedData[k][card.idx];
+    ownedData[k][card.idx] = (cur === undefined || cur === null) ? true : (cur === true ? false : null);
+    saveToLocalStorage();
+    updateSidebarStats();
+    refreshSpread();
+    updateModalActions();
+});
 
 function openCardModalFromDb(imgUrls, startIdx) {
     modalCardList = imgUrls.map(u => ({ src: u }));
@@ -3143,6 +3920,7 @@ function openCardModalFromDb(imgUrls, startIdx) {
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
     loadMemo(modalCardList[startIdx]);  // DB 카드는 sp 없어 메모 패널 숨겨짐
+    updateModalActions();
 }
 
 modalClose.addEventListener('click', closeCardModal);
@@ -3300,11 +4078,13 @@ async function sbSignOut() {
     BINDERS.length = 0;
     Object.keys(cardData).forEach(k => delete cardData[k]);
     Object.keys(stickerData).forEach(k => delete stickerData[k]);
+    Object.keys(ownedData).forEach(k => delete ownedData[k]);
+    Object.keys(cardMeta).forEach(k => delete cardMeta[k]);
     loadFromLocalStorage();
     if (!BINDERS.length) {
         BINDERS.push(
-            { id: 1, name: '스칼렛 & 바이올렛', color: '#6060ff', pages: 5, type: '9포켓' },
-            { id: 2, name: '소드 & 실드',       color: '#40b080', pages: 4, type: '9포켓' },
+            { id: 1, name: '스칼렛 & 바이올렛', color: '#6060ff', pages: 5, type: '3x3' },
+            { id: 2, name: '소드 & 실드',       color: '#40b080', pages: 4, type: '3x3' },
             { id: 3, name: '탑로더 컬렉션',     color: '#e06040', pages: 3, type: '탑로더' }
         );
         nextId = 4;
@@ -3442,12 +4222,33 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
 });
 
 /* ══════════════════════════════════════
-   DB 검색 (통합)
+   DB 검색 (통합 — KR / JP / EN)
 ══════════════════════════════════════ */
 {
     const dbSI = document.getElementById('db-search-input');
     const dbSC = document.getElementById('db-search-clear');
     let dbSearchTimer;
+    let searchLangFilter = 'all'; // all / kr / jp / en
+    let cachedSearchResults = []; // 마지막 검색 전체 결과 캐시 (필터링용)
+    let cachedSearchQuery   = ''; // 캐시된 검색어
+
+    /* 언어 필터 버튼 — 재검색 없이 캐시에서 필터링 */
+    document.querySelectorAll('.db-slang-btn').forEach(btn =>
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.db-slang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            searchLangFilter = btn.dataset.slang;
+            // 검색 결과 있으면 재검색 없이 바로 필터
+            if (cachedSearchResults.length > 0) {
+                const filtered = searchLangFilter === 'all'
+                    ? cachedSearchResults
+                    : cachedSearchResults.filter(c => c.region === searchLangFilter);
+                renderGlobalResults(filtered, cachedSearchQuery, false);
+            } else if (dbSI.value.trim().length >= 2) {
+                applyDbFilter();
+            }
+        })
+    );
 
     /* 검색어 → 매칭 그룹 배열 (AND-of-ORs) */
     function buildMatchGroups(q) {
@@ -3476,88 +4277,210 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
         return [[q]];
     }
 
-    /* ── KR 전체 검색 ───────────────────────── */
-    async function runKrGlobalSearch(q) {
-        dbView = 'search';
-        dbNav.classList.add('visible');
-        dbNavText.textContent = `"${q}" 전체 검색 중…`;
-        dbStatus.textContent = '로딩 중…';
-        dbContent.innerHTML = '';
-
-        // 모든 KR 시리즈 JSON 병렬 로드 (캐시 활용)
-        await Promise.all(KR_SERIES.map(async s => {
-            const url = `/data/kr/${s.code}.json`;
-            if (!dbCache[url]) {
-                try { const r = await fetch(url); if (r.ok) dbCache[url] = await r.json(); }
-                catch(e) { /* 무시 */ }
-            }
-        }));
-
-        const groups = buildMatchGroups(q);
-        const results = [];
-
-        for (const s of KR_SERIES) {
-            const url = `/data/kr/${s.code}.json`;
-            if (!dbCache[url]) continue;
-            const raw   = dbCache[url];
-            const packs = Array.isArray(raw) ? raw : Object.values(raw);
-            for (const pack of packs) {
-                if (!pack.card_list_detail) continue;
-                const series = (pack.series && pack.series[0]) || s.code;
-                for (const card of pack.card_list_detail) {
-                    const num = String(card.num).padStart(3,'0');
-                    const haystack = [pack.code, num, card.num, card.name||'', card.rarity||''].join(' ').toLowerCase();
-                    const ok = groups.every(grp => grp.some(v => haystack.includes(v)));
-                    if (ok) results.push({ pack, card, num, series });
-                }
+    /* ── KR 검색 — search_index.json 사용 ──── */
+    const KR_SERIES_MAP = { sv:'SV', ss:'S', sm:'SM', xy:'XY', bw:'BW', dp:'DP', mg:'MEGA' };
+    function krCardUrls(series_short, set_code, num) {
+        const s = KR_SERIES_MAP[series_short] || series_short.toUpperCase();
+        const cdnCode = s === 'SM' ? set_code.toUpperCase() : set_code;
+        const base = `https://cards.image.pokemonkorea.co.kr/data/wmimages/${s}/${cdnCode}/${cdnCode}_${num}`;
+        return { thumb: `${base}.png?w=200`, full: `${base}.png?w=512` };
+    }
+    async function runKrSearch(q) {
+        const url = '/data/kr/search_index.json';
+        if (!dbCache[url]) {
+            try { const r = await fetch(url); dbCache[url] = await r.json(); }
+            catch(e) { return []; }
+        }
+        const idx = dbCache[url]; // [[series, set_code, num, name, rarity], ...]
+        const ql = q.toLowerCase();
+        const out = [];
+        for (const [series, set_code, num, name, rarity] of idx) {
+            if (`${set_code} ${num} ${name} ${rarity}`.toLowerCase().includes(ql)) {
+                const { thumb, full } = krCardUrls(series, set_code, num);
+                out.push({ region:'kr', set_code, num, name, rarity, thumb, full });
+                if (out.length >= 150) break;
             }
         }
+        return out;
+    }
 
-        dbNavText.textContent = `"${q}" 전체 검색`;
+    /* ── JP 검색 — TCGdex EN API 결과를 Limitless CDN 이미지로 매핑 ── */
+    // TCGdex /v2/ja/cards?name=X 는 항상 빈 배열 반환 (지원 안 함)
+    // → EN 카드 API로 세트 코드+번호 찾아 Limitless JP 이미지로 변환
+    const JP_SET_CODES = new Set(['SV','S','SM','XY','BW']); // Limitless JP CDN 커버 시리즈
+    const EN_TO_JP_SET = {
+        // SV 시리즈
+        'sv1':'SV1S','sv2':'SV2a','sv3':'SV3','sv3pt5':'SV2a',
+        'sv4':'SV4K','sv4pt5':'SV4a','sv5':'SV5K','sv6':'SV6',
+        'sv6pt5':'SV6a','sv7':'SV7','sv8':'SV8','sv8pt5':'SV8a',
+        // SS 시리즈
+        'swsh1':'S1W','swsh2':'S2','swsh3':'S3','swsh4':'S4',
+        'swsh5':'S5','swsh6':'S6','swsh7':'S7','swsh8':'S8',
+        'swsh9':'S9','swsh10':'S10','swsh11':'S11','swsh12':'S12',
+        // SM 시리즈
+        'sm1':'SM1S','sm2':'SM2L','sm3':'SM3N','sm4':'SM4S',
+        'sm5':'SM5S','sm6':'SM6','sm7':'SM7','sm7pt5':'SM7a',
+        'sm8':'SM8','sm8pt5':'SM8a','sm9':'SM9','sm9pt5':'SM9a',
+        'sm10':'SM10','sm10pt5':'SM10b','sm11':'SM11','sm12':'SM12',
+    };
+    const searchApiCache = {};
+    let searchAbortCtrl  = null;
+
+    async function runJpSearch(q, signal) {
+        const key = 'jp:' + q;
+        if (searchApiCache[key]) return searchApiCache[key];
+        try {
+            // EN API로 카드 찾은 뒤 JP 이미지로 변환
+            const r = await fetch(
+                `https://api.pokemontcg.io/v2/cards?q=name:*${encodeURIComponent(q)}*&pageSize=20&select=id,name,number,set,rarity&orderBy=-set.releaseDate`,
+                { signal }
+            );
+            if (!r.ok) return [];
+            const data = await r.json();
+            const result = (data.data || [])
+                .map(c => {
+                    const jpSet = EN_TO_JP_SET[c.set?.id];
+                    if (!jpSet) return null;
+                    const num = String(+c.number || 1); // Limitless는 zero-padding 없음
+                    const base = `https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpc/${jpSet}`;
+                    return { region:'jp', set_code: jpSet, num: String(+c.number||1).padStart(3,'0'),
+                        name: c.name || '', rarity: c.rarity || '',
+                        thumb: `${base}/${jpSet}_${num}_R_JP_SM.png`,
+                        full:  `${base}/${jpSet}_${num}_R_JP_LG.png` };
+                })
+                .filter(Boolean);
+            searchApiCache[key] = result;
+            return result;
+        } catch(e) { return []; }
+    }
+
+    /* ── EN 검색 — pokemontcg.io API (캐시 포함) */
+    async function runEnSearch(q, signal) {
+        const key = 'en:' + q;
+        if (searchApiCache[key]) return searchApiCache[key];
+        try {
+            const r = await fetch(
+                `https://api.pokemontcg.io/v2/cards?q=name:*${encodeURIComponent(q)}*&pageSize=20&select=id,name,number,set,images,rarity&orderBy=-set.releaseDate`,
+                { signal }
+            );
+            if (!r.ok) return [];
+            const data = await r.json();
+            const result = (data.data || []).map(c => ({
+                region:'en', set_code: c.set?.id || '', set_name: c.set?.name || '',
+                num: String(c.number || '').padStart(3,'0'), name: c.name || '',
+                rarity: c.rarity || '', thumb: c.images?.small || '', full: c.images?.large || ''
+            }));
+            searchApiCache[key] = result;
+            return result;
+        } catch(e) { return []; }
+    }
+
+    /* ── 통합 글로벌 검색 렌더 ────────────────── */
+    const REGION_LABEL = { kr:'🇰🇷', jp:'🇯🇵', en:'🇺🇸' };
+    function renderGlobalResults(results, q, stillLoading) {
+        dbNavText.textContent = `"${q}" 검색결과`;
+        const more = Math.max(0, results.length - 300);
+        dbStatus.textContent = results.length === 0
+            ? (stillLoading ? '검색 중…' : '검색 결과 없음')
+            : `${results.length}장${stillLoading ? ' · 추가 로딩 중…' : (more ? ' (300장까지 표시)' : '')}`;
 
         if (results.length === 0) {
-            dbContent.innerHTML = `<div style="padding:48px;text-align:center;color:rgba(255,255,255,0.28);font-size:13px">검색 결과가 없습니다</div>`;
-            dbStatus.textContent = `검색 결과: 0장`;
+            if (!stillLoading) dbContent.innerHTML = `<div style="padding:48px;text-align:center;color:rgba(255,255,255,0.25);font-size:13px">검색 결과가 없습니다</div>`;
             return;
         }
-
         const shown = results.slice(0, 300);
-        const more  = results.length - shown.length;
-        dbStatus.textContent = `검색 결과: ${results.length}장${more > 0 ? ' (상위 300장 표시)' : ''}`;
-
-        dbContent.innerHTML = `<div class="db-card-grid">${shown.map((r, i) => {
-            const { pack, card, num, series } = r;
-            const cdnC = series === 'SM' ? pack.code.toUpperCase() : pack.code;
-            const base = `https://cards.image.pokemonkorea.co.kr/data/wmimages/${series}/${cdnC}/${cdnC}_${num}`;
-            const rarColor = RARITY_COLOR[card.rarity] || '#555';
-            const label = `${pack.code}·${num}${card.name ? ' '+card.name : ''}`;
-            return `<div class="db-card-item db-srch" data-idx="${i}" data-pack="${pack.code}"
-                data-search="${[pack.code,num,card.name||'',card.rarity||''].join(' ').toLowerCase()}"
-                title="${pack.name} ${num}${card.name?' '+card.name:''}${card.rarity?' ['+card.rarity+']':''}">
-                <img src="${base}.png?w=200" loading="lazy" alt="${card.name||num}"
-                    onerror="this.src='${base}.png';this.onerror=function(){this.parentElement.style.opacity='0.15'}">
-                ${card.rarity?`<div class="db-card-rarity" style="background:${rarColor};color:#fff;opacity:1">${card.rarity}</div>`:''}
-                <div class="db-card-label" style="opacity:1">${label}</div>
+        // 지역별 섹션 헤더와 함께 렌더
+        const REGION_NAME = { kr:'🇰🇷 한글판', jp:'🇯🇵 일판', en:'🇺🇸 영판' };
+        let lastRegion = null;
+        const cardHtmls = shown.map((c, i) => {
+            const rarColor = RARITY_COLOR[c.rarity] || 'rgba(255,255,255,0.3)';
+            const rarBadge = c.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${c.rarity}</div>` : '';
+            const wished   = wishlistData.some(w => w.full === c.full || w.thumb === c.thumb);
+            const regionCnt = shown.filter(x => x.region === c.region).length;
+            const header = c.region !== lastRegion
+                ? `<div class="search-region-header">${REGION_NAME[c.region]||c.region} <span class="search-region-count">${regionCnt}장</span></div>`
+                : '';
+            lastRegion = c.region;
+            return header + `<div class="db-card-item${wished?' wishlisted':''}" data-idx="${i}"
+                data-region="${c.region}" data-setcode="${c.set_code}"
+                title="${c.set_code} ${c.num} ${c.name}${c.rarity?' ['+c.rarity+']':''}">
+                <img src="${c.thumb}" loading="lazy" alt="${c.name}" onerror="this.parentElement.style.opacity='0.15'">
+                ${rarBadge}
+                <div class="db-card-label">${c.num} ${c.name}</div>
+                <button class="db-wish-btn" title="${wished?'위시리스트 제거':'위시리스트 추가'}">♥</button>
+                <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
             </div>`;
-        }).join('')}${more>0?`<div style="grid-column:1/-1;padding:12px;text-align:center;color:rgba(255,255,255,0.28);font-size:11.5px">… ${more}장 더 있습니다. 검색어를 좁혀보세요.</div>`:''}</div>`;
+        });
+        dbContent.innerHTML = `<div class="db-card-grid">${cardHtmls.join('')}${more>0?`<div style="grid-column:1/-1;padding:12px;text-align:center;color:rgba(255,255,255,0.28);font-size:11.5px">… ${more}장 더 있습니다. 검색어를 좁혀보세요.</div>`:''}</div>`;
 
-        // 클릭 → 해당 팩의 카드뷰 열기
-        dbContent.querySelectorAll('.db-srch').forEach(el => {
-            el.addEventListener('click', async e => {
-                if (e.target.closest('.db-add-btn')) return;
-                const packCode = el.dataset.pack;
-                let foundPack = null;
-                for (const s of KR_SERIES) {
-                    const url = `/data/kr/${s.code}.json`;
-                    if (!dbCache[url]) continue;
-                    const raw = dbCache[url];
-                    const packs = Array.isArray(raw) ? raw : Object.values(raw);
-                    foundPack = packs.find(p => p.code === packCode);
-                    if (foundPack) break;
+        const shownData = shown;
+        dbContent.querySelectorAll('.db-card-item').forEach(el => {
+            const i = +el.dataset.idx;
+            const c = shownData[i];
+            el.addEventListener('click', e => {
+                if (e.target.closest('.db-wish-btn')) {
+                    if (c.region === 'kr') {
+                        const added = toggleWishlist({ key: wishKey(c.set_code, c.num),
+                            pack_code: c.set_code, pack_name: '', series: c.region,
+                            num: c.num, name: c.name, rarity: c.rarity, thumb: c.thumb, full: c.full });
+                        el.classList.toggle('wishlisted', added);
+                        e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
+                    } else {
+                        const urlKey = 'url_' + c.full.slice(-40);
+                        const existIdx = wishlistData.findIndex(w => w.full === c.full || w.key === urlKey);
+                        if (existIdx >= 0) { wishlistData.splice(existIdx,1); el.classList.remove('wishlisted'); e.target.title='위시리스트 추가'; }
+                        else { wishlistData.push({key:urlKey, pack_code:c.set_code, pack_name:c.set_name||'', series:c.region, num:c.num, name:c.name, rarity:c.rarity, thumb:c.thumb, full:c.full}); el.classList.add('wishlisted'); e.target.title='위시리스트 제거'; }
+                        updateWishCount(); saveToLocalStorage();
+                    }
+                } else if (e.target.closest('.db-add-btn')) {
+                    const meta = c.region === 'kr' ? {pack_code: c.set_code, num: c.num} : null;
+                    enterSlotPickMode(c.full || c.thumb, meta);
+                } else {
+                    openCardModalFromDb(shownData.map(x => x.full||x.thumb), i);
                 }
-                if (foundPack) { dbSI.value = ''; await showKrCards(foundPack); }
             });
         });
+    }
+
+    /* ── 통합 글로벌 검색 — 항상 KR+EN+JP 전부 가져오고 캐시에 저장 ── */
+    async function runGlobalSearch(q) {
+        if (searchAbortCtrl) searchAbortCtrl.abort();
+        searchAbortCtrl = new AbortController();
+        const signal = searchAbortCtrl.signal;
+
+        dbView = 'search';
+        dbNav.classList.add('visible');
+        dbNavText.textContent = `"${q}" 검색 중…`;
+        dbStatus.textContent = '검색 중…';
+        dbContent.innerHTML = '';
+
+        // 캐시 초기화
+        cachedSearchResults = [];
+        cachedSearchQuery   = q;
+
+        let allResults = [];
+        let pendingExt = 2; // EN + JP 항상 둘 다
+
+        // ① KR 즉시 표시 (로컬 인덱스 — 빠름)
+        const krRes = await runKrSearch(q);
+        if (signal.aborted) return;
+        allResults = [...krRes];
+        cachedSearchResults = [...allResults];
+        const filtered = searchLangFilter === 'all' ? allResults : allResults.filter(c => c.region === searchLangFilter);
+        renderGlobalResults(filtered, q, true);
+
+        // ② EN / JP 비동기로 도착하는 대로 append — 언어 필터 무관하게 항상 가져옴
+        function onExtDone(newRes) {
+            if (signal.aborted) return;
+            pendingExt--;
+            allResults = [...allResults, ...newRes];
+            cachedSearchResults = [...allResults]; // 전체 캐시 업데이트
+            const f = searchLangFilter === 'all' ? allResults : allResults.filter(c => c.region === searchLangFilter);
+            renderGlobalResults(f, q, pendingExt > 0);
+        }
+
+        runEnSearch(q, signal).then(onExtDone);
+        runJpSearch(q, signal).then(onExtDone);
     }
 
     /* ── 통합 필터 ──────────────────────────── */
@@ -3599,20 +4522,19 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
             return;
         }
 
-        // ③ 팩 뷰 / 검색 뷰에서 텍스트 입력
-        if (dbLang === 'kr') {
-            if (q.length >= 2) {
-                // 2글자 이상: 전체 카드 검색 (디바운스 250ms)
-                dbSearchTimer = setTimeout(() => runKrGlobalSearch(q), 250);
-            } else if (dbView === 'search') {
-                // 1글자로 줄어든 경우 → 팩 목록으로 복귀
-                dbView = 'packs';
-                dbNav.classList.remove('visible');
-                if (dbActiveSeries) loadKrPacks(dbActiveSeries);
-                else { dbContent.innerHTML = ''; dbStatus.textContent = '시리즈를 선택하세요'; }
-            }
+        // ③ 팩 뷰 / 검색 뷰에서 텍스트 입력 → 전체 검색 (디바운스 300ms)
+        if (q.length >= 2) {
+            dbSearchTimer = setTimeout(() => runGlobalSearch(q), 300);
+        } else if (dbView === 'search') {
+            dbView = 'packs';
+            dbNav.classList.remove('visible');
+            if (dbActiveSeries) {
+                if (dbLang === 'kr')      loadKrPacks(dbActiveSeries);
+                else if (dbLang === 'jp') loadJpPacks(dbActiveSeries);
+                else                      loadEnSets(dbActiveSeries);
+            } else { dbContent.innerHTML = ''; dbStatus.textContent = '시리즈를 선택하세요'; }
         } else {
-            // JP/EN: 팩 이름 필터
+            // 1글자: 팩 이름 로컬 필터
             dbContent.querySelectorAll('.db-pack-item').forEach(el => {
                 el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
             });
@@ -3620,7 +4542,7 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
     }
 
     dbSI.addEventListener('input', applyDbFilter);
-    dbSC.addEventListener('click', () => { dbSI.value = ''; applyDbFilter(); dbSI.focus(); });
+    dbSC.addEventListener('click', () => { dbSI.value = ''; cachedSearchResults = []; cachedSearchQuery = ''; applyDbFilter(); dbSI.focus(); });
     document.getElementById('btn-card-db').addEventListener('click', () => {
         requestAnimationFrame(() => dbSI.focus());
     }, { capture: true });
@@ -3722,6 +4644,11 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
     document.getElementById('bs-close').addEventListener('click', closeBsModal);
     document.getElementById('bs-backdrop').addEventListener('click', closeBsModal);
     document.getElementById('btn-binder-search').addEventListener('click', openBsModal);
+    document.getElementById('btn-wish-border').addEventListener('click', () => {
+        wishBorderMode = !wishBorderMode;
+        document.getElementById('btn-wish-border').classList.toggle('active', wishBorderMode);
+        refreshSpread();
+    });
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
             if (dbModal.classList.contains('open')) return;
@@ -3733,5 +4660,41 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
 }
 
 </script>
+
+<!-- 거래 추가 모달 -->
+<div id="ledger-add-modal">
+    <div id="ledger-add-box">
+        <div id="ledger-add-header">
+            <span>거래 추가</span>
+            <button id="ledger-add-close">×</button>
+        </div>
+        <div id="ledger-add-form">
+            <div class="la-row">
+                <label>날짜</label>
+                <input type="date" id="la-date">
+            </div>
+            <div class="la-row">
+                <label>카드명</label>
+                <input type="text" id="la-card" placeholder="카드 이름 입력">
+            </div>
+            <div class="la-row">
+                <label>유형</label>
+                <div class="la-type-btns">
+                    <button class="la-type-btn active" data-type="buy">구매</button>
+                    <button class="la-type-btn" data-type="sell">판매</button>
+                </div>
+            </div>
+            <div class="la-row">
+                <label>금액 (원)</label>
+                <input type="number" id="la-price" placeholder="0" min="0" step="100">
+            </div>
+            <div class="la-row">
+                <label>메모</label>
+                <input type="text" id="la-memo" placeholder="어디서 샀는지, 상태 등 (선택)">
+            </div>
+            <button id="la-submit">저장</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
