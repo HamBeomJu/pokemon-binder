@@ -1386,6 +1386,17 @@
         }
         .la-type-btn[data-type="buy"].active  { background: rgba(255,120,80,0.2); border-color: rgba(255,120,80,0.45); color: #ff8060; }
         .la-type-btn[data-type="sell"].active { background: rgba(80,232,128,0.2); border-color: rgba(80,232,128,0.45); color: #50e880; }
+        #la-img-drop {
+            border: 1.5px dashed rgba(255,255,255,0.15); border-radius: 8px;
+            padding: 12px; text-align: center; cursor: pointer;
+            transition: all 0.13s; position: relative; min-height: 60px;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px;
+        }
+        #la-img-drop:hover, #la-img-drop.drag-over { border-color: rgba(88,88,255,0.5); background: rgba(88,88,255,0.06); }
+        #la-img-hint { font-size: 11px; color: rgba(255,255,255,0.3); }
+        #la-img-preview img { max-width: 100%; max-height: 120px; border-radius: 6px; object-fit: contain; }
+        .lt-img-thumb { width: 36px; height: 36px; object-fit: cover; border-radius: 4px; cursor: pointer; }
+        .lt-img-cell { width: 44px; }
         #la-submit {
             margin-top: 2px; padding: 11px;
             background: rgba(88,88,255,0.28); border: 1px solid rgba(88,88,255,0.5);
@@ -1551,6 +1562,7 @@
                             <th>유형</th>
                             <th>금액</th>
                             <th>메모</th>
+                            <th class="lt-img-cell">사진</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -1605,6 +1617,14 @@
             <div class="la-row">
                 <label>메모</label>
                 <input type="text" id="la-memo" placeholder="어디서 샀는지, 상태 등 (선택)">
+            </div>
+            <div class="la-row">
+                <label>사진</label>
+                <div id="la-img-drop" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="ledgerHandleImgDrop(event)">
+                    <div id="la-img-preview"></div>
+                    <span id="la-img-hint">🖼️ 이미지를 여기에 드래그하거나 클릭</span>
+                    <input type="file" id="la-img-input" accept="image/*" style="display:none">
+                </div>
             </div>
             <button id="la-submit">저장</button>
         </div>
@@ -2088,12 +2108,11 @@ function renderSidebar() {
             <button class="b-del" data-id="${b.id}" title="바인더 삭제">×</button>
         </div>`).join('');
 
-    /* click row → switch */
+    /* click row or name → switch */
     list.querySelectorAll('.binder-item').forEach(el =>
         el.addEventListener('click', e => {
-            if (e.target.classList.contains('b-dot') ||
-                e.target.classList.contains('b-del') ||
-                e.target.classList.contains('b-name')) return;
+            if (e.target.classList.contains('b-dot')) return;
+            if (e.target.classList.contains('b-del')) return;
             switchBinder(+el.dataset.id);
         })
     );
@@ -3433,6 +3452,22 @@ function loadFromLocalStorage() {
 let ledgerData   = [];
 let ledgerNextId = 1;
 let ledgerAddType = 'buy';
+let ledgerAddImg  = null; // 거래 추가 시 첨부 이미지 (data URL)
+
+function ledgerHandleImgDrop(e) {
+    e.preventDefault();
+    document.getElementById('la-img-drop').classList.remove('drag-over');
+    const file = (e.dataTransfer || e.target).files?.[0] || e.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        ledgerAddImg = ev.target.result;
+        const preview = document.getElementById('la-img-preview');
+        preview.innerHTML = `<img src="${ledgerAddImg}" onclick="ledgerAddImg=null;this.parentElement.innerHTML='';document.getElementById('la-img-hint').style.display=''">`;
+        document.getElementById('la-img-hint').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
 
 function fmtMoney(n) {
     return '₩' + Math.abs(Math.round(n)).toLocaleString('ko-KR');
@@ -3480,12 +3515,16 @@ function renderLedger() {
     }
     tbody.innerHTML = sorted.map(t => {
         const isBuy = t.type === 'buy';
+        const imgCell = t.image
+            ? `<img class="lt-img-thumb" src="${t.image}" title="클릭해서 크게보기" onclick="window.open('${t.image}','_blank')">`
+            : `<span style="color:rgba(255,255,255,0.15);font-size:11px">−</span>`;
         return `<tr>
             <td class="lt-date">${t.date||'-'}</td>
             <td class="lt-card">${t.cardName||'-'}</td>
             <td><span class="lt-type-badge ${isBuy?'lt-buy':'lt-sell'}">${isBuy?'구매':'판매'}</span></td>
             <td class="${isBuy?'lt-price-buy':'lt-price-sell'}">${isBuy?'−':'+'}${fmtMoney(t.price)}</td>
             <td class="lt-memo">${t.memo||''}</td>
+            <td class="lt-img-cell">${imgCell}</td>
             <td><button class="lt-del" data-id="${t.id}">×</button></td>
         </tr>`;
     }).join('');
@@ -3521,10 +3560,22 @@ document.getElementById('ledger-add-btn').addEventListener('click', () => {
     document.getElementById('la-card').value  = '';
     document.getElementById('la-price').value = '';
     document.getElementById('la-memo').value  = '';
+    document.getElementById('la-img-preview').innerHTML = '';
+    document.getElementById('la-img-hint').style.display = '';
+    ledgerAddImg  = null;
     ledgerAddType = 'buy';
     document.querySelectorAll('.la-type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === 'buy'));
     document.getElementById('ledger-add-modal').classList.add('open');
     setTimeout(() => document.getElementById('la-card').focus(), 50);
+});
+
+/* 드롭존 클릭 → 파일 선택 */
+document.getElementById('la-img-drop').addEventListener('click', e => {
+    if (e.target.tagName === 'IMG') return;
+    document.getElementById('la-img-input').click();
+});
+document.getElementById('la-img-input').addEventListener('change', e => {
+    if (e.target.files?.[0]) ledgerHandleImgDrop({ dataTransfer: { files: e.target.files }, preventDefault: ()=>{} });
 });
 
 document.getElementById('ledger-add-close').addEventListener('click', () =>
@@ -3549,7 +3600,7 @@ document.getElementById('la-submit').addEventListener('click', () => {
         else document.getElementById('la-price').focus();
         return;
     }
-    ledgerData.push({ id: ledgerNextId++, date, cardName, type: ledgerAddType, price, memo });
+    ledgerData.push({ id: ledgerNextId++, date, cardName, type: ledgerAddType, price, memo, image: ledgerAddImg || null });
     document.getElementById('ledger-add-modal').classList.remove('open');
     renderLedger();
     saveToLocalStorage();
