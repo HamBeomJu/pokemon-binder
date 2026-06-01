@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PokéBinder</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -3705,10 +3705,17 @@ updateUI();
 initFill();
 renderSticker();
 
-/* 초기 autoFit + 리사이즈 대응 */
-window.addEventListener('load',   () => autoFit());
+/* 초기 autoFit — stage가 실제로 크기를 가질 때까지 재시도 */
+function tryAutoFit(remaining) {
+    const stage = document.querySelector('.stage');
+    if (stage && stage.clientWidth > 0) { autoFit(); return; }
+    if (remaining > 0) setTimeout(() => tryAutoFit(remaining - 1), 100);
+}
+window.addEventListener('load',   () => { autoFit(); });
 window.addEventListener('resize', () => { clearTimeout(window._rsTimer); window._rsTimer = setTimeout(autoFit, 150); });
-setTimeout(autoFit, 100); // DOM 렌더 완료 후 즉시 한번 더
+document.addEventListener('DOMContentLoaded', () => tryAutoFit(20));
+setTimeout(() => tryAutoFit(20), 50);   // 스크립트 실행 직후
+setTimeout(autoFit, 1000);              // 최종 폴백 (CDN 로드 완료 후)
 
 /* ══════════════════════════════════════
    CARD MODAL
