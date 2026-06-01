@@ -1374,6 +1374,69 @@
         .lt-buy  { background: rgba(255,120,80,0.15); color: #ff8060; }
         .lt-sell { background: rgba(80,232,128,0.15); color: #50e880; }
 
+        /* ── 가계부 상세 모달 ── */
+        #ledger-detail-modal {
+            display: none; position: fixed; inset: 0; z-index: 1300;
+            align-items: center; justify-content: center;
+        }
+        #ledger-detail-modal.open { display: flex; }
+        #ldm-backdrop {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.92); backdrop-filter: blur(10px);
+            opacity: 0; transition: opacity 200ms;
+        }
+        #ledger-detail-modal.open #ldm-backdrop { opacity: 1; }
+        #ldm-wrap {
+            position: relative; z-index: 1;
+            display: flex; align-items: flex-start; gap: 28px;
+            transform: scale(0.88); opacity: 0;
+            transition: transform 240ms cubic-bezier(0.34,1.4,0.64,1), opacity 200ms;
+            max-width: 90vw; max-height: 90vh;
+        }
+        #ledger-detail-modal.open #ldm-wrap { transform: scale(1); opacity: 1; }
+        #ldm-img-box { position: relative; flex-shrink: 0; }
+        #ldm-img {
+            display: block; max-width: min(340px, 50vw); max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 40px 100px rgba(0,0,0,0.9);
+        }
+        #ldm-no-img {
+            width: min(260px, 40vw); aspect-ratio: 3/4;
+            border-radius: 12px;
+            background: linear-gradient(135deg,rgba(255,255,255,0.04),rgba(88,88,255,0.07));
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 60px; opacity: 0.4;
+        }
+        #ldm-close {
+            position: absolute; top: -12px; right: -12px;
+            width: 28px; height: 28px; border-radius: 50%;
+            background: rgba(20,20,30,0.95); border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.7); font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.14s; z-index: 2;
+        }
+        #ldm-close:hover { background: rgba(220,50,50,0.9); color: #fff; }
+        #ldm-info {
+            min-width: 220px; max-width: 280px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 22px;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+        #ldm-type-badge { display: inline-block; padding: 3px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; width: fit-content; }
+        #ldm-name { font-size: 18px; font-weight: 700; color: #fff; line-height: 1.3; }
+        #ldm-price { font-size: 26px; font-weight: 800; }
+        .ldm-row { display: flex; flex-direction: column; gap: 3px; }
+        .ldm-row-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.05em; }
+        .ldm-row-val { font-size: 13px; color: rgba(255,255,255,0.85); }
+        #ldm-del {
+            margin-top: auto; padding: 9px; border-radius: 9px; font-size: 12px; font-weight: 600;
+            background: none; border: 1px solid rgba(255,60,60,0.25);
+            color: rgba(255,100,100,0.5); cursor: pointer; transition: all 0.13s;
+        }
+        #ldm-del:hover { background: rgba(255,60,60,0.15); color: #ff6060; border-color: rgba(255,60,60,0.5); }
+
         /* 거래 추가 모달 */
         #ledger-add-modal {
             display: none; position: fixed; inset: 0; z-index: 300;
@@ -1605,6 +1668,32 @@
         </div>
         <div id="bs-status"></div>
         <div id="bs-grid"></div>
+    </div>
+</div>
+
+<!-- 가계부 상세 모달 -->
+<div id="ledger-detail-modal">
+    <div id="ldm-backdrop"></div>
+    <div id="ldm-wrap">
+        <div id="ldm-img-box">
+            <button id="ldm-close">×</button>
+            <img id="ldm-img" src="" style="display:none">
+            <div id="ldm-no-img">🃏</div>
+        </div>
+        <div id="ldm-info">
+            <span id="ldm-type-badge"></span>
+            <div id="ldm-name"></div>
+            <div id="ldm-price"></div>
+            <div class="ldm-row" id="ldm-date-row">
+                <span class="ldm-row-label">날짜</span>
+                <span class="ldm-row-val" id="ldm-date"></span>
+            </div>
+            <div class="ldm-row" id="ldm-memo-row">
+                <span class="ldm-row-label">메모</span>
+                <span class="ldm-row-val" id="ldm-memo"></span>
+            </div>
+            <button id="ldm-del">🗑 삭제</button>
+        </div>
     </div>
 </div>
 
@@ -2614,7 +2703,7 @@ document.getElementById('btn-prev').addEventListener('click', flipPrev);
 document.getElementById('btn-next').addEventListener('click', flipNext);
 document.addEventListener('keydown', e => {
     if (modal.classList.contains('open')) {
-        if (e.key === 'Escape')     closeCardModal();
+        if (e.key === 'Escape')     { closeCardModal(); closeLedgerDetail(); }
         if (e.key === 'ArrowRight') { if (modalCardIdx < modalCardList.length - 1) showModalCard(modalCardIdx + 1); }
         if (e.key === 'ArrowLeft')  { if (modalCardIdx > 0) showModalCard(modalCardIdx - 1); }
         return;
@@ -3543,7 +3632,7 @@ function renderLedger() {
         const imgHtml = t.image
             ? `<img src="${t.image}" onclick="window.open('${t.image}','_blank')" title="클릭해서 크게보기">`
             : `<div class="lc-img-placeholder">🃏</div>`;
-        return `<div class="lc-card">
+        return `<div class="lc-card" data-id="${t.id}" style="cursor:pointer">
             <div class="lc-img-wrap">
                 ${imgHtml}
                 <span class="lc-type-badge ${isBuy ? 'lc-buy' : 'lc-sell'}">${isBuy ? '구매' : '판매'}</span>
@@ -3554,20 +3643,62 @@ function renderLedger() {
                 <div class="lc-date">📅 ${t.date || '-'}</div>
                 ${t.memo ? `<div class="lc-memo">💬 ${t.memo}</div>` : ''}
             </div>
-            <div class="lc-footer">
-                <button class="lc-del" data-id="${t.id}">삭제</button>
-            </div>
         </div>`;
     }).join('');
 
-    grid.querySelectorAll('.lc-del').forEach(btn =>
-        btn.addEventListener('click', () => {
-            const id = +btn.dataset.id;
-            const idx = ledgerData.findIndex(t => t.id === id);
-            if (idx >= 0) { ledgerData.splice(idx, 1); renderLedger(); saveToLocalStorage(); }
-        })
+    grid.querySelectorAll('.lc-card').forEach(card =>
+        card.addEventListener('click', () => openLedgerDetail(+card.dataset.id))
     );
 }
+
+/* ── 가계부 상세 모달 ── */
+let ldmCurrentId = null;
+
+function openLedgerDetail(id) {
+    const t = ledgerData.find(x => x.id === id);
+    if (!t) return;
+    ldmCurrentId = id;
+    const isBuy = t.type === 'buy';
+
+    // 이미지
+    const imgEl  = document.getElementById('ldm-img');
+    const noImg  = document.getElementById('ldm-no-img');
+    if (t.image) {
+        imgEl.src = t.image; imgEl.style.display = 'block'; noImg.style.display = 'none';
+    } else {
+        imgEl.style.display = 'none'; noImg.style.display = 'flex';
+    }
+
+    // 뱃지
+    const badge = document.getElementById('ldm-type-badge');
+    badge.textContent = isBuy ? '구매' : '판매';
+    badge.style.background = isBuy ? 'rgba(255,100,60,0.75)' : 'rgba(40,200,100,0.75)';
+    badge.style.color = '#fff';
+
+    document.getElementById('ldm-name').textContent  = t.cardName || '카드명 없음';
+    const priceEl = document.getElementById('ldm-price');
+    priceEl.textContent = (isBuy ? '−' : '+') + fmtMoney(t.price);
+    priceEl.style.color = isBuy ? '#ff8060' : '#50e880';
+    document.getElementById('ldm-date').textContent  = t.date || '-';
+    document.getElementById('ldm-memo').textContent  = t.memo || '(메모 없음)';
+
+    document.getElementById('ledger-detail-modal').classList.add('open');
+}
+
+function closeLedgerDetail() {
+    document.getElementById('ledger-detail-modal').classList.remove('open');
+    ldmCurrentId = null;
+}
+
+document.getElementById('ldm-close').addEventListener('click', closeLedgerDetail);
+document.getElementById('ldm-backdrop').addEventListener('click', closeLedgerDetail);
+document.getElementById('ldm-del').addEventListener('click', () => {
+    if (ldmCurrentId == null) return;
+    const idx = ledgerData.findIndex(t => t.id === ldmCurrentId);
+    if (idx >= 0) { ledgerData.splice(idx, 1); saveToLocalStorage(); }
+    closeLedgerDetail();
+    renderLedger();
+});
 
 /* 필터 버튼 */
 document.querySelectorAll('.ledger-filter-btn').forEach(btn =>
