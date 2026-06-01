@@ -1527,6 +1527,12 @@
         <button class="sidebar-db-btn" id="btn-card-db">🗃️ 카드 DB 브라우저</button>
         <button class="sidebar-ledger-btn" id="btn-ledger">📒 가계부</button>
     </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.05);margin-top:6px;padding-top:8px;">
+        <div class="sidebar-label" style="padding-top:6px;">데이터 백업</div>
+        <button class="sidebar-db-btn" id="btn-export" style="color:rgba(255,200,80,0.7);border-color:rgba(255,200,80,0.15)">💾 데이터 내보내기</button>
+        <button class="sidebar-db-btn" id="btn-import" style="color:rgba(150,200,255,0.7);border-color:rgba(150,200,255,0.15)">📂 데이터 불러오기</button>
+        <input type="file" id="import-file-input" accept=".json" style="display:none">
+    </div>
     <div id="sidebar-stats">
         <span>📦 <span class="ss-val" id="ss-cards">0</span>장</span>
         <span>♥ <span class="ss-val" id="ss-wish">0</span>개</span>
@@ -3829,6 +3835,44 @@ document.getElementById('la-submit').addEventListener('click', () => {
 /* Enter 키로 저장 */
 document.getElementById('la-memo').addEventListener('keydown', e => {
     if (e.key === 'Enter') document.getElementById('la-submit').click();
+});
+
+/* ══════════════════════════════════════
+   데이터 내보내기 / 불러오기
+══════════════════════════════════════ */
+document.getElementById('btn-export').addEventListener('click', () => {
+    const keys = ['pb_binders','pb_nextId','pb_cards','pb_memos','pb_stickers',
+                  'pb_wishlist','pb_owned','pb_card_meta','pb_ledger'];
+    const backup = { version: 1, date: new Date().toISOString(), data: {} };
+    keys.forEach(k => { const v = localStorage.getItem(k); if (v) backup.data[k] = v; });
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = `PokeBinder_백업_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+});
+
+document.getElementById('btn-import').addEventListener('click', () => {
+    document.getElementById('import-file-input').click();
+});
+
+document.getElementById('import-file-input').addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        try {
+            const backup = JSON.parse(ev.target.result);
+            if (!backup.data) { alert('올바른 백업 파일이 아닙니다.'); return; }
+            if (!confirm(`${backup.date?.slice(0,10) || '?'} 백업 파일을 불러옵니다.\n현재 데이터가 덮어씌워집니다. 계속할까요?`)) return;
+            Object.entries(backup.data).forEach(([k, v]) => localStorage.setItem(k, v));
+            alert('불러오기 완료! 페이지를 새로고침합니다.');
+            location.reload();
+        } catch(err) { alert('파일 읽기 실패: ' + err.message); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
 });
 
 /* ══════════════════════════════════════
