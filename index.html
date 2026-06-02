@@ -4055,6 +4055,7 @@ renderDots();
 updateUI();
 initFill();
 renderSticker();
+if (ledgerData.length) renderLedger(); // 저장된 가계부 데이터 즉시 렌더
 
 /* 초기 autoFit — stage가 실제로 크기를 가질 때까지 재시도 */
 function tryAutoFit(remaining) {
