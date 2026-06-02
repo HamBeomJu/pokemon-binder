@@ -3194,49 +3194,60 @@ async function showKrCards(pack) {
     });
 
     dbStatus.textContent = `총 ${pack.printed_total || pack.total || cards.length}종 · ${cards.length}장 표시`;
-    dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => {
+    const BATCH = 60;
+    function makeKrCardHtml(c, i) {
         const rarColor = RARITY_COLOR[c.rarity] || 'rgba(255,255,255,0.3)';
         const rarBadge = c.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${c.rarity}</div>` : '';
         const imgSrc = thumbUrls[i] || '';
         const numPad = String(c.num).padStart(3,'0');
         const wk = wishKey(pack.code, numPad);
         const wished = isWishlisted(pack.code, numPad);
-        const _ds = [pack.code, numPad, c.num, c.name||'', c.rarity||'',
-                     `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
-        return `
-        <div class="db-card-item${wished?' wishlisted':''}" data-idx="${i}" data-wkey="${wk}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.name}${c.rarity ? ' ['+c.rarity+']' : ''}">
+        const _ds = [pack.code, numPad, c.num, c.name||'', c.rarity||'', `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
+        return `<div class="db-card-item${wished?' wishlisted':''}" data-idx="${i}" data-wkey="${wk}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.name}${c.rarity?` [${c.rarity}]`:''}">
             <img src="${imgSrc}" loading="lazy" alt="${c.name}" onerror="this.parentElement.style.opacity='0.15'">
             ${rarBadge}
             <div class="db-card-label">${numPad}  ${c.name}</div>
             <button class="db-wish-btn" title="${wished?'위시리스트 제거':'위시리스트 추가'}">♥</button>
             <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
         </div>`;
-    }).join('')}</div>`;
-    dbContent.querySelectorAll('.db-card-item').forEach(el => {
-        el.addEventListener('click', e => {
-            const idx = +el.dataset.idx;
-            if (e.target.closest('.db-wish-btn')) {
-                const numPad = String(cards[idx].num).padStart(3,'0');
-                const added = toggleWishlist({
-                    key:       wishKey(pack.code, numPad),
-                    pack_code: pack.code,
-                    pack_name: pack.name,
-                    series:    series,
-                    num:       numPad,
-                    name:      cards[idx].name || '',
-                    rarity:    cards[idx].rarity || '',
-                    thumb:     thumbUrls[idx] || '',
-                    full:      fullUrls[idx]  || '',
-                });
-                el.classList.toggle('wishlisted', added);
-                e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
-            } else if (e.target.closest('.db-add-btn')) {
-                const numPad2 = String(cards[idx].num).padStart(3,'0');
-                enterSlotPickMode(fullUrls[idx], {pack_code: pack.code, num: numPad2});
-            } else {
-                openCardModalFromDb(fullUrls, idx);
-            }
-        });
+    }
+    const grid = document.createElement('div');
+    grid.className = 'db-card-grid';
+    grid.innerHTML = cards.slice(0, BATCH).map((c, i) => makeKrCardHtml(c, i)).join('');
+    if (cards.length > BATCH) {
+        const more = document.createElement('div');
+        more.id = 'db-load-more'; more.dataset.from = BATCH;
+        more.style.cssText = 'grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px';
+        more.textContent = `더 보기 (${cards.length - BATCH}장 더)`;
+        grid.appendChild(more);
+    }
+    dbContent.innerHTML = ''; dbContent.appendChild(grid);
+
+    grid.addEventListener('click', e => {
+        const more = e.target.closest('#db-load-more');
+        if (more) {
+            const from = +more.dataset.from, next = Math.min(from + BATCH, cards.length);
+            const tmp = document.createElement('div');
+            tmp.innerHTML = cards.slice(from, next).map((c, j) => makeKrCardHtml(c, from + j)).join('');
+            while (tmp.firstChild) grid.insertBefore(tmp.firstChild, more);
+            more.dataset.from = next;
+            if (next >= cards.length) more.remove();
+            else more.textContent = `더 보기 (${cards.length - next}장 더)`;
+            return;
+        }
+        const el = e.target.closest('.db-card-item');
+        if (!el) return;
+        const idx = +el.dataset.idx;
+        if (e.target.closest('.db-wish-btn')) {
+            const numPad = String(cards[idx].num).padStart(3,'0');
+            const added = toggleWishlist({ key: wishKey(pack.code, numPad), pack_code: pack.code, pack_name: pack.name, series, num: numPad, name: cards[idx].name||'', rarity: cards[idx].rarity||'', thumb: thumbUrls[idx]||'', full: fullUrls[idx]||'' });
+            el.classList.toggle('wishlisted', added);
+            e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
+        } else if (e.target.closest('.db-add-btn')) {
+            enterSlotPickMode(fullUrls[idx], {pack_code: pack.code, num: String(cards[idx].num).padStart(3,'0')});
+        } else {
+            openCardModalFromDb(fullUrls, idx);
+        }
     });
 }
 
@@ -3344,24 +3355,52 @@ async function showJpCards(pack) {
     function renderCards(cards) {
         const fullUrls = cards.map(c => c.full);
         dbStatus.textContent = `총 ${cards.length}장`;
-        dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => {
+        const BATCH = 60;
+
+        function makeCardHtml(c, i) {
             const numPad = String(i+1).padStart(3,'0');
             const _ds = [pack.code, numPad, String(i+1), c.label||'',
                          `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
-            return `
-            <div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.label}">
+            return `<div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.label}">
                 <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
                 <div class="db-card-label">${numPad}  ${c.label}</div>
                 <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
-            </div>`;}).join('')}</div>`;
-        dbContent.querySelectorAll('.db-card-item').forEach(el => {
-            el.addEventListener('click', e => {
-                if (e.target.closest('.db-add-btn')) {
-                    enterSlotPickMode(fullUrls[+el.dataset.idx]);
-                } else {
-                    openCardModalFromDb(fullUrls, +el.dataset.idx);
-                }
-            });
+            </div>`;
+        }
+
+        const initial = cards.slice(0, BATCH).map((c, i) => makeCardHtml(c, i)).join('');
+        const moreBtn = cards.length > BATCH
+            ? `<div id="db-load-more" data-from="${BATCH}" style="grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px">더 보기 (${cards.length - BATCH}장 더)</div>`
+            : '';
+        const grid = document.createElement('div');
+        grid.className = 'db-card-grid';
+        grid.innerHTML = initial + moreBtn;
+        dbContent.innerHTML = '';
+        dbContent.appendChild(grid);
+
+        // 이벤트 위임 — 리스너 1개로 전체 처리
+        grid.addEventListener('click', e => {
+            const loadMore = e.target.closest('#db-load-more');
+            if (loadMore) {
+                const from = +loadMore.dataset.from;
+                const next = Math.min(from + BATCH, cards.length);
+                const frag = document.createDocumentFragment();
+                const tmp  = document.createElement('div');
+                tmp.innerHTML = cards.slice(from, next).map((c, j) => makeCardHtml(c, from + j)).join('');
+                while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+                grid.insertBefore(frag, loadMore);
+                loadMore.dataset.from = next;
+                if (next >= cards.length) loadMore.remove();
+                else loadMore.textContent = `더 보기 (${cards.length - next}장 더)`;
+                return;
+            }
+            const item = e.target.closest('.db-card-item');
+            if (!item) return;
+            if (e.target.closest('.db-add-btn')) {
+                enterSlotPickMode(fullUrls[+item.dataset.idx]);
+            } else {
+                openCardModalFromDb(fullUrls, +item.dataset.idx);
+            }
         });
     }
 
@@ -3453,25 +3492,43 @@ async function showEnCards(set) {
     });
     const fullUrls = cards.map(c => c.full);
     dbStatus.textContent = `${total}장`;
-    dbContent.innerHTML = `<div class="db-card-grid">${cards.map((c, i) => {
+    const BATCH = 60;
+    function makeEnCardHtml(c, i) {
         const numPad = String(i+1).padStart(3,'0');
-        const _ds = [set.id, set.name||'', numPad, String(i+1), c.label||'',
-                     `${set.id}${numPad}`, `${set.id}/${numPad}`].join(' ').toLowerCase();
-        return `
-        <div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${set.id} ${numPad}">
+        const _ds = [set.id, set.name||'', numPad, String(i+1), c.label||'', `${set.id}${numPad}`, `${set.id}/${numPad}`].join(' ').toLowerCase();
+        return `<div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${set.id} ${numPad}">
             <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
             <div class="db-card-label">${numPad}</div>
             <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
         </div>`;
-    }).join('')}</div>`;
-    dbContent.querySelectorAll('.db-card-item').forEach(el => {
-        el.addEventListener('click', e => {
-            if (e.target.closest('.db-add-btn')) {
-                enterSlotPickMode(fullUrls[+el.dataset.idx]);
-            } else {
-                openCardModalFromDb(fullUrls, +el.dataset.idx);
-            }
-        });
+    }
+    const grid = document.createElement('div');
+    grid.className = 'db-card-grid';
+    grid.innerHTML = cards.slice(0, BATCH).map((c, i) => makeEnCardHtml(c, i)).join('');
+    if (cards.length > BATCH) {
+        const more = document.createElement('div');
+        more.id = 'db-load-more'; more.dataset.from = BATCH;
+        more.style.cssText = 'grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px';
+        more.textContent = `더 보기 (${cards.length - BATCH}장 더)`;
+        grid.appendChild(more);
+    }
+    dbContent.innerHTML = ''; dbContent.appendChild(grid);
+    grid.addEventListener('click', e => {
+        const more = e.target.closest('#db-load-more');
+        if (more) {
+            const from = +more.dataset.from, next = Math.min(from + BATCH, cards.length);
+            const tmp = document.createElement('div');
+            tmp.innerHTML = cards.slice(from, next).map((c, j) => makeEnCardHtml(c, from + j)).join('');
+            while (tmp.firstChild) grid.insertBefore(tmp.firstChild, more);
+            more.dataset.from = next;
+            if (next >= cards.length) more.remove();
+            else more.textContent = `더 보기 (${cards.length - next}장 더)`;
+            return;
+        }
+        const el = e.target.closest('.db-card-item');
+        if (!el) return;
+        if (e.target.closest('.db-add-btn')) enterSlotPickMode(fullUrls[+el.dataset.idx]);
+        else openCardModalFromDb(fullUrls, +el.dataset.idx);
     });
 }
 
