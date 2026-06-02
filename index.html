@@ -3629,7 +3629,7 @@ function _showSaveToast() {
 
 function saveToLocalStorage() {
     clearTimeout(_saveTimer);
-    _saveTimer = setTimeout(() => { _doSave(); _showSaveToast(); }, 5000);
+    _saveTimer = setTimeout(() => { _doSave(); _showSaveToast(); }, 2000);
 }
 
 /* 탭/창 닫을 때 즉시 저장 (데이터 유실 방지) */
