@@ -3429,10 +3429,10 @@ async function showJpCards(pack) {
         const BATCH = 60;
 
         function makeCardHtml(c, i) {
-            const numPad = String(i+1).padStart(3,'0');
+            const numPad = c.localId || String(i+1).padStart(3,'0');
             const _ds = [pack.code, numPad, String(i+1), c.label||'',
                          `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
-            return `<div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.label}">
+            return `<div class="db-card-item" data-idx="${i}" data-num="${numPad}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.label}">
                 <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
                 <div class="db-card-label">${numPad}  ${c.label}</div>
                 <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
@@ -3469,7 +3469,9 @@ async function showJpCards(pack) {
             if (!item) return;
             if (e.target.closest('.db-add-btn') || dbMultiMode) {
                 const i = +item.dataset.idx;
-                const meta = {pack_code: pack.code, num: String(i+1).padStart(3,'0'), name:'', pack_name: pack.name||pack.code, total: total||0, region:'jp'};
+                const numFromEl = item.dataset.num || String(i+1).padStart(3,'0');
+                const nameFromEl = cards[i] ? (cards[i].label||'') : '';
+                const meta = {pack_code: pack.code, num: numFromEl, name: nameFromEl, pack_name: pack.name_kr||pack.name||pack.code, total: total||0, region:'jp'};
                 if (dbMultiMode) toggleDbCardSelect(item, fullUrls[i], meta);
                 else enterSlotPickMode(fullUrls[i], meta);
             } else {
@@ -3482,7 +3484,7 @@ async function showJpCards(pack) {
     function useLimitless() {
         const base = `https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpc/${pack.code}`;
         const cards = Array.from({ length: total }, (_, i) => {
-            const num = i + 1; // zero-padding 없음
+            const num = i + 1;
             return {
                 thumb: `${base}/${pack.code}_${num}_R_JP_SM.png`,
                 full:  `${base}/${pack.code}_${num}_R_JP_LG.png`,
@@ -3492,11 +3494,34 @@ async function showJpCards(pack) {
         renderCards(cards);
     }
 
-    // Limitless CDN 먼저 (빠른 CDN) — SV/S/SM/XY/BW 대부분 커버
-    // artofpkm은 Limitless가 없는 팩(MEGA 등)에만 폴백
-    const LIMITLESS_SERIES = new Set(['SV','S','SM','XY','BW']);
+    async function useTcgdex() {
+        const cacheKey = 'tcgdex_ja_' + pack.code;
+        if (!dbCache[cacheKey]) {
+            try {
+                const r = await fetch(`https://api.tcgdex.net/v2/ja/sets/${pack.code}`);
+                if (!r.ok) throw new Error('not ok');
+                dbCache[cacheKey] = await r.json();
+            } catch(e) { return false; }
+        }
+        const data = dbCache[cacheKey];
+        if (!data.cards || data.cards.length === 0) return false;
+        const cards = data.cards.map(c => ({
+            localId: c.localId,
+            thumb: `${c.image}/low.webp`,
+            full:  `${c.image}/high.webp`,
+            label: c.name || c.localId
+        }));
+        renderCards(cards);
+        return true;
+    }
+
+    const LIMITLESS_SERIES = new Set(['S','SM','XY','BW']);
     const jpSerie = pack.tcgdex_serie || serie;
-    if (LIMITLESS_SERIES.has(jpSerie)) {
+    if (jpSerie === 'SV') {
+        // SV 시리즈 → TCGdex (카드명 포함), 실패 시 Limitless 폴백
+        const ok = await useTcgdex();
+        if (!ok) useLimitless();
+    } else if (LIMITLESS_SERIES.has(jpSerie)) {
         useLimitless();
     } else if (pack.artofpkm_id) {
         // MEGA 등 Limitless 미커버 시리즈 → artofpkm
