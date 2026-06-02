@@ -4712,15 +4712,15 @@ async function loadFromSb(userId) {
     if (!sb || !userId) return;
     const { data: rows } = await sb.from('binders')
         .select('*').eq('user_id', userId).order('sort_order');
+
     if (rows && rows.length > 0) {
+        // Supabase에 데이터 있음 → 클라우드 데이터로 교체
         BINDERS.length = 0;
         rows.forEach(r => BINDERS.push({ id: r.id, name: r.name, color: r.color, type: r.type, pages: r.pages }));
         nextId = Math.max(...BINDERS.map(b => b.id)) + 1;
         activeBinder = BINDERS[0];
-    }
-    /* 카드 불러오기 */
-    const binderIds = BINDERS.map(b => b.id);
-    if (binderIds.length > 0) {
+
+        const binderIds = BINDERS.map(b => b.id);
         const { data: cards } = await sb.from('cards').select('*').in('binder_id', binderIds);
         Object.keys(cardData).forEach(k => delete cardData[k]);
         Object.keys(stickerData).forEach(k => delete stickerData[k]);
@@ -4731,7 +4731,20 @@ async function loadFromSb(userId) {
                 cardData[key][c.slot] = c.image_url;
             });
         }
+    } else if (rows && rows.length === 0) {
+        // Supabase 계정인데 데이터 없음 → 로컬 데이터 클라우드에 자동 업로드
+        const hasLocalData = BINDERS.length > 0 && BINDERS.some(b =>
+            Object.keys(cardData).some(k => k.startsWith(b.id + '_')));
+        if (hasLocalData && confirm('로컬에 저장된 바인더를 클라우드 계정에 업로드할까요?')) {
+            for (const b of BINDERS) await sbSaveBinder(b);
+            for (const [key, arr] of Object.entries(cardData)) {
+                const [bid, sp, side] = key.split('_');
+                arr.forEach((url, slot) => { if (url) sbSaveCard(+bid, +sp, side, slot, url); });
+            }
+            alert('업로드 완료!');
+        }
     }
+
     page = 1;
     updateTopbar(); renderDots(); updateUI(); renderSidebar(); initFill();
     renderSticker();
