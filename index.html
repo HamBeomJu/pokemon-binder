@@ -3515,7 +3515,7 @@ async function showJpCards(pack) {
         return true;
     }
 
-    const LIMITLESS_SERIES = new Set(['S','SM','XY','BW']);
+    const LIMITLESS_SERIES = new Set(['S','SM']); // XY/BW: Limitless 403 → artofpkm으로 처리
     const jpSerie = pack.tcgdex_serie || serie;
     if (jpSerie === 'SV') {
         // SV 시리즈 → TCGdex (카드명 포함), 실패 시 Limitless 폴백
