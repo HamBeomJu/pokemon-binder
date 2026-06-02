@@ -1856,8 +1856,8 @@
         <h2 id="auth-title">로그인</h2>
         <p class="auth-sub" id="auth-sub">Supabase 계정으로 데이터를 클라우드에 저장하세요</p>
         <p class="auth-err" id="auth-err"></p>
-        <input class="auth-inp" id="auth-email" type="email" placeholder="이메일" autocomplete="email">
-        <input class="auth-inp" id="auth-pw" type="password" placeholder="비밀번호" autocomplete="current-password">
+        <input class="auth-inp" id="auth-nick" type="text" placeholder="닉네임 (영문+숫자)" autocomplete="username" maxlength="20">
+        <input class="auth-inp" id="auth-pw" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="current-password">
         <button class="auth-btn-main" id="auth-submit">로그인</button>
         <p class="auth-toggle" style="margin-top:12px">계정이 없으신가요? <a id="auth-mode-toggle">회원가입</a></p>
         <hr class="auth-sep">
@@ -4614,12 +4614,12 @@ function openAuthModal() {
         return;
     }
     document.getElementById('auth-err').textContent = '';
-    document.getElementById('auth-email').value = '';
+    document.getElementById('auth-nick').value = '';
     document.getElementById('auth-pw').value = '';
     authMode = 'login';
     updateAuthModalMode();
     document.getElementById('auth-overlay').classList.add('open');
-    setTimeout(() => document.getElementById('auth-email').focus(), 100);
+    setTimeout(() => document.getElementById('auth-nick').focus(), 100);
 }
 
 function updateAuthModalMode() {
@@ -4642,11 +4642,13 @@ document.getElementById('auth-cancel').addEventListener('click',  () => {
 });
 
 document.getElementById('auth-submit').addEventListener('click', async () => {
-    const email = document.getElementById('auth-email').value.trim();
+    const nick  = document.getElementById('auth-nick').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
     const pw    = document.getElementById('auth-pw').value;
     const errEl = document.getElementById('auth-err');
     const btn   = document.getElementById('auth-submit');
-    if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 입력해주세요.'; return; }
+    if (!nick)      { errEl.textContent = '닉네임을 입력해주세요 (영문+숫자).'; return; }
+    if (pw.length < 6) { errEl.textContent = '비밀번호는 6자 이상이어야 해요.'; return; }
+    const email = `${nick}@pokebinder.app`; // 내부용 이메일 생성
     btn.disabled = true; btn.textContent = '처리 중...';
     errEl.textContent = '';
     try {
@@ -4654,15 +4656,15 @@ document.getElementById('auth-submit').addEventListener('click', async () => {
         if (authMode === 'login') {
             res = await sb.auth.signInWithPassword({ email, password: pw });
         } else {
-            res = await sb.auth.signUp({ email, password: pw });
+            res = await sb.auth.signUp({ email, password: pw, options: { data: { display_name: nick } } });
         }
         if (res.error) {
-            errEl.textContent = res.error.message;
+            errEl.textContent = res.error.message === 'User already registered'
+                ? '이미 사용 중인 닉네임이에요.' : res.error.message;
+        } else if (authMode === 'signup' && !res.data.session) {
+            errEl.textContent = '⚠️ 이메일 인증이 필요합니다. Supabase 대시보드에서 이메일 인증을 꺼주세요.';
         } else {
             document.getElementById('auth-overlay').classList.remove('open');
-            if (authMode === 'signup' && !res.data.session) {
-                alert('확인 이메일을 보냈습니다. 이메일을 확인한 후 로그인해주세요.');
-            }
         }
     } catch(e) {
         errEl.textContent = e.message;
@@ -4672,7 +4674,7 @@ document.getElementById('auth-submit').addEventListener('click', async () => {
 });
 
 /* Enter 키 지원 */
-['auth-email','auth-pw'].forEach(id =>
+['auth-nick','auth-pw'].forEach(id =>
     document.getElementById(id).addEventListener('keydown', e => {
         if (e.key === 'Enter') document.getElementById('auth-submit').click();
     })
