@@ -532,6 +532,47 @@
             transition: all 0.14s;
         }
         #db-close:hover { background: rgba(255,60,60,0.55); color: #fff; border-color: transparent; transform: scale(1.08); }
+
+        /* ── 다중 선택 ── */
+        #db-multi-toggle {
+            padding: 5px 13px; border-radius: 8px; font-size: 12px; font-weight: 600;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.45); cursor: pointer; transition: all 0.13s;
+        }
+        #db-multi-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        #db-multi-toggle.active { background: rgba(88,88,255,0.25); border-color: rgba(88,88,255,0.5); color: #c0c0ff; }
+        .db-card-item.db-selected {
+            outline: 2.5px solid rgba(88,180,255,0.9); outline-offset: -2px;
+            background: rgba(88,180,255,0.12) !important;
+        }
+        .db-card-item.db-selected::after {
+            content: '✓'; position: absolute; top: 4px; right: 4px;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: rgba(88,180,255,0.9); color: #fff;
+            font-size: 11px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 18px; text-align: center;
+        }
+        #db-multi-bar {
+            display: none; align-items: center; gap: 10px;
+            padding: 10px 22px; flex-shrink: 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            background: #0d0d1a;
+        }
+        #db-multi-bar.show { display: flex; }
+        #db-multi-count { font-size: 12px; color: rgba(255,255,255,0.55); flex: 1; }
+        #db-multi-add {
+            padding: 8px 20px; border-radius: 9px; font-size: 12px; font-weight: 700;
+            background: rgba(88,88,255,0.35); border: 1px solid rgba(88,88,255,0.6);
+            color: #fff; cursor: pointer; transition: all 0.13s;
+        }
+        #db-multi-add:hover { background: rgba(88,88,255,0.55); }
+        #db-multi-clear {
+            padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600;
+            background: none; border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.35); cursor: pointer;
+        }
+        #db-multi-clear:hover { color: #ff6060; border-color: rgba(255,60,60,0.4); }
         /* ── 시리즈 버튼 행 ── */
         #db-series-row {
             display: flex; gap: 6px; padding: 10px 22px;
@@ -1775,6 +1816,7 @@
                 <button class="db-lang-btn" data-lang="en">🇺🇸 영판</button>
             </div>
             <button id="db-wish-tab">♥ 위시<span id="db-wish-count"></span></button>
+            <button id="db-multi-toggle" title="여러 장 선택해서 한번에 추가">☑ 다중선택</button>
             <button id="db-close">✕</button>
         </div>
         <div id="db-series-row"></div>
@@ -1794,6 +1836,11 @@
         </div>
         <div id="db-status">시리즈를 선택하세요</div>
         <div id="db-content"></div>
+        <div id="db-multi-bar">
+            <span id="db-multi-count">0장 선택됨</span>
+            <button id="db-multi-clear">선택 초기화</button>
+            <button id="db-multi-add">✚ 바인더에 추가</button>
+        </div>
     </div>
 </div>
 
@@ -2106,15 +2153,26 @@ function fillPage(gridId, sp, side) {
             pocket.addEventListener('click', e => {
                 if (!pendingDbCard) return;
                 if (e.target.closest('.pocket-menu')) return;
-                const k = `${activeBinder.id}_${pSp}_${pSide}`;
-                getCards(activeBinder.id, pSp, pSide)[idx] = pendingDbCard;
-                // DB 카드 메타 저장 (위시 테두리 매칭용)
-                if (pendingDbCardMeta) {
-                    if (!cardMeta[k]) cardMeta[k] = [];
-                    cardMeta[k][idx] = pendingDbCardMeta;
-                }
+
+                // 다중 선택 모드 — 선택된 카드 전부 순서대로 채움
+                const items = (dbMultiSelection && dbMultiSelection.length > 1)
+                    ? dbMultiSelection
+                    : [{ url: pendingDbCard, meta: pendingDbCardMeta }];
+
+                const slots = buildSlots(pSp, pSide, idx, items.length);
+                slots.forEach((s, i) => {
+                    const item = items[i];
+                    getCards(activeBinder.id, s.sp, s.side)[s.idx] = item.url;
+                    if (item.meta) {
+                        const sk = `${activeBinder.id}_${s.sp}_${s.side}`;
+                        if (!cardMeta[sk]) cardMeta[sk] = [];
+                        cardMeta[sk][s.idx] = item.meta;
+                    }
+                    if (typeof sbSaveCard === 'function') sbSaveCard(activeBinder.id, s.sp, s.side, s.idx, item.url);
+                });
+
+                dbMultiSelection = [];
                 saveToLocalStorage();
-                if (typeof sbSaveCard === 'function') sbSaveCard(activeBinder.id, pSp, pSide, idx, pendingDbCard);
                 refreshSpread();
                 exitSlotPickMode();
             });
@@ -3254,8 +3312,10 @@ async function showKrCards(pack) {
             const added = toggleWishlist({ key: wishKey(pack.code, numPad), pack_code: pack.code, pack_name: pack.name, series, num: numPad, name: cards[idx].name||'', rarity: cards[idx].rarity||'', thumb: thumbUrls[idx]||'', full: fullUrls[idx]||'' });
             el.classList.toggle('wishlisted', added);
             e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
-        } else if (e.target.closest('.db-add-btn')) {
-            enterSlotPickMode(fullUrls[idx], {pack_code: pack.code, num: String(cards[idx].num).padStart(3,'0'), name: cards[idx].name||'', pack_name: pack.name||pack.code, total: pack.total||0, region:'kr'});
+        } else if (e.target.closest('.db-add-btn') || dbMultiMode) {
+            const meta = {pack_code: pack.code, num: String(cards[idx].num).padStart(3,'0'), name: cards[idx].name||'', pack_name: pack.name||pack.code, total: pack.total||0, region:'kr'};
+            if (dbMultiMode) toggleDbCardSelect(el, fullUrls[idx], meta);
+            else enterSlotPickMode(fullUrls[idx], meta);
         } else {
             openCardModalFromDb(fullUrls, idx);
         }
@@ -3407,9 +3467,11 @@ async function showJpCards(pack) {
             }
             const item = e.target.closest('.db-card-item');
             if (!item) return;
-            if (e.target.closest('.db-add-btn')) {
+            if (e.target.closest('.db-add-btn') || dbMultiMode) {
                 const i = +item.dataset.idx;
-                enterSlotPickMode(fullUrls[i], {pack_code: pack.code, num: String(i+1).padStart(3,'0'), name:'', pack_name: pack.name||pack.code, total: total||0, region:'jp'});
+                const meta = {pack_code: pack.code, num: String(i+1).padStart(3,'0'), name:'', pack_name: pack.name||pack.code, total: total||0, region:'jp'};
+                if (dbMultiMode) toggleDbCardSelect(item, fullUrls[i], meta);
+                else enterSlotPickMode(fullUrls[i], meta);
             } else {
                 openCardModalFromDb(fullUrls, +item.dataset.idx);
             }
@@ -3539,14 +3601,67 @@ async function showEnCards(set) {
         }
         const el = e.target.closest('.db-card-item');
         if (!el) return;
-        if (e.target.closest('.db-add-btn')) { const i = +el.dataset.idx; enterSlotPickMode(fullUrls[i], {pack_code: set.id, num: String(i+1).padStart(3,'0'), name:'', pack_name: set.name||set.id, total: total||0, region:'en'}); }
-        else openCardModalFromDb(fullUrls, +el.dataset.idx);
+        if (e.target.closest('.db-add-btn') || dbMultiMode) {
+            const i = +el.dataset.idx;
+            const meta = {pack_code: set.id, num: String(i+1).padStart(3,'0'), name:'', pack_name: set.name||set.id, total: total||0, region:'en'};
+            if (dbMultiMode) toggleDbCardSelect(el, fullUrls[i], meta);
+            else enterSlotPickMode(fullUrls[i], meta);
+        } else openCardModalFromDb(fullUrls, +el.dataset.idx);
     });
 }
 
+/* ══ 다중 선택 ══ */
+let dbMultiMode = false;
+let dbMultiSelection = []; // [{url, meta}, ...]
+
+function setDbMultiMode(on) {
+    dbMultiMode = on;
+    document.getElementById('db-multi-toggle').classList.toggle('active', on);
+    if (!on) clearDbMultiSelection();
+}
+
+function clearDbMultiSelection() {
+    dbMultiSelection = [];
+    document.querySelectorAll('.db-card-item.db-selected').forEach(el => el.classList.remove('db-selected'));
+    updateDbMultiBar();
+}
+
+function updateDbMultiBar() {
+    const bar = document.getElementById('db-multi-bar');
+    const n   = dbMultiSelection.length;
+    bar.classList.toggle('show', n > 0);
+    document.getElementById('db-multi-count').textContent = `${n}장 선택됨`;
+}
+
+function toggleDbCardSelect(el, url, meta) {
+    const idx = dbMultiSelection.findIndex(x => x.url === url);
+    if (idx >= 0) {
+        dbMultiSelection.splice(idx, 1);
+        el.classList.remove('db-selected');
+    } else {
+        dbMultiSelection.push({ url, meta });
+        el.classList.add('db-selected');
+    }
+    updateDbMultiBar();
+}
+
+document.getElementById('db-multi-toggle').addEventListener('click', () => setDbMultiMode(!dbMultiMode));
+document.getElementById('db-multi-clear').addEventListener('click', clearDbMultiSelection);
+document.getElementById('db-multi-add').addEventListener('click', () => {
+    if (!dbMultiSelection.length) return;
+    closeDbModal();
+    // 슬롯 선택 모드 진입 (다중)
+    pendingDbCard     = dbMultiSelection[0].url;
+    pendingDbCardMeta = dbMultiSelection[0].meta || null;
+    document.body.classList.add('slot-pick-mode');
+    document.getElementById('slot-pick-overlay').classList.add('show');
+    document.getElementById('slot-pick-overlay').querySelector('button').textContent =
+        `취소 (ESC) — ${dbMultiSelection.length}장 선택됨`;
+});
+
 document.getElementById('btn-card-db').addEventListener('click', openDbModal);
-document.getElementById('db-close').addEventListener('click', closeDbModal);
-document.getElementById('db-backdrop').addEventListener('click', closeDbModal);
+document.getElementById('db-close').addEventListener('click', () => { setDbMultiMode(false); closeDbModal(); });
+document.getElementById('db-backdrop').addEventListener('click', () => { setDbMultiMode(false); closeDbModal(); });
 // 언어 탭 버튼
 document.querySelectorAll('.db-lang-btn').forEach(b =>
     b.addEventListener('click', () => setDbLang(b.dataset.lang))
