@@ -1025,6 +1025,11 @@
             font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
             color: rgba(255,255,255,0.35); text-transform: uppercase; margin: 0;
         }
+        #card-info-section { display: none; flex-direction: column; gap: 6px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+        #card-info-section.visible { display: flex; }
+        .ci-row { display: flex; flex-direction: column; gap: 2px; }
+        .ci-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.08em; }
+        .ci-val { font-size: 12.5px; color: rgba(255,255,255,0.85); font-weight: 500; line-height: 1.3; word-break: keep-all; }
         .memo-field { display: flex; flex-direction: column; gap: 4px; }
         .memo-field label {
             font-size: 11px; color: rgba(255,255,255,0.42);
@@ -1827,6 +1832,12 @@
             <div id="card-modal-info"></div>
         </div>
         <div id="card-modal-memo">
+            <div id="card-info-section">
+                <h4>🃏 카드 정보</h4>
+                <div class="ci-row"><span class="ci-label">카드명</span><span class="ci-val" id="ci-name">—</span></div>
+                <div class="ci-row"><span class="ci-label">시리즈</span><span class="ci-val" id="ci-series">—</span></div>
+                <div class="ci-row"><span class="ci-label">카드 번호</span><span class="ci-val" id="ci-number">—</span></div>
+            </div>
             <h4>📝 메모</h4>
             <div class="memo-field">
                 <label>💰 가격</label>
@@ -2897,7 +2908,7 @@ function showWishlist() {
                 showWishlist();                     // 뷰 갱신
             } else if (e.target.closest('.db-add-btn')) {
                 const w = wishlistData[i];
-                enterSlotPickMode(w.full || w.thumb, {pack_code: w.pack_code, num: w.num});
+                enterSlotPickMode(w.full || w.thumb, {pack_code: w.pack_code, num: w.num, name: w.name||'', pack_name: w.pack_name||w.series||w.pack_code, total: 0, region:''});
             } else {
                 const fullUrls = wishlistData.map(w => w.full || w.thumb);
                 openCardModalFromDb(fullUrls, i);
@@ -3244,7 +3255,7 @@ async function showKrCards(pack) {
             el.classList.toggle('wishlisted', added);
             e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
         } else if (e.target.closest('.db-add-btn')) {
-            enterSlotPickMode(fullUrls[idx], {pack_code: pack.code, num: String(cards[idx].num).padStart(3,'0')});
+            enterSlotPickMode(fullUrls[idx], {pack_code: pack.code, num: String(cards[idx].num).padStart(3,'0'), name: cards[idx].name||'', pack_name: pack.name||pack.code, total: pack.total||0, region:'kr'});
         } else {
             openCardModalFromDb(fullUrls, idx);
         }
@@ -3397,7 +3408,8 @@ async function showJpCards(pack) {
             const item = e.target.closest('.db-card-item');
             if (!item) return;
             if (e.target.closest('.db-add-btn')) {
-                enterSlotPickMode(fullUrls[+item.dataset.idx]);
+                const i = +item.dataset.idx;
+                enterSlotPickMode(fullUrls[i], {pack_code: pack.code, num: String(i+1).padStart(3,'0'), name:'', pack_name: pack.name||pack.code, total: total||0, region:'jp'});
             } else {
                 openCardModalFromDb(fullUrls, +item.dataset.idx);
             }
@@ -3527,7 +3539,7 @@ async function showEnCards(set) {
         }
         const el = e.target.closest('.db-card-item');
         if (!el) return;
-        if (e.target.closest('.db-add-btn')) enterSlotPickMode(fullUrls[+el.dataset.idx]);
+        if (e.target.closest('.db-add-btn')) { const i = +el.dataset.idx; enterSlotPickMode(fullUrls[i], {pack_code: set.id, num: String(i+1).padStart(3,'0'), name:'', pack_name: set.name||set.id, total: total||0, region:'en'}); }
         else openCardModalFromDb(fullUrls, +el.dataset.idx);
     });
 }
@@ -4290,15 +4302,22 @@ function updateModalActions() {
         ownedBtn.className     = 'modal-action-btn' + (own === true ? ' m-owned' : (own === false ? ' m-notowned' : ''));
         ownedBtn.title = own === true ? '보유중 → 클릭시 미보유' : (own === false ? '미보유 → 클릭시 초기화' : '보유 상태 미설정');
         // 카드 정보 표시
+        const infoSection = document.getElementById('card-info-section');
         if (infoEl) {
             const meta = (cardMeta[k] || [])[card.idx];
             if (meta) {
-                const wi = wishlistData.find(w => w.key === wishKey(meta.pack_code, meta.num));
-                const name = wi ? wi.name : '';
-                const rarity = wi ? wi.rarity : '';
-                infoEl.textContent = [meta.pack_code, meta.num, name, rarity ? `[${rarity}]` : ''].filter(Boolean).join('  ');
-                infoEl.classList.add('visible');
+                // 이름: meta에 저장된 name 우선, 없으면 wishlist에서 찾기
+                const wi   = wishlistData.find(w => w.key === wishKey(meta.pack_code, meta.num));
+                const name = meta.name || (wi ? wi.name : '') || '';
+                const packName = meta.pack_name || (wi ? wi.pack_name || wi.series : '') || meta.pack_code || '';
+                const numStr   = meta.total ? `${meta.num} / ${String(meta.total).padStart(3,'0')}` : meta.num;
+                document.getElementById('ci-name').textContent   = name   || '—';
+                document.getElementById('ci-series').textContent = packName || '—';
+                document.getElementById('ci-number').textContent = numStr  || '—';
+                if (infoSection) infoSection.classList.add('visible');
+                infoEl.classList.remove('visible');
             } else {
+                if (infoSection) infoSection.classList.remove('visible');
                 infoEl.classList.remove('visible');
             }
         }
