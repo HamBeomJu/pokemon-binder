@@ -3571,12 +3571,12 @@ document.getElementById('db-back').addEventListener('click', () => {
 /* ══════════════════════════════════════
    LOCAL STORAGE (비로그인 영구 저장)
 ══════════════════════════════════════ */
-function saveToLocalStorage() {
+/* 실제 저장 로직 */
+function _doSave() {
     try {
         localStorage.setItem('pb_binders',  JSON.stringify(BINDERS));
         localStorage.setItem('pb_nextId',   String(nextId));
         localStorage.setItem('pb_stickers', JSON.stringify(stickerData));
-        /* data: URL은 용량이 크므로 제외 — https URL 카드만 저장 */
         const slim = {};
         Object.entries(cardData).forEach(([k, arr]) => {
             const f = arr.map(v => (v && !v.startsWith('data:')) ? v : null);
@@ -3586,18 +3586,29 @@ function saveToLocalStorage() {
         if (Object.keys(memoData).length) localStorage.setItem('pb_memos', JSON.stringify(memoData));
         if (wishlistData.length) localStorage.setItem('pb_wishlist', JSON.stringify(wishlistData));
         else localStorage.removeItem('pb_wishlist');
-        // 보유 상태
         if (Object.keys(ownedData).length) localStorage.setItem('pb_owned', JSON.stringify(ownedData));
         else localStorage.removeItem('pb_owned');
-        // 카드 메타 (위시 테두리 매칭용)
         const slimMeta = {};
         Object.entries(cardMeta).forEach(([k, arr]) => { if (arr && arr.some(Boolean)) slimMeta[k] = arr; });
         if (Object.keys(slimMeta).length) localStorage.setItem('pb_card_meta', JSON.stringify(slimMeta));
         else localStorage.removeItem('pb_card_meta');
         if (ledgerData.length) localStorage.setItem('pb_ledger', JSON.stringify({ data: ledgerData, nextId: ledgerNextId }));
         else localStorage.removeItem('pb_ledger');
+        _saveTimer = null;
     } catch(e) { console.warn('localStorage 저장 실패:', e); }
 }
+
+/* 5초 디바운스 저장 — 연속 작업 시 마지막 변경 후 5초 뒤에만 저장 */
+let _saveTimer = null;
+function saveToLocalStorage() {
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(_doSave, 5000);
+}
+
+/* 탭/창 닫을 때 즉시 저장 (데이터 유실 방지) */
+window.addEventListener('beforeunload', () => {
+    if (_saveTimer) { clearTimeout(_saveTimer); _doSave(); }
+});
 
 function loadFromLocalStorage() {
     try {
