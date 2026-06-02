@@ -3612,9 +3612,24 @@ function _doSave() {
 
 /* 5초 디바운스 저장 — 연속 작업 시 마지막 변경 후 5초 뒤에만 저장 */
 let _saveTimer = null;
+
+function _showSaveToast() {
+    let t = document.getElementById('save-toast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'save-toast';
+        t.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;background:rgba(30,200,100,0.92);color:#fff;font-size:11px;font-weight:700;padding:7px 14px;border-radius:20px;pointer-events:none;opacity:0;transition:opacity 0.3s;box-shadow:0 4px 16px rgba(0,0,0,0.4)';
+        t.textContent = '💾 저장됨';
+        document.body.appendChild(t);
+    }
+    clearTimeout(t._hide);
+    t.style.opacity = '1';
+    t._hide = setTimeout(() => { t.style.opacity = '0'; }, 1800);
+}
+
 function saveToLocalStorage() {
     clearTimeout(_saveTimer);
-    _saveTimer = setTimeout(_doSave, 5000);
+    _saveTimer = setTimeout(() => { _doSave(); _showSaveToast(); }, 5000);
 }
 
 /* 탭/창 닫을 때 즉시 저장 (데이터 유실 방지) */
