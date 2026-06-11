@@ -1004,8 +1004,8 @@
         }
         #card-modal-img {
             display: block;
-            max-width: min(440px, 75vw);
-            max-height: 86vh;
+            max-width: min(540px, 78vw);
+            max-height: 90vh;
             width: auto; height: auto;
             border-radius: 12px;
             transition: width 0.12s ease, opacity 0.1s ease;
@@ -1061,13 +1061,13 @@
 
         /* ── CARD MEMO PANEL ── */
         #card-modal-memo {
-            width: 220px; flex-shrink: 0;
+            width: 340px; flex-shrink: 0;
             background: rgba(18,18,28,0.85);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 14px;
-            padding: 16px 15px 12px;
-            display: none; flex-direction: column; gap: 11px;
-            max-height: 480px; overflow-y: auto;
+            padding: 20px 18px 16px;
+            display: none; flex-direction: column; gap: 13px;
+            max-height: 90vh; overflow-y: auto;
         }
         #card-modal.open #card-modal-memo.visible { display: flex; }
         #card-modal-memo h4 {
@@ -1967,9 +1967,18 @@
         <div id="card-modal-memo">
             <div id="card-info-section">
                 <h4>🃏 카드 정보</h4>
-                <div class="ci-row"><span class="ci-label">카드명</span><span class="ci-val" id="ci-name">—</span></div>
-                <div class="ci-row"><span class="ci-label">시리즈</span><span class="ci-val" id="ci-series">—</span></div>
-                <div class="ci-row"><span class="ci-label">카드 번호</span><span class="ci-val" id="ci-number">—</span></div>
+                <!-- DB 카드: 읽기전용 표시 -->
+                <div id="ci-readonly">
+                    <div class="ci-row"><span class="ci-label">카드명</span><span class="ci-val" id="ci-name">—</span></div>
+                    <div class="ci-row"><span class="ci-label">시리즈</span><span class="ci-val" id="ci-series">—</span></div>
+                    <div class="ci-row"><span class="ci-label">카드 번호</span><span class="ci-val" id="ci-number">—</span></div>
+                </div>
+                <!-- 수동 카드: 직접 입력 -->
+                <div id="ci-manual" style="display:none">
+                    <div class="memo-field"><label>🃏 카드명</label><input type="text" id="ci-in-name" placeholder="카드 이름" autocomplete="off"></div>
+                    <div class="memo-field"><label>📚 시리즈/팩</label><input type="text" id="ci-in-series" placeholder="예: 메가 심포니아" autocomplete="off"></div>
+                    <div class="memo-field"><label>🔢 카드 번호</label><input type="text" id="ci-in-number" placeholder="예: 084/063" autocomplete="off"></div>
+                </div>
             </div>
             <h4>📝 메모</h4>
             <div class="memo-field">
@@ -2983,6 +2992,14 @@ document.addEventListener('wheel', e => {
 ══════════════════════════════════════ */
 const dbModal    = document.getElementById('db-modal');
 const dbContent  = document.getElementById('db-content');
+/* 무한 스크롤 — 바닥 근처 가면 "더 보기" 자동 클릭 */
+dbContent.addEventListener('scroll', () => {
+    const more = dbContent.querySelector('#db-load-more');
+    if (!more) return;
+    if (dbContent.scrollTop + dbContent.clientHeight >= dbContent.scrollHeight - 300) {
+        more.click();
+    }
+});
 const dbStatus   = document.getElementById('db-status');
 const dbNav      = document.getElementById('db-nav');
 const dbNavText  = document.getElementById('db-nav-text');
@@ -4757,10 +4774,13 @@ function updateModalActions() {
         ownedBtn.title = own === true ? '보유중 → 클릭시 미보유' : (own === false ? '미보유 → 클릭시 초기화' : '보유 상태 미설정');
         // 카드 정보 표시
         const infoSection = document.getElementById('card-info-section');
+        const roBox = document.getElementById('ci-readonly');
+        const manBox = document.getElementById('ci-manual');
         if (infoEl) {
             const meta = (cardMeta[k] || [])[card.idx];
-            if (meta) {
-                // 이름: meta에 저장된 name 우선, 없으면 wishlist에서 찾기
+            infoEl.classList.remove('visible');
+            if (meta && !meta.manual) {
+                // DB 카드 — 읽기전용
                 const wi   = wishlistData.find(w => w.key === wishKey(meta.pack_code, meta.num));
                 const name = meta.name || (wi ? wi.name : '') || '';
                 const packName = meta.pack_name || (wi ? wi.pack_name || wi.series : '') || meta.pack_code || '';
@@ -4768,11 +4788,16 @@ function updateModalActions() {
                 document.getElementById('ci-name').textContent   = name   || '—';
                 document.getElementById('ci-series').textContent = packName || '—';
                 document.getElementById('ci-number').textContent = numStr  || '—';
-                if (infoSection) infoSection.classList.add('visible');
-                infoEl.classList.remove('visible');
+                roBox.style.display = ''; manBox.style.display = 'none';
+                infoSection.classList.add('visible');
             } else {
-                if (infoSection) infoSection.classList.remove('visible');
-                infoEl.classList.remove('visible');
+                // 수동 업로드 카드 — 직접 입력
+                const m = meta || {};
+                document.getElementById('ci-in-name').value   = m.name || '';
+                document.getElementById('ci-in-series').value = m.pack_name || '';
+                document.getElementById('ci-in-number').value = m.num || '';
+                roBox.style.display = 'none'; manBox.style.display = '';
+                infoSection.classList.add('visible');
             }
         }
     } else {
@@ -4780,6 +4805,27 @@ function updateModalActions() {
         if (infoEl) infoEl.classList.remove('visible');
     }
 }
+
+/* 수동 카드 정보 입력 저장 */
+function saveManualCardInfo() {
+    const card = modalCardList[modalCardIdx];
+    if (!card || card.sp == null) return;
+    const k = `${activeBinder.id}_${card.sp}_${card.side}`;
+    if (!cardMeta[k]) cardMeta[k] = [];
+    const existing = cardMeta[k][card.idx] || {};
+    if (existing.manual === false || (existing.pack_code && !existing.manual)) return; // DB카드는 건드리지 않음
+    cardMeta[k][card.idx] = {
+        ...existing,
+        manual: true,
+        name: document.getElementById('ci-in-name').value.trim(),
+        pack_name: document.getElementById('ci-in-series').value.trim(),
+        num: document.getElementById('ci-in-number').value.trim(),
+    };
+    saveToLocalStorage();
+}
+['ci-in-name','ci-in-series','ci-in-number'].forEach(id => {
+    document.getElementById(id).addEventListener('change', saveManualCardInfo);
+});
 
 document.getElementById('modal-wish-btn').addEventListener('click', () => {
     const card = modalCardList[modalCardIdx];
