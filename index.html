@@ -1317,6 +1317,55 @@
         .sidebar-ledger-btn:hover { background: rgba(80,232,128,0.12); border-color: rgba(80,232,128,0.3); color: #50e880; }
 
         /* ══ 가계부 패널 ══ */
+        /* ── 위시리스트 탭 ── */
+        #wl-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; background: #08080f; }
+        #wl-header {
+            padding: 14px 24px 12px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 12px; background: #0c0c18; flex-shrink: 0;
+        }
+        #wl-title { font-size: 14px; font-weight: 700; flex: 1; letter-spacing: -0.02em; }
+        #wl-summary { display: flex; gap: 0; flex-shrink: 0; background: #0a0a16; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        #wl-toolbar {
+            padding: 10px 20px; flex-shrink: 0; display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        #wl-search {
+            flex: 1; max-width: 360px; padding: 7px 13px; border-radius: 8px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: #fff; font-size: 12.5px; outline: none; transition: border-color 0.13s;
+        }
+        #wl-search:focus { border-color: rgba(255,128,192,0.5); background: rgba(255,128,192,0.06); }
+        #wl-result-count { font-size: 11px; color: rgba(255,255,255,0.25); margin-left: auto; }
+        #wl-grid-wrap { flex: 1; overflow-y: auto; padding: 20px 24px; }
+        #wl-grid-wrap::-webkit-scrollbar { width: 4px; }
+        #wl-grid-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+        #wl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+        .wl-card {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.18s;
+        }
+        .wl-card:hover { border-color: rgba(255,128,192,0.4); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .wl-img-wrap { width: 100%; aspect-ratio: 63/88; background: rgba(255,255,255,0.03); position: relative; }
+        .wl-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .wl-del {
+            position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(0,0,0,0.7); border: none; color: #ff80c0; font-size: 13px; cursor: pointer;
+            opacity: 0; transition: opacity 0.13s; display: flex; align-items: center; justify-content: center;
+        }
+        .wl-card:hover .wl-del { opacity: 1; }
+        .wl-del:hover { background: rgba(255,60,60,0.6); color: #fff; }
+        .wl-body { padding: 10px 12px 12px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        .wl-name { font-size: 12.5px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .wl-meta { font-size: 10.5px; color: rgba(255,255,255,0.35); }
+        .wl-price-input {
+            margin-top: 4px; width: 100%; padding: 5px 8px; border-radius: 6px;
+            background: rgba(255,128,192,0.06); border: 1px solid rgba(255,128,192,0.18);
+            color: #ff80c0; font-size: 12px; font-weight: 600; outline: none; text-align: right;
+        }
+        .wl-price-input:focus { border-color: rgba(255,128,192,0.5); background: rgba(255,128,192,0.1); }
+        .wl-price-input::placeholder { color: rgba(255,128,192,0.3); font-weight: 400; }
+        #wl-empty { grid-column: 1/-1; text-align: center; padding: 80px 0; color: rgba(255,255,255,0.2); font-size: 13px; line-height: 2; }
+
         #ledger-panel {
             display: flex; flex-direction: column;
             flex: 1; overflow: hidden; background: #08080f;
@@ -1569,12 +1618,8 @@
         <span style="font-size:13px;">＋</span> 새 바인더
     </div>
     <div style="border-top:1px solid rgba(255,255,255,0.05);margin-top:6px;padding-top:8px;">
-        <div class="sidebar-label" style="padding-top:6px;">카드 데이터</div>
+        <div class="sidebar-label" style="padding-top:6px;">도구</div>
         <button class="sidebar-db-btn" id="btn-card-db">🗃️ 카드 DB 브라우저</button>
-        <button class="sidebar-ledger-btn" id="btn-ledger">📒 가계부</button>
-    </div>
-    <div style="border-top:1px solid rgba(255,255,255,0.05);margin-top:6px;padding-top:8px;">
-        <div class="sidebar-label" style="padding-top:6px;">데이터 백업</div>
         <button class="sidebar-db-btn" id="btn-export" style="color:rgba(255,200,80,0.7);border-color:rgba(255,200,80,0.15)">💾 데이터 내보내기</button>
         <button class="sidebar-db-btn" id="btn-import" style="color:rgba(150,200,255,0.7);border-color:rgba(150,200,255,0.15)">📂 데이터 불러오기</button>
         <input type="file" id="import-file-input" accept=".json" style="display:none">
@@ -1596,6 +1641,7 @@
     <!-- 탭 바 -->
     <div class="main-tabs">
         <button class="main-tab active" data-tab="binder">🃏 바인더</button>
+        <button class="main-tab" data-tab="wishlist">♥ 위시리스트</button>
         <button class="main-tab" data-tab="ledger">📒 가계부</button>
     </div>
 
@@ -1670,6 +1716,32 @@
         </div>
     </div>
     </div><!-- /tab-binder -->
+
+    <!-- 위시리스트 탭 -->
+    <div class="tab-content" id="tab-wishlist">
+        <div id="wl-panel">
+            <div id="wl-header">
+                <span id="wl-title">♥ 위시리스트</span>
+            </div>
+            <div id="wl-summary">
+                <div class="ls-card">
+                    <div class="ls-label">위시 카드</div>
+                    <div class="ls-val" id="wl-count-val">0장</div>
+                </div>
+                <div class="ls-card">
+                    <div class="ls-label">예상 총액</div>
+                    <div class="ls-val" id="wl-total-val" style="color:#ff80c0">₩0</div>
+                </div>
+            </div>
+            <div id="wl-toolbar">
+                <input id="wl-search" type="text" placeholder="🔍 이름·번호·시리즈 검색…" autocomplete="off">
+                <span id="wl-result-count"></span>
+            </div>
+            <div id="wl-grid-wrap">
+                <div id="wl-grid"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- 가계부 탭 -->
     <div class="tab-content" id="tab-ledger">
@@ -2900,11 +2972,15 @@ function toggleWishlist(item) {
 
 function updateWishCount() {
     const el = document.getElementById('db-wish-count');
-    if (!el) return;
-    const n = wishlistData.length;
-    el.textContent = n;
-    el.classList.toggle('has-items', n > 0);
-    document.getElementById('db-wish-tab').classList.toggle('active', dbView === 'wishlist');
+    if (el) {
+        const n = wishlistData.length;
+        el.textContent = n;
+        el.classList.toggle('has-items', n > 0);
+        document.getElementById('db-wish-tab').classList.toggle('active', dbView === 'wishlist');
+    }
+    // 위시 탭이 열려있으면 갱신
+    if (document.getElementById('tab-wishlist')?.classList.contains('active')
+        && typeof renderWishlistTab === 'function') renderWishlistTab();
 }
 
 function showWishlist() {
@@ -3744,7 +3820,9 @@ function _doSave() {
         Object.entries(cardMeta).forEach(([k, arr]) => { if (arr && arr.some(Boolean)) slimMeta[k] = arr; });
         if (Object.keys(slimMeta).length) localStorage.setItem('pb_card_meta', JSON.stringify(slimMeta));
         else localStorage.removeItem('pb_card_meta');
-        if (ledgerData.length) localStorage.setItem('pb_ledger', JSON.stringify({ data: ledgerData, nextId: ledgerNextId }));
+        // 가계부 이미지는 data:URL이면 제거 (localStorage 용량 초과 방지)
+        const slimLedger = ledgerData.map(t => ({...t, image: (t.image && !t.image.startsWith('data:')) ? t.image : null}));
+        if (slimLedger.length) localStorage.setItem('pb_ledger', JSON.stringify({ data: slimLedger, nextId: ledgerNextId }));
         else localStorage.removeItem('pb_ledger');
         _saveTimer = null;
     } catch(e) { console.warn('localStorage 저장 실패:', e); }
@@ -3977,12 +4055,108 @@ function switchTab(name) {
     document.querySelectorAll('.tab-content').forEach(c =>
         c.classList.toggle('active', c.id === 'tab-' + name));
     if (name === 'ledger') renderLedger();
+    if (name === 'wishlist') renderWishlistTab();
 }
+
+/* ══ 위시리스트 탭 ══ */
+let wlSearchQuery = '';
+
+function renderWishlistTab() {
+    const grid = document.getElementById('wl-grid');
+    if (!grid) return;
+
+    // 총액 계산 (전체 기준)
+    let total = 0;
+    wishlistData.forEach(w => { total += (+w.price || 0); });
+    document.getElementById('wl-count-val').textContent = `${wishlistData.length}장`;
+    document.getElementById('wl-total-val').textContent = '₩' + total.toLocaleString('ko-KR');
+
+    // 검색 필터
+    const q = wlSearchQuery.trim().toLowerCase();
+    const filtered = wishlistData
+        .map((w, i) => ({ w, i }))
+        .filter(({ w }) => !q || [w.name, w.num, w.pack_code, w.pack_name, w.series, w.rarity]
+            .filter(Boolean).join(' ').toLowerCase().includes(q));
+
+    document.getElementById('wl-result-count').textContent =
+        q ? `${filtered.length}장 검색됨` : `총 ${wishlistData.length}장`;
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div id="wl-empty">${wishlistData.length === 0
+            ? '위시리스트가 비어있어요<br><small style="font-size:11px;opacity:0.6">카드 DB에서 ♥를 눌러 추가해보세요</small>'
+            : '검색 결과가 없어요'}</div>`;
+        return;
+    }
+
+    grid.innerHTML = filtered.map(({ w, i }) => {
+        const meta = [w.pack_code, w.num].filter(Boolean).join(' · ');
+        return `<div class="wl-card" data-widx="${i}">
+            <div class="wl-img-wrap">
+                <img src="${w.thumb || w.full || ''}" loading="lazy" onerror="this.style.opacity='0.15'">
+                <button class="wl-del" data-widx="${i}" title="위시 제거">×</button>
+            </div>
+            <div class="wl-body">
+                <div class="wl-name">${w.name || w.num || '카드'}</div>
+                <div class="wl-meta">${meta}${w.pack_name ? '<br>'+w.pack_name : ''}</div>
+                <input class="wl-price-input" data-widx="${i}" type="text" inputmode="numeric"
+                       placeholder="가격 입력" value="${w.price ? (+w.price).toLocaleString('ko-KR') : ''}">
+            </div>
+        </div>`;
+    }).join('');
+
+    // 삭제
+    grid.querySelectorAll('.wl-del').forEach(btn =>
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const i = +btn.dataset.widx;
+            wishlistData.splice(i, 1);
+            updateWishCount(); saveToLocalStorage(); renderWishlistTab();
+            if (typeof refreshSpread === 'function') refreshSpread();
+        })
+    );
+
+    // 가격 입력 (콤마 자동 + 위시↔모달 연동)
+    grid.querySelectorAll('.wl-price-input').forEach(inp => {
+        inp.addEventListener('input', () => {
+            const raw = inp.value.replace(/[^0-9]/g, '');
+            inp.value = raw ? (+raw).toLocaleString('ko-KR') : '';
+        });
+        inp.addEventListener('change', () => {
+            const i = +inp.dataset.widx;
+            const num = +inp.value.replace(/[^0-9]/g, '') || 0;
+            wishlistData[i].price = num;
+            // 가격 양방향 연동: 위시 → 메모(슬롯) 가격
+            syncWishPriceToMemo(wishlistData[i], num);
+            document.getElementById('wl-total-val').textContent =
+                '₩' + wishlistData.reduce((s, w) => s + (+w.price || 0), 0).toLocaleString('ko-KR');
+            saveToLocalStorage();
+        });
+    });
+}
+
+/* 위시 가격 → 슬롯 메모 가격 동기화 (URL/메타 매칭) */
+function syncWishPriceToMemo(wishItem, price) {
+    if (typeof memoData === 'undefined') return;
+    const priceStr = price ? price.toLocaleString('ko-KR') + '원' : '';
+    // cardMeta에서 같은 팩+번호 카드 찾아 memoData 가격 갱신
+    Object.keys(cardMeta || {}).forEach(k => {
+        (cardMeta[k] || []).forEach((m, idx) => {
+            if (m && wishKey(m.pack_code, m.num) === wishItem.key) {
+                const mk = `${k}_${idx}`;
+                if (!memoData[mk]) memoData[mk] = {};
+                memoData[mk].price = priceStr;
+            }
+        });
+    });
+}
+
+document.getElementById('wl-search').addEventListener('input', e => {
+    wlSearchQuery = e.target.value;
+    renderWishlistTab();
+});
 document.querySelectorAll('.main-tab').forEach(btn =>
     btn.addEventListener('click', () => switchTab(btn.dataset.tab))
 );
-
-document.getElementById('btn-ledger').addEventListener('click', openLedger);
 
 /* 거래 추가/수정 모달 */
 let ledgerEditId = null; // null=추가모드, id=수정모드
