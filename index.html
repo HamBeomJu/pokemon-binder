@@ -1104,6 +1104,19 @@
         #memo-save-hint.saved { color: rgba(90,220,110,0.75); }
         @media (max-width: 740px) { #card-modal-memo { display: none !important; } }
 
+        /* ══ 모바일: 한 페이지씩 보기 ══ */
+        @media (max-width: 700px) {
+            /* 오른쪽 페이지 + 책등 숨김 → 왼쪽 페이지만 전체폭 */
+            body.mobile-single #zone-R,
+            body.mobile-single .spine,
+            body.mobile-single #flipper-L { display: none !important; }
+            body.mobile-single .binder-outer { box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+            body.mobile-single .stage { padding: 12px; }
+            /* 사이드바 좁게 */
+            body.mobile-single .sidebar { width: 150px; }
+            body.mobile-single .main-tab { padding: 9px 9px; font-size: 11px; }
+        }
+
         /* ══ PAGE NAV ══ */
         .page-nav { display: flex; align-items: center; gap: 14px; }
         .nav-arrow {
@@ -2055,7 +2068,10 @@ function autoFit() {
     const gap     = 9, pp = 16, spine = 26;
     const sw      = stage.clientWidth  - 40;                 // stage padding
     const sh      = stage.clientHeight - (nav ? nav.offsetHeight + 28 : 80) - 40;
-    const pwW     = Math.floor((sw - 2*(2*gap + 2*pp) - spine) / 6);   // 6 pockets wide
+    // 모바일 단일 페이지면 3칸 기준(한 페이지), 아니면 6칸(양면)
+    const pwW     = isMobileSingle()
+        ? Math.floor((sw - (2*gap + 2*pp)) / 3)
+        : Math.floor((sw - 2*(2*gap + 2*pp) - spine) / 6);
     const pwH     = Math.floor(sh * 63 / 88 - 2*pp);                    // height → pw
     const fit     = Math.min(pwW, pwH, PW_STEPS[PW_STEPS.length - 1]);
     const clamped = Math.max(PW_STEPS[0], fit);
@@ -2938,10 +2954,56 @@ function initFill() {
     fillPage('right-bg-grid',     page, 'R');
     fillPage('flip-R-front-grid', page, 'R');
     fillPage('flip-L-front-grid', page, 'L');
+    if (isMobileSingle()) renderMobilePage();
 }
 
-document.getElementById('btn-prev').addEventListener('click', flipPrev);
-document.getElementById('btn-next').addEventListener('click', flipNext);
+/* ══════════════════════════════════════
+   모바일: 한 페이지씩 보기
+══════════════════════════════════════ */
+let mobileHalf = 'L';  // 현재 보는 반쪽 (L 또는 R)
+
+function isMobileSingle() { return window.matchMedia('(max-width: 700px)').matches; }
+
+/* 모바일에서 보이는 왼쪽 그리드에 현재 page+half 렌더 */
+function renderMobilePage() {
+    fillPage('left-bg-grid', page, mobileHalf);
+    // 라벨/버튼 갱신
+    const lbl = document.getElementById('mobile-page-lbl');
+    if (lbl) lbl.textContent = `${page}-${mobileHalf}`;
+    updateMobileNavDisabled();
+}
+
+function updateMobileNavDisabled() {
+    const atStart = (page === 1 && mobileHalf === 'L');
+    const atEnd   = (page === activeBinder.pages && mobileHalf === 'R');
+    document.getElementById('btn-prev').disabled = atStart;
+    document.getElementById('btn-next').disabled = atEnd;
+}
+
+function mobileNext() {
+    if (mobileHalf === 'L') { mobileHalf = 'R'; }
+    else if (page < activeBinder.pages) { page++; mobileHalf = 'L'; }
+    else return;
+    renderMobilePage(); renderDots(); renderSticker();
+}
+function mobilePrev() {
+    if (mobileHalf === 'R') { mobileHalf = 'L'; }
+    else if (page > 1) { page--; mobileHalf = 'R'; }
+    else return;
+    renderMobilePage(); renderDots(); renderSticker();
+}
+
+/* 모바일 모드 진입/해제 — body 클래스 토글 */
+function applyMobileMode() {
+    const m = isMobileSingle();
+    document.body.classList.toggle('mobile-single', m);
+    if (m) { mobileHalf = 'L'; renderMobilePage(); }
+    else { initFill(); }
+}
+window.addEventListener('resize', () => { clearTimeout(window._mmTimer); window._mmTimer = setTimeout(applyMobileMode, 200); });
+
+document.getElementById('btn-prev').addEventListener('click', () => isMobileSingle() ? mobilePrev() : flipPrev());
+document.getElementById('btn-next').addEventListener('click', () => isMobileSingle() ? mobileNext() : flipNext());
 document.addEventListener('keydown', e => {
     if (modal.classList.contains('open')) {
         if (e.key === 'Escape')     { closeCardModal(); closeLedgerDetail(); }
@@ -2951,8 +3013,8 @@ document.addEventListener('keydown', e => {
     }
     // DB 모달 열려있으면 바인더 페이지 넘기기 막기
     if (dbModal && dbModal.classList.contains('open')) return;
-    if (e.key === 'ArrowRight') flipNext();
-    if (e.key === 'ArrowLeft')  flipPrev();
+    if (e.key === 'ArrowRight') isMobileSingle() ? mobileNext() : flipNext();
+    if (e.key === 'ArrowLeft')  isMobileSingle() ? mobilePrev() : flipPrev();
 });
 
 /* wheel: Ctrl+wheel → zoom (modal or binder), plain wheel → page flip */
@@ -4606,6 +4668,7 @@ updateUI();
 initFill();
 renderSticker();
 if (ledgerData.length) renderLedger(); // 저장된 가계부 데이터 즉시 렌더
+applyMobileMode(); // 모바일이면 단일 페이지 모드로
 
 /* 초기 autoFit — stage가 실제로 크기를 가질 때까지 재시도 */
 function tryAutoFit(remaining) {
