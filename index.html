@@ -153,6 +153,13 @@
         }
         .main-tab:hover { color: rgba(255,255,255,0.7); }
         .main-tab.active { color: #fff; border-bottom-color: #6060ff; }
+        #sales-banner {
+            flex-shrink: 0; padding: 8px 24px; background: rgba(255,200,80,0.08);
+            border-bottom: 1px solid rgba(255,200,80,0.2);
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 12px; color: rgba(255,210,120,0.9);
+        }
+        #sales-total { font-weight: 700; font-size: 14px; color: #ffd060; }
 
         /* ── 탭 콘텐츠 ── */
         .tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; }
@@ -1643,7 +1650,13 @@
     <div class="main-tabs">
         <button class="main-tab active" data-tab="binder">🃏 바인더</button>
         <button class="main-tab" data-tab="wishlist">♥ 위시리스트</button>
+        <button class="main-tab" data-tab="sales">💰 판매</button>
         <button class="main-tab" data-tab="ledger">📒 가계부</button>
+    </div>
+    <!-- 판매 총합 배너 (판매 탭일 때만) -->
+    <div id="sales-banner" style="display:none">
+        <span id="sales-banner-text">💰 판매용 바인더 — 팔 카드를 모아보세요</span>
+        <span id="sales-total">판매 총액 ₩0</span>
     </div>
 
     <!-- 바인더 탭 -->
@@ -2430,7 +2443,7 @@ function inlineEdit(el, onSave) {
 ══════════════════════════════════════ */
 function renderSidebar() {
     const list = document.getElementById('binder-list');
-    list.innerHTML = BINDERS.map(b => `
+    list.innerHTML = BINDERS.filter(b => !b.isSales).map(b => `
         <div class="binder-item${b.id === activeBinder.id ? ' active' : ''}" data-id="${b.id}">
             <div class="b-dot" style="background:${b.color};" data-id="${b.id}" title="색상 변경"></div>
             <span class="b-name" data-id="${b.id}">${b.name}</span>
@@ -4110,13 +4123,63 @@ function openLedger()  { switchTab('ledger'); }
 function closeLedger() { switchTab('binder'); }
 
 /* ── 탭 전환 ── */
+let prevNormalBinderId = null; // 판매탭 진입 전 보던 일반 바인더
+
 function switchTab(name) {
+    const isSales = name === 'sales';
+    const contentName = isSales ? 'binder' : name; // 판매탭은 바인더 뷰 재활용
     document.querySelectorAll('.main-tab').forEach(t =>
         t.classList.toggle('active', t.dataset.tab === name));
     document.querySelectorAll('.tab-content').forEach(c =>
-        c.classList.toggle('active', c.id === 'tab-' + name));
+        c.classList.toggle('active', c.id === 'tab-' + contentName));
+    document.getElementById('sales-banner').style.display = isSales ? 'flex' : 'none';
+
     if (name === 'ledger') renderLedger();
     if (name === 'wishlist') renderWishlistTab();
+    if (isSales) enterSalesBinder();
+    else if (name === 'binder') exitSalesBinder();
+}
+
+/* ── 판매용 바인더 ── */
+function getSalesBinder() {
+    let sb = BINDERS.find(b => b.isSales);
+    if (!sb) {
+        sb = { id: nextId++, name: '💰 판매용', color: '#e0a030', pages: 5, type: '3x3', isSales: true };
+        BINDERS.push(sb);
+        saveToLocalStorage();
+    }
+    return sb;
+}
+function enterSalesBinder() {
+    const sb = getSalesBinder();
+    if (activeBinder.id !== sb.id) {
+        if (!activeBinder.isSales) prevNormalBinderId = activeBinder.id;
+        activeBinder = sb; page = 1;
+        updateTopbar(); renderDots(); updateUI(); initFill(); renderSticker();
+    }
+    updateSalesTotal();
+}
+function exitSalesBinder() {
+    if (activeBinder.isSales) {
+        const back = BINDERS.find(b => b.id === prevNormalBinderId && !b.isSales)
+                  || BINDERS.find(b => !b.isSales);
+        if (back) { activeBinder = back; page = 1;
+            updateTopbar(); renderDots(); updateUI(); initFill(); renderSticker(); }
+    }
+}
+function updateSalesTotal() {
+    const sb = BINDERS.find(b => b.isSales);
+    if (!sb) return;
+    let total = 0;
+    const prefix = `${sb.id}_`;
+    Object.keys(memoData).forEach(k => {
+        if (k.startsWith(prefix)) {
+            const p = +(memoData[k].price || '').replace(/[^0-9]/g, '') || 0;
+            total += p;
+        }
+    });
+    const el = document.getElementById('sales-total');
+    if (el) el.textContent = '판매 총액 ₩' + total.toLocaleString('ko-KR');
 }
 
 /* ══ 위시리스트 탭 ══ */
@@ -4612,6 +4675,7 @@ function flushMemo() {
     if (price || site || note) memoData[key] = { price, site, note };
     else delete memoData[key];
     saveToLocalStorage();
+    if (typeof updateSalesTotal === 'function') updateSalesTotal();
 }
 function saveMemoWithFeedback() {
     flushMemo();
