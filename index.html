@@ -454,6 +454,7 @@
             border-color: rgba(100,100,255,0.7) !important;
             box-shadow: 0 0 0 2px rgba(88,88,255,0.35);
         }
+        .pocket.dragging { opacity: 0.4; }
         .pocket.has-card { cursor: zoom-in; }
         .pocket.has-card:hover {
             transform: scale(1.08);
@@ -2151,6 +2152,46 @@ function loadImgMulti(files, binderId, sp, side, startIdx) {
 document.addEventListener('dragover', e => e.preventDefault());
 document.addEventListener('drop',     e => e.preventDefault());
 
+/* ── 슬롯 간 카드 이동/교환 ── */
+let draggedSlot = null;
+function swapSlots(from, to) {
+    const bId = activeBinder.id;
+    const fCards = getCards(bId, from.sp, from.side);
+    const tCards = getCards(bId, to.sp, to.side);
+    const fKey = `${bId}_${from.sp}_${from.side}`;
+    const tKey = `${bId}_${to.sp}_${to.side}`;
+
+    // 이미지 swap
+    const tmp = fCards[from.idx];
+    fCards[from.idx] = tCards[to.idx];
+    tCards[to.idx]   = tmp;
+
+    // cardMeta swap
+    [cardMeta].forEach(store => {
+        if (!store[fKey]) store[fKey] = [];
+        if (!store[tKey]) store[tKey] = [];
+        const t = store[fKey][from.idx];
+        store[fKey][from.idx] = store[tKey][to.idx];
+        store[tKey][to.idx]   = t;
+    });
+    // ownedData swap
+    [ownedData].forEach(store => {
+        if (!store[fKey]) store[fKey] = [];
+        if (!store[tKey]) store[tKey] = [];
+        const t = store[fKey][from.idx];
+        store[fKey][from.idx] = store[tKey][to.idx];
+        store[tKey][to.idx]   = t;
+    });
+    // memoData swap (키: binderId_sp_side_idx)
+    const fMemoK = `${fKey}_${from.idx}`, tMemoK = `${tKey}_${to.idx}`;
+    const fMemo = memoData[fMemoK], tMemo = memoData[tMemoK];
+    if (tMemo) memoData[fMemoK] = tMemo; else delete memoData[fMemoK];
+    if (fMemo) memoData[tMemoK] = fMemo; else delete memoData[tMemoK];
+
+    refreshSpread();
+    saveToLocalStorage();
+}
+
 /* ══════════════════════════════════════
    POCKET HTML
 ══════════════════════════════════════ */
@@ -2168,7 +2209,7 @@ function makePocket(binderId, sp, side, idx) {
         const wishIcon  = wished ? '♥' : '♡';
         const wishCls   = (wishBorderMode && wished) ? ' wish-border' : '';
         const notOwnedOverlay = owned === false ? '<div class="pocket-notowned-overlay"></div>' : '';
-        return `<div class="pocket has-card${ownedCls}${wishedCls}${wishCls}" data-sp="${sp}" data-side="${side}" data-idx="${idx}">
+        return `<div class="pocket has-card${ownedCls}${wishedCls}${wishCls}" data-sp="${sp}" data-side="${side}" data-idx="${idx}" draggable="true">
             <img src="${src}" class="pocket-img" draggable="false">
             ${notOwnedOverlay}
             <button class="pocket-remove" title="카드 제거">×</button>
@@ -2200,6 +2241,19 @@ function fillPage(gridId, sp, side) {
         const pSp  = +pocket.dataset.sp;
         const pSide = pocket.dataset.side;
 
+        /* 슬롯 간 카드 이동/교환 — dragstart */
+        if (pocket.classList.contains('has-card')) {
+            pocket.addEventListener('dragstart', e => {
+                draggedSlot = { sp: pSp, side: pSide, idx };
+                e.dataTransfer.effectAllowed = 'move';
+                pocket.classList.add('dragging');
+            });
+            pocket.addEventListener('dragend', () => {
+                pocket.classList.remove('dragging');
+                draggedSlot = null;
+            });
+        }
+
         /* drag & drop */
         pocket.addEventListener('dragover', e => {
             e.preventDefault(); e.stopPropagation();
@@ -2209,6 +2263,13 @@ function fillPage(gridId, sp, side) {
         pocket.addEventListener('drop', e => {
             e.preventDefault(); e.stopPropagation();
             pocket.classList.remove('drag-over');
+            // 1) 슬롯 간 카드 이동/교환
+            if (draggedSlot && !(draggedSlot.sp === pSp && draggedSlot.side === pSide && draggedSlot.idx === idx)) {
+                swapSlots(draggedSlot, { sp: pSp, side: pSide, idx });
+                draggedSlot = null;
+                return;
+            }
+            // 2) 외부 파일 드롭
             const files = e.dataTransfer.files;
             if (files.length)
                 loadImgMulti(files, activeBinder.id, pSp, pSide, idx);
