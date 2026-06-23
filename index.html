@@ -162,7 +162,7 @@
         #sales-total { font-weight: 700; font-size: 14px; color: #ffd060; }
 
         /* ── 탭 콘텐츠 ── */
-        .tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+        .tab-content { display: none; flex: 1; flex-direction: column; overflow: hidden; min-height: 0; }
         .tab-content.active { display: flex; }
 
         /* Topbar */
@@ -1339,7 +1339,7 @@
 
         /* ══ 가계부 패널 ══ */
         /* ── 위시리스트 탭 ── */
-        #wl-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; background: #08080f; }
+        #wl-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; background: #08080f; min-height: 0; }
         #wl-header {
             padding: 14px 24px 12px; border-bottom: 1px solid rgba(255,255,255,0.06);
             display: flex; align-items: center; gap: 12px; background: #0c0c18; flex-shrink: 0;
@@ -1389,7 +1389,7 @@
 
         #ledger-panel {
             display: flex; flex-direction: column;
-            flex: 1; overflow: hidden; background: #08080f;
+            flex: 1; overflow: hidden; background: #08080f; min-height: 0;
         }
         #ledger-header {
             padding: 14px 24px 12px;
