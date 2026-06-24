@@ -3379,6 +3379,38 @@ function hideCardFilters() {
     if (f) f.classList.remove('visible');
 }
 
+/* JP/EN용 보유/위시 필터 (레어도 그룹 없음 — 데이터 부족) */
+function setupOwnWishFilter(cards, fullUrls, rerender) {
+    const filterBar = document.getElementById('db-card-filters');
+    const rarBox = document.getElementById('dcf-rarity');
+    rarBox.innerHTML = ''; // JP/EN은 레어도 필터 없음
+    filterBar.classList.add('visible');
+    let ownFilter = 'all';
+
+    function isOwnedUrl(c) {
+        const u = fullUrls[c._idx], t = c.thumb;
+        for (const k in cardData) if ((cardData[k]||[]).some(v => v === u || v === t)) return true;
+        return false;
+    }
+    function isWishedUrl(c) {
+        const u = fullUrls[c._idx], t = c.thumb;
+        return wishlistData.some(w => w.full === u || w.thumb === u || w.full === t || w.thumb === t);
+    }
+    function apply() {
+        let list = cards;
+        if (ownFilter === 'binder') list = cards.filter(isOwnedUrl);
+        else if (ownFilter === 'wish') list = cards.filter(isWishedUrl);
+        rerender(list);
+    }
+    document.querySelectorAll('#dcf-own .dcf-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.own === 'all');
+        btn.onclick = () => {
+            document.querySelectorAll('#dcf-own .dcf-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active'); ownFilter = btn.dataset.own; apply();
+        };
+    });
+}
+
 async function loadKrPacks(seriesCode) {
     hideCardFilters();
     try {
@@ -3748,58 +3780,62 @@ async function showJpCards(pack) {
     const total = pack.total || pack.printed_total || 0;
 
     function renderCards(cards) {
+        cards.forEach((c, i) => { c._idx = i; });
         const fullUrls = cards.map(c => c.full);
-        dbStatus.textContent = `총 ${cards.length}장`;
-        const BATCH = 60;
+        setupOwnWishFilter(cards, fullUrls, (list) => doRenderJp(list, cards, fullUrls), 'jp');
+        doRenderJp(cards, cards, fullUrls);
+    }
 
-        function makeCardHtml(c, i) {
+    function doRenderJp(list, allCards, fullUrls) {
+        dbStatus.textContent = `${list.length}장`;
+        const BATCH = 60;
+        function makeCardHtml(c) {
+            const i = c._idx;
             const numPad = c.localId || String(i+1).padStart(3,'0');
-            const _ds = [pack.code, numPad, String(i+1), c.label||'',
-                         `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
+            const _ds = [pack.code, numPad, String(i+1), c.label||'', `${pack.code}${numPad}`, `${pack.code}/${numPad}`].join(' ').toLowerCase();
             return `<div class="db-card-item" data-idx="${i}" data-num="${numPad}" data-search="${_ds}" title="${pack.code} ${numPad} ${c.label}">
                 <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
                 <div class="db-card-label">${numPad}  ${c.label}</div>
                 <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
             </div>`;
         }
-
-        const initial = cards.slice(0, BATCH).map((c, i) => makeCardHtml(c, i)).join('');
-        const moreBtn = cards.length > BATCH
-            ? `<div id="db-load-more" data-from="${BATCH}" style="grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px">더 보기 (${cards.length - BATCH}장 더)</div>`
-            : '';
         const grid = document.createElement('div');
         grid.className = 'db-card-grid';
-        grid.innerHTML = initial + moreBtn;
-        dbContent.innerHTML = '';
-        dbContent.appendChild(grid);
+        if (list.length === 0) { grid.innerHTML = `<div style="grid-column:1/-1;padding:50px;text-align:center;color:rgba(255,255,255,0.25);font-size:13px">해당하는 카드가 없어요</div>`; }
+        else {
+            grid.innerHTML = list.slice(0, BATCH).map(makeCardHtml).join('');
+            if (list.length > BATCH) {
+                const more = document.createElement('div');
+                more.id='db-load-more'; more.dataset.from=BATCH;
+                more.style.cssText='grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px';
+                more.textContent=`더 보기 (${list.length-BATCH}장 더)`;
+                grid.appendChild(more);
+            }
+        }
+        dbContent.innerHTML = ''; dbContent.appendChild(grid);
 
-        // 이벤트 위임 — 리스너 1개로 전체 처리
         grid.addEventListener('click', e => {
             const loadMore = e.target.closest('#db-load-more');
             if (loadMore) {
-                const from = +loadMore.dataset.from;
-                const next = Math.min(from + BATCH, cards.length);
-                const frag = document.createDocumentFragment();
-                const tmp  = document.createElement('div');
-                tmp.innerHTML = cards.slice(from, next).map((c, j) => makeCardHtml(c, from + j)).join('');
-                while (tmp.firstChild) frag.appendChild(tmp.firstChild);
-                grid.insertBefore(frag, loadMore);
-                loadMore.dataset.from = next;
-                if (next >= cards.length) loadMore.remove();
-                else loadMore.textContent = `더 보기 (${cards.length - next}장 더)`;
+                const from=+loadMore.dataset.from, next=Math.min(from+BATCH,list.length);
+                const tmp=document.createElement('div');
+                tmp.innerHTML=list.slice(from,next).map(makeCardHtml).join('');
+                while(tmp.firstChild) grid.insertBefore(tmp.firstChild,loadMore);
+                loadMore.dataset.from=next;
+                if(next>=list.length) loadMore.remove(); else loadMore.textContent=`더 보기 (${list.length-next}장 더)`;
                 return;
             }
             const item = e.target.closest('.db-card-item');
             if (!item) return;
+            const i = +item.dataset.idx;
             if (e.target.closest('.db-add-btn') || dbMultiMode) {
-                const i = +item.dataset.idx;
                 const numFromEl = item.dataset.num || String(i+1).padStart(3,'0');
-                const nameFromEl = cards[i] ? (cards[i].label||'') : '';
+                const nameFromEl = allCards[i] ? (allCards[i].label||'') : '';
                 const meta = {pack_code: pack.code, num: numFromEl, name: nameFromEl, pack_name: pack.name_kr||pack.name||pack.code, total: total||0, region:'jp'};
                 if (dbMultiMode) toggleDbCardSelect(item, fullUrls[i], meta);
                 else enterSlotPickMode(fullUrls[i], meta);
             } else {
-                openCardModalFromDb(fullUrls, +item.dataset.idx);
+                openCardModalFromDb(fullUrls, i);
             }
         });
     }
@@ -3914,10 +3950,17 @@ async function showEnCards(set) {
             label: String(n)
         };
     });
+    cards.forEach((c, i) => { c._idx = i; });
     const fullUrls = cards.map(c => c.full);
     dbStatus.textContent = `${total}장`;
+    setupOwnWishFilter(cards, fullUrls, (list) => doRenderEn(list, cards, fullUrls, set, total));
+    doRenderEn(cards, cards, fullUrls, set, total);
+}
+
+function doRenderEn(list, allCards, fullUrls, set, total) {
     const BATCH = 60;
-    function makeEnCardHtml(c, i) {
+    function makeEnCardHtml(c) {
+        const i = c._idx;
         const numPad = String(i+1).padStart(3,'0');
         const _ds = [set.id, set.name||'', numPad, String(i+1), c.label||'', `${set.id}${numPad}`, `${set.id}/${numPad}`].join(' ').toLowerCase();
         return `<div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${set.id} ${numPad}">
@@ -3928,35 +3971,38 @@ async function showEnCards(set) {
     }
     const grid = document.createElement('div');
     grid.className = 'db-card-grid';
-    grid.innerHTML = cards.slice(0, BATCH).map((c, i) => makeEnCardHtml(c, i)).join('');
-    if (cards.length > BATCH) {
-        const more = document.createElement('div');
-        more.id = 'db-load-more'; more.dataset.from = BATCH;
-        more.style.cssText = 'grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px';
-        more.textContent = `더 보기 (${cards.length - BATCH}장 더)`;
-        grid.appendChild(more);
+    if (list.length === 0) { grid.innerHTML = `<div style="grid-column:1/-1;padding:50px;text-align:center;color:rgba(255,255,255,0.25);font-size:13px">해당하는 카드가 없어요</div>`; }
+    else {
+        grid.innerHTML = list.slice(0, BATCH).map(makeEnCardHtml).join('');
+        if (list.length > BATCH) {
+            const more = document.createElement('div');
+            more.id = 'db-load-more'; more.dataset.from = BATCH;
+            more.style.cssText = 'grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px';
+            more.textContent = `더 보기 (${list.length - BATCH}장 더)`;
+            grid.appendChild(more);
+        }
     }
     dbContent.innerHTML = ''; dbContent.appendChild(grid);
     grid.addEventListener('click', e => {
         const more = e.target.closest('#db-load-more');
         if (more) {
-            const from = +more.dataset.from, next = Math.min(from + BATCH, cards.length);
+            const from = +more.dataset.from, next = Math.min(from + BATCH, list.length);
             const tmp = document.createElement('div');
-            tmp.innerHTML = cards.slice(from, next).map((c, j) => makeEnCardHtml(c, from + j)).join('');
+            tmp.innerHTML = list.slice(from, next).map(makeEnCardHtml).join('');
             while (tmp.firstChild) grid.insertBefore(tmp.firstChild, more);
             more.dataset.from = next;
-            if (next >= cards.length) more.remove();
-            else more.textContent = `더 보기 (${cards.length - next}장 더)`;
+            if (next >= list.length) more.remove();
+            else more.textContent = `더 보기 (${list.length - next}장 더)`;
             return;
         }
         const el = e.target.closest('.db-card-item');
         if (!el) return;
+        const i = +el.dataset.idx;
         if (e.target.closest('.db-add-btn') || dbMultiMode) {
-            const i = +el.dataset.idx;
             const meta = {pack_code: set.id, num: String(i+1).padStart(3,'0'), name:'', pack_name: set.name||set.id, total: total||0, region:'en'};
             if (dbMultiMode) toggleDbCardSelect(el, fullUrls[i], meta);
             else enterSlotPickMode(fullUrls[i], meta);
-        } else openCardModalFromDb(fullUrls, +el.dataset.idx);
+        } else openCardModalFromDb(fullUrls, i);
     });
 }
 
