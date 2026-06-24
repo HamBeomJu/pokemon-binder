@@ -746,6 +746,28 @@
             background: rgba(0,0,0,0.78); border: 1px solid;
             border-radius: 5px; padding: 2px 5px; line-height: 1.5;
         }
+        /* ── 팩 카드뷰 필터 (OPTCG 스타일) ── */
+        #db-card-filters {
+            display: none; flex-wrap: wrap; gap: 12px; align-items: center;
+            padding: 4px 22px 10px; flex-shrink: 0;
+        }
+        #db-card-filters.visible { display: flex; }
+        .dcf-group { display: flex; gap: 5px; flex-wrap: wrap; }
+        .dcf-btn {
+            padding: 4px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 600;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.45); cursor: pointer; transition: all 0.12s; white-space: nowrap;
+        }
+        .dcf-btn:hover { color: rgba(255,255,255,0.85); }
+        .dcf-btn.active { background: #1b1b2a; border-color: rgba(255,255,255,0.25); color: #fff; }
+        .dcf-btn.rar-active { color: #fff; }
+        /* 레어도 그룹 헤더 */
+        .db-rarity-header {
+            grid-column: 1/-1; display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 2px 2px; font-size: 13px; font-weight: 800; color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 4px;
+        }
+        .db-rarity-header span { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.35); }
         /* 호버 오버레이 */
         .db-card-item:hover .db-card-img-wrap::after {
             content: ''; position: absolute; inset: 0;
@@ -1934,6 +1956,15 @@
             <button class="db-slang-btn" data-slang="en">🇺🇸 영판</button>
         </div>
         <div id="db-status">시리즈를 선택하세요</div>
+        <!-- 팩 카드뷰 필터 (OPTCG 스타일) -->
+        <div id="db-card-filters">
+            <div class="dcf-group" id="dcf-own">
+                <button class="dcf-btn active" data-own="all">전체</button>
+                <button class="dcf-btn" data-own="binder">보유중</button>
+                <button class="dcf-btn" data-own="wish">위시</button>
+            </div>
+            <div class="dcf-group" id="dcf-rarity"></div>
+        </div>
         <div id="db-content"></div>
         <div id="db-multi-bar">
             <span id="db-multi-count">0장 선택됨</span>
@@ -3137,6 +3168,7 @@ function updateWishCount() {
 }
 
 function showWishlist() {
+    hideCardFilters();
     dbView = 'wishlist';
     dbNav.classList.remove('visible');
     document.getElementById('db-wish-tab').classList.add('active');
@@ -3342,7 +3374,13 @@ async function selectSeries(code) {
     else                      await loadEnSets(code);
 }
 
+function hideCardFilters() {
+    const f = document.getElementById('db-card-filters');
+    if (f) f.classList.remove('visible');
+}
+
 async function loadKrPacks(seriesCode) {
+    hideCardFilters();
     try {
         // _meta.json = card_list_detail 없는 슬림 파일 (23KB vs 1.8MB)
         const metaUrl = `/data/kr/${seriesCode}_meta.json`;
@@ -3492,8 +3530,21 @@ async function showKrCards(pack) {
     });
 
     dbStatus.textContent = `총 ${pack.printed_total || pack.total || cards.length}종 · ${cards.length}장 표시`;
-    const BATCH = 60;
-    function makeKrCardHtml(c, i) {
+
+    // 카드에 원본 인덱스 부여 (필터해도 fullUrls 매칭 유지)
+    cards.forEach((c, i) => { c._idx = i; });
+
+    function cardOwned(c) { // 바인더에 있는지 (URL 매칭)
+        const u = fullUrls[c._idx], t = thumbUrls[c._idx];
+        for (const k in cardData) {
+            if ((cardData[k]||[]).some(v => v === u || v === t)) return true;
+        }
+        return false;
+    }
+    function cardWished(c) { return isWishlisted(pack.code, String(c.num).padStart(3,'0')); }
+
+    function makeKrCardHtml(c) {
+        const i = c._idx;
         const rarColor = RARITY_COLOR[c.rarity] || 'rgba(255,255,255,0.3)';
         const rarBadge = c.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${c.rarity}</div>` : '';
         const imgSrc = thumbUrls[i] || '';
@@ -3509,46 +3560,89 @@ async function showKrCards(pack) {
             <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
         </div>`;
     }
-    const grid = document.createElement('div');
-    grid.className = 'db-card-grid';
-    grid.innerHTML = cards.slice(0, BATCH).map((c, i) => makeKrCardHtml(c, i)).join('');
-    if (cards.length > BATCH) {
-        const more = document.createElement('div');
-        more.id = 'db-load-more'; more.dataset.from = BATCH;
-        more.style.cssText = 'grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px';
-        more.textContent = `더 보기 (${cards.length - BATCH}장 더)`;
-        grid.appendChild(more);
-    }
-    dbContent.innerHTML = ''; dbContent.appendChild(grid);
 
-    grid.addEventListener('click', e => {
-        const more = e.target.closest('#db-load-more');
-        if (more) {
-            const from = +more.dataset.from, next = Math.min(from + BATCH, cards.length);
-            const tmp = document.createElement('div');
-            tmp.innerHTML = cards.slice(from, next).map((c, j) => makeKrCardHtml(c, from + j)).join('');
-            while (tmp.firstChild) grid.insertBefore(tmp.firstChild, more);
-            more.dataset.from = next;
-            if (next >= cards.length) more.remove();
-            else more.textContent = `더 보기 (${cards.length - next}장 더)`;
-            return;
+    // ── 필터 상태 ──
+    let ownFilter = 'all', rarFilter = 'ALL';
+
+    // 레어도 필터 버튼 동적 생성 (이 팩에 있는 레어도만)
+    const raritiesInPack = [...new Set(cards.map(c => c.rarity).filter(Boolean))];
+    const rarBox = document.getElementById('dcf-rarity');
+    rarBox.innerHTML = `<button class="dcf-btn active" data-rar="ALL">ALL</button>` +
+        raritiesInPack.map(r => {
+            const col = RARITY_COLOR[r] || '#fff';
+            return `<button class="dcf-btn" data-rar="${r}" style="--rc:${col}">${r}</button>`;
+        }).join('');
+    document.getElementById('db-card-filters').classList.add('visible');
+
+    function applyFilters() {
+        let list = cards;
+        if (ownFilter === 'binder') list = list.filter(cardOwned);
+        else if (ownFilter === 'wish') list = list.filter(cardWished);
+        if (rarFilter !== 'ALL') list = list.filter(c => c.rarity === rarFilter);
+        renderGrid(list);
+    }
+
+    function renderGrid(list) {
+        const grid = document.createElement('div');
+        grid.className = 'db-card-grid';
+        if (list.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1;padding:50px;text-align:center;color:rgba(255,255,255,0.25);font-size:13px">해당하는 카드가 없어요</div>`;
+        } else if (rarFilter === 'ALL' && ownFilter === 'all') {
+            // 레어도별 그룹핑
+            const groups = {};
+            list.forEach(c => { const r = c.rarity || '기타'; (groups[r] ||= []).push(c); });
+            let html = '';
+            Object.keys(groups).forEach(r => {
+                const col = RARITY_COLOR[r] || '#fff';
+                html += `<div class="db-rarity-header" style="border-color:${col}40"><span style="color:${col};font-weight:800">${r}</span><span>${groups[r].length}장</span></div>`;
+                html += groups[r].map(makeKrCardHtml).join('');
+            });
+            grid.innerHTML = html;
+        } else {
+            grid.innerHTML = list.map(makeKrCardHtml).join('');
         }
+        dbContent.innerHTML = ''; dbContent.appendChild(grid);
+        dbStatus.textContent = `${list.length}장 표시`;
+    }
+
+    // 필터 버튼 이벤트
+    document.querySelectorAll('#dcf-own .dcf-btn').forEach(btn =>
+        btn.onclick = () => {
+            document.querySelectorAll('#dcf-own .dcf-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active'); ownFilter = btn.dataset.own; applyFilters();
+        });
+    rarBox.querySelectorAll('.dcf-btn').forEach(btn =>
+        btn.onclick = () => {
+            rarBox.querySelectorAll('.dcf-btn').forEach(b => { b.classList.remove('active','rar-active'); b.style.background=''; b.style.borderColor=''; });
+            btn.classList.add('active');
+            if (btn.dataset.rar !== 'ALL') {
+                const col = RARITY_COLOR[btn.dataset.rar] || '#fff';
+                btn.style.background = col + '25'; btn.style.borderColor = col; btn.style.color = '#fff';
+            }
+            rarFilter = btn.dataset.rar; applyFilters();
+        });
+
+    applyFilters(); // 초기 렌더
+
+    // 카드 클릭 (이벤트 위임 — dbContent 전체)
+    dbContent.onclick = e => {
         const el = e.target.closest('.db-card-item');
         if (!el) return;
         const idx = +el.dataset.idx;
+        const c = cards.find(x => x._idx === idx);
         if (e.target.closest('.db-wish-btn')) {
-            const numPad = String(cards[idx].num).padStart(3,'0');
-            const added = toggleWishlist({ key: wishKey(pack.code, numPad), pack_code: pack.code, pack_name: pack.name, series, num: numPad, name: cards[idx].name||'', rarity: cards[idx].rarity||'', thumb: thumbUrls[idx]||'', full: fullUrls[idx]||'' });
+            const numPad = String(c.num).padStart(3,'0');
+            const added = toggleWishlist({ key: wishKey(pack.code, numPad), pack_code: pack.code, pack_name: pack.name, series, num: numPad, name: c.name||'', rarity: c.rarity||'', thumb: thumbUrls[idx]||'', full: fullUrls[idx]||'' });
             el.classList.toggle('wishlisted', added);
             e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
         } else if (e.target.closest('.db-add-btn') || dbMultiMode) {
-            const meta = {pack_code: pack.code, num: String(cards[idx].num).padStart(3,'0'), name: cards[idx].name||'', pack_name: pack.name||pack.code, total: pack.total||0, region:'kr'};
+            const meta = {pack_code: pack.code, num: String(c.num).padStart(3,'0'), name: c.name||'', pack_name: pack.name||pack.code, total: pack.total||0, region:'kr'};
             if (dbMultiMode) toggleDbCardSelect(el, fullUrls[idx], meta);
             else enterSlotPickMode(fullUrls[idx], meta);
         } else {
             openCardModalFromDb(fullUrls, idx);
         }
-    });
+    };
 }
 
 function getJpSymbolUrl(code, serie) {
@@ -3601,6 +3695,7 @@ function getJpSymbolUrl(code, serie) {
 }
 
 async function loadJpPacks(seriesCode) {
+    hideCardFilters();
     try {
         const url = `/data/jp/${seriesCode}.json`;
         if (!dbCache[url]) { const r = await fetch(url); dbCache[url] = await r.json(); }
@@ -3776,6 +3871,7 @@ async function showJpCards(pack) {
 }
 
 async function loadEnSets(seriesCode) {
+    hideCardFilters();
     try {
         const url = '/data/en/en.json';
         if (!dbCache[url]) { const r = await fetch(url); const j = await r.json(); dbCache[url] = Array.isArray(j) ? j : (j.data || []); }
@@ -5482,6 +5578,7 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
         const signal = searchAbortCtrl.signal;
 
         dbView = 'search';
+        hideCardFilters();
         dbNav.classList.add('visible');
         dbNavText.textContent = `"${q}" 검색 중…`;
         dbStatus.textContent = '검색 중…';
