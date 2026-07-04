@@ -455,6 +455,19 @@
         }
         /* 위시 테두리 모드 토글 버튼 활성화 */
         #btn-wish-border.active { background: rgba(255,100,180,0.2) !important; color: #ff90c0 !important; border-color: rgba(255,100,180,0.4) !important; }
+        /* ── 살 카드(위시인데 미보유) 항상 표시 ── */
+        .pocket.p-tobuy {
+            outline: 2px dashed rgba(255,140,200,0.85);
+            outline-offset: -2px;
+        }
+        .pocket.p-tobuy .pocket-img { filter: saturate(0.8) brightness(0.82); }
+        .pocket-tobuy-badge {
+            position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+            z-index: 6; background: rgba(230,60,140,0.92); color: #fff;
+            font-size: 8.5px; font-weight: 800; letter-spacing: 0.02em;
+            padding: 2px 7px; border-radius: 10px; white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4); pointer-events: none;
+        }
 
         .pocket.drag-over {
             background: rgba(88,88,255,0.22) !important;
@@ -2277,10 +2290,15 @@ function makePocket(binderId, sp, side, idx) {
         const wishedCls = wished ? ' p-wished' : '';
         const wishIcon  = wished ? '♥' : '♡';
         const wishCls   = (wishBorderMode && wished) ? ' wish-border' : '';
+        // 살 카드 표시: 위시에 있는데 아직 '보유'로 표시 안 한 카드 (완성 미리보기용)
+        const isToBuy   = wished && owned !== true;
+        const toBuyCls  = isToBuy ? ' p-tobuy' : '';
+        const toBuyBadge = isToBuy ? '<div class="pocket-tobuy-badge">🛒 살 카드</div>' : '';
         const notOwnedOverlay = owned === false ? '<div class="pocket-notowned-overlay"></div>' : '';
-        return `<div class="pocket has-card${ownedCls}${wishedCls}${wishCls}" data-sp="${sp}" data-side="${side}" data-idx="${idx}" draggable="true">
+        return `<div class="pocket has-card${ownedCls}${wishedCls}${wishCls}${toBuyCls}" data-sp="${sp}" data-side="${side}" data-idx="${idx}" draggable="true">
             <img src="${src}" class="pocket-img" draggable="false">
             ${notOwnedOverlay}
+            ${toBuyBadge}
             <button class="pocket-remove" title="카드 제거">×</button>
             <button class="pocket-wish-btn" title="${wished?'위시리스트 제거':'위시리스트 추가'}">${wishIcon}</button>
             <button class="pocket-owned-btn" title="보유 상태 토글">${ownedIcon}</button>
