@@ -3505,6 +3505,31 @@ const RARITY_COLOR = {
     'PR':  '#aaddff',
     'MUR': '#ffd700',
     'MA':  '#ff99cc',
+    // EN (pokemontcg.io) 레어도
+    'Common':                    '#8888aa',
+    'Uncommon':                  '#55aadd',
+    'Rare':                      '#ffcc44',
+    'Rare Holo':                 '#ffd766',
+    'Rare Holo EX':              '#ff8844',
+    'Rare Holo GX':              '#ff7755',
+    'Rare Holo V':               '#ff6688',
+    'Rare Holo VMAX':            '#ff4488',
+    'Rare Holo VSTAR':           '#ff55aa',
+    'Double Rare':               '#ff8844',
+    'Ultra Rare':                '#cc44ff',
+    'Rare Ultra':                '#cc44ff',
+    'Illustration Rare':         '#aaffdd',
+    'Special Illustration Rare': '#88ffcc',
+    'Hyper Rare':                '#ffd700',
+    'Rare Secret':               '#ffdd55',
+    'Rare Rainbow':              '#ff99ee',
+    'Rare Shiny':                '#bbffff',
+    'Amazing Rare':              '#ffaa66',
+    'Radiant Rare':              '#ffee88',
+    'Promo':                     '#aaddff',
+    'Rare Prime':                '#ff7799',
+    'LEGEND':                    '#ffcc00',
+    'Rare BREAK':                '#ffaa44',
 };
 
 async function showKrCards(pack) {
@@ -3931,6 +3956,13 @@ async function loadEnSets(seriesCode) {
     } catch(e) { dbStatus.textContent = '로딩 오류.'; }
 }
 
+const EN_SERIES_FILE = {
+    'Base':'Base','Gym':'Gym','Neo':'Neo','Other':'Other','E-Card':'E-Card','EX':'EX','NP':'NP','POP':'POP',
+    'Diamond & Pearl':'Diamond_&_Pearl','Platinum':'Platinum','HeartGold & SoulSilver':'HeartGold_&_SoulSilver',
+    'Black & White':'Black_&_White','XY':'XY','Sun & Moon':'Sun_&_Moon','Sword & Shield':'Sword_&_Shield',
+    'Scarlet & Violet':'Scarlet_&_Violet','Mega Evolution':'Mega_Evolution'
+};
+
 async function showEnCards(set) {
     if (!set) return;
     dbView = 'cards';
@@ -3939,71 +3971,162 @@ async function showEnCards(set) {
     dbStatus.textContent = '카드 불러오는 중...';
     dbContent.innerHTML = '';
 
-    const total = Math.max(set.total || 0, set.printedTotal || 0);
-    const base  = `https://images.pokemontcg.io/${set.id}`;
-    // Generate sequential card numbers 1..total
-    const cards = Array.from({ length: total }, (_, i) => {
-        const n = i + 1;
-        return {
-            thumb: `${base}/${n}.png`,
-            full:  `${base}/${n}_hires.png`,
-            label: String(n)
-        };
-    });
+    // 자체 DB에서 실제 카드(이름+레어도) 로드
+    const file = EN_SERIES_FILE[set.series] || 'Other';
+    const url = `/data/en/full/${file}.json`;
+    if (!dbCache[url]) {
+        try { const r = await fetch(url); if (r.ok) dbCache[url] = await r.json(); }
+        catch(e) { dbCache[url] = []; }
+    }
+    const packs = dbCache[url] || [];
+    const pack = packs.find(p => p.code === set.id);
+    const detail = (pack && pack.card_list_detail) || [];
+
+    const base = `https://images.pokemontcg.io/${set.id}`;
+    let cards;
+    if (detail.length) {
+        cards = detail.map(c => ({
+            num: c.num, name: c.name || '', rarity: c.rarity || '',
+            thumb: `${base}/${c.num}.png`, full: `${base}/${c.num}_hires.png`
+        }));
+    } else {
+        const total = Math.max(set.total || 0, set.printedTotal || 0);
+        cards = Array.from({ length: total }, (_, i) => ({
+            num: String(i+1), name: '', rarity: '',
+            thumb: `${base}/${i+1}.png`, full: `${base}/${i+1}_hires.png`
+        }));
+    }
     cards.forEach((c, i) => { c._idx = i; });
     const fullUrls = cards.map(c => c.full);
-    dbStatus.textContent = `${total}장`;
-    setupOwnWishFilter(cards, fullUrls, (list) => doRenderEn(list, cards, fullUrls, set, total));
-    doRenderEn(cards, cards, fullUrls, set, total);
+    const thumbUrls = cards.map(c => c.thumb);
+    renderRarityCardView({
+        cards, fullUrls, thumbUrls, region: 'en',
+        packCode: set.id, packName: set.name || set.id, total: cards.length
+    });
 }
 
-function doRenderEn(list, allCards, fullUrls, set, total) {
-    const BATCH = 60;
-    function makeEnCardHtml(c) {
+/* ── 레어도 필터+그룹핑 공용 카드뷰 (KR/EN 공용) ── */
+function renderRarityCardView(opts) {
+    const { cards, fullUrls, thumbUrls, region, packCode, packName, total } = opts;
+    dbStatus.textContent = `총 ${cards.length}장`;
+
+    function cardOwned(c) {
+        const u = fullUrls[c._idx], t = thumbUrls[c._idx];
+        for (const k in cardData) if ((cardData[k]||[]).some(v => v === u || v === t)) return true;
+        return false;
+    }
+    function cardWished(c) { return isWishlisted(packCode, String(c.num).padStart(3,'0')); }
+
+    function makeHtml(c) {
         const i = c._idx;
-        const numPad = String(i+1).padStart(3,'0');
-        const _ds = [set.id, set.name||'', numPad, String(i+1), c.label||'', `${set.id}${numPad}`, `${set.id}/${numPad}`].join(' ').toLowerCase();
-        return `<div class="db-card-item" data-idx="${i}" data-search="${_ds}" title="${set.id} ${numPad}">
-            <img src="${c.thumb}" loading="lazy" alt="${c.label}" onerror="this.parentElement.style.opacity='0.15'">
-            <div class="db-card-label">${numPad}</div>
+        const rarColor = RARITY_COLOR[c.rarity] || 'rgba(255,255,255,0.3)';
+        const rarBadge = c.rarity ? `<div class="db-card-rarity" style="color:${rarColor};border-color:${rarColor}40">${c.rarity}</div>` : '';
+        const numPad = String(c.num).padStart(3,'0');
+        const wk = wishKey(packCode, numPad);
+        const wished = isWishlisted(packCode, numPad);
+        const _ds = [packCode, numPad, c.num, c.name||'', c.rarity||'', `${packCode}${numPad}`, `${packCode}/${numPad}`].join(' ').toLowerCase();
+        return `<div class="db-card-item${wished?' wishlisted':''}" data-idx="${i}" data-wkey="${wk}" data-search="${_ds}" title="${packCode} ${numPad} ${c.name}${c.rarity?` [${c.rarity}]`:''}">
+            <img src="${thumbUrls[i]}" loading="lazy" alt="${c.name}" onerror="this.parentElement.style.opacity='0.15'">
+            ${rarBadge}
+            <div class="db-card-label">${numPad}  ${c.name}</div>
+            <button class="db-wish-btn" title="${wished?'위시리스트 제거':'위시리스트 추가'}">♥</button>
             <button class="db-add-btn" data-idx="${i}">+ 바인더</button>
         </div>`;
     }
-    const grid = document.createElement('div');
-    grid.className = 'db-card-grid';
-    if (list.length === 0) { grid.innerHTML = `<div style="grid-column:1/-1;padding:50px;text-align:center;color:rgba(255,255,255,0.25);font-size:13px">해당하는 카드가 없어요</div>`; }
-    else {
-        grid.innerHTML = list.slice(0, BATCH).map(makeEnCardHtml).join('');
-        if (list.length > BATCH) {
-            const more = document.createElement('div');
-            more.id = 'db-load-more'; more.dataset.from = BATCH;
-            more.style.cssText = 'grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px';
-            more.textContent = `더 보기 (${list.length - BATCH}장 더)`;
-            grid.appendChild(more);
-        }
+
+    let ownFilter = 'all', rarFilter = 'ALL';
+    const raritiesInPack = [...new Set(cards.map(c => c.rarity).filter(Boolean))];
+    const rarBox = document.getElementById('dcf-rarity');
+    rarBox.innerHTML = raritiesInPack.length
+        ? `<button class="dcf-btn active" data-rar="ALL">ALL</button>` +
+          raritiesInPack.map(r => `<button class="dcf-btn" data-rar="${r}">${r}</button>`).join('')
+        : '';
+    document.getElementById('db-card-filters').classList.add('visible');
+
+    function applyFilters() {
+        let list = cards;
+        if (ownFilter === 'binder') list = list.filter(cardOwned);
+        else if (ownFilter === 'wish') list = list.filter(cardWished);
+        if (rarFilter !== 'ALL') list = list.filter(c => c.rarity === rarFilter);
+        renderGrid(list);
     }
-    dbContent.innerHTML = ''; dbContent.appendChild(grid);
-    grid.addEventListener('click', e => {
+    function renderGrid(list) {
+        const BATCH = 80;
+        const grid = document.createElement('div');
+        grid.className = 'db-card-grid';
+        if (list.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1;padding:50px;text-align:center;color:rgba(255,255,255,0.25);font-size:13px">해당하는 카드가 없어요</div>`;
+        } else if (rarFilter === 'ALL' && ownFilter === 'all' && raritiesInPack.length) {
+            const groups = {}; const order = [];
+            list.forEach(c => { const r = c.rarity || '기타'; if(!groups[r]){groups[r]=[];order.push(r);} groups[r].push(c); });
+            let html = '';
+            order.forEach(r => {
+                const col = RARITY_COLOR[r] || '#fff';
+                html += `<div class="db-rarity-header" style="border-color:${col}40"><span style="color:${col};font-weight:800">${r}</span><span>${groups[r].length}장</span></div>`;
+                html += groups[r].map(makeHtml).join('');
+            });
+            grid.innerHTML = html;
+        } else {
+            grid.innerHTML = list.slice(0, BATCH).map(makeHtml).join('');
+            if (list.length > BATCH) {
+                const more = document.createElement('div');
+                more.id='db-load-more'; more.dataset.from=BATCH;
+                more.style.cssText='grid-column:1/-1;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,0.45);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:8px';
+                more.textContent=`더 보기 (${list.length-BATCH}장 더)`;
+                grid.appendChild(more);
+                grid._list = list; grid._make = makeHtml;
+            }
+        }
+        dbContent.innerHTML = ''; dbContent.appendChild(grid);
+        dbStatus.textContent = `${list.length}장 표시`;
+    }
+
+    document.querySelectorAll('#dcf-own .dcf-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.own === 'all');
+        btn.onclick = () => {
+            document.querySelectorAll('#dcf-own .dcf-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active'); ownFilter = btn.dataset.own; applyFilters();
+        };
+    });
+    rarBox.querySelectorAll('.dcf-btn').forEach(btn =>
+        btn.onclick = () => {
+            rarBox.querySelectorAll('.dcf-btn').forEach(b => { b.classList.remove('active'); b.style.background=''; b.style.borderColor=''; b.style.color=''; });
+            btn.classList.add('active');
+            if (btn.dataset.rar !== 'ALL') { const col = RARITY_COLOR[btn.dataset.rar] || '#fff'; btn.style.background=col+'25'; btn.style.borderColor=col; btn.style.color='#fff'; }
+            rarFilter = btn.dataset.rar; applyFilters();
+        });
+
+    applyFilters();
+
+    dbContent.onclick = e => {
         const more = e.target.closest('#db-load-more');
         if (more) {
-            const from = +more.dataset.from, next = Math.min(from + BATCH, list.length);
+            const grid = more.parentElement, list = grid._list, mk = grid._make;
+            const from = +more.dataset.from, next = Math.min(from + 80, list.length);
             const tmp = document.createElement('div');
-            tmp.innerHTML = list.slice(from, next).map(makeEnCardHtml).join('');
+            tmp.innerHTML = list.slice(from, next).map(mk).join('');
             while (tmp.firstChild) grid.insertBefore(tmp.firstChild, more);
             more.dataset.from = next;
-            if (next >= list.length) more.remove();
-            else more.textContent = `더 보기 (${list.length - next}장 더)`;
+            if (next >= list.length) more.remove(); else more.textContent = `더 보기 (${list.length-next}장 더)`;
             return;
         }
         const el = e.target.closest('.db-card-item');
         if (!el) return;
-        const i = +el.dataset.idx;
-        if (e.target.closest('.db-add-btn') || dbMultiMode) {
-            const meta = {pack_code: set.id, num: String(i+1).padStart(3,'0'), name:'', pack_name: set.name||set.id, total: total||0, region:'en'};
-            if (dbMultiMode) toggleDbCardSelect(el, fullUrls[i], meta);
-            else enterSlotPickMode(fullUrls[i], meta);
-        } else openCardModalFromDb(fullUrls, i);
-    });
+        const idx = +el.dataset.idx;
+        const c = cards.find(x => x._idx === idx);
+        if (e.target.closest('.db-wish-btn')) {
+            const numPad = String(c.num).padStart(3,'0');
+            const added = toggleWishlist({ key: wishKey(packCode, numPad), pack_code: packCode, pack_name: packName, series: region, num: numPad, name: c.name||'', rarity: c.rarity||'', thumb: thumbUrls[idx]||'', full: fullUrls[idx]||'' });
+            el.classList.toggle('wishlisted', added);
+            e.target.title = added ? '위시리스트 제거' : '위시리스트 추가';
+        } else if (e.target.closest('.db-add-btn') || dbMultiMode) {
+            const meta = {pack_code: packCode, num: String(c.num).padStart(3,'0'), name: c.name||'', pack_name: packName, total: total||0, region};
+            if (dbMultiMode) toggleDbCardSelect(el, fullUrls[idx], meta);
+            else enterSlotPickMode(fullUrls[idx], meta);
+        } else {
+            openCardModalFromDb(fullUrls, idx);
+        }
+    };
 }
 
 /* ══ 다중 선택 ══ */
