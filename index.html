@@ -1392,7 +1392,7 @@
         }
         #wl-search:focus { border-color: rgba(255,128,192,0.5); background: rgba(255,128,192,0.06); }
         #wl-result-count { font-size: 11px; color: rgba(255,255,255,0.25); margin-left: auto; }
-        #wl-grid-wrap { flex: 1; overflow-y: auto; padding: 20px 24px; }
+        #wl-grid-wrap { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 24px; }
         #wl-grid-wrap::-webkit-scrollbar { width: 4px; }
         #wl-grid-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
         #wl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
@@ -1719,7 +1719,7 @@
             <button class="sz-btn" id="sz-up">+</button>
             <button class="sz-btn" id="sz-fit" title="화면에 맞춤" style="font-size:12px;">⊡</button>
             <button class="sz-btn" id="btn-binder-search" title="바인더 카드 검색 (Ctrl+F)" style="font-size:12px;">🔍</button>
-            <button class="sz-btn" id="btn-wish-border" title="위시 테두리 표시 (위시리스트 카드 하이라이트)" style="font-size:13px;">♥</button>
+            <button class="sz-btn" id="btn-wish-border" title="🛒 살 카드 표시 켜기/끄기 (위시인데 미보유 카드)" style="font-size:13px;">♥</button>
         </div>
     </div>
 
@@ -2290,8 +2290,8 @@ function makePocket(binderId, sp, side, idx) {
         const wishedCls = wished ? ' p-wished' : '';
         const wishIcon  = wished ? '♥' : '♡';
         const wishCls   = (wishBorderMode && wished) ? ' wish-border' : '';
-        // 살 카드 표시: 위시에 있는데 아직 '보유'로 표시 안 한 카드 (완성 미리보기용)
-        const isToBuy   = wished && owned !== true;
+        // 살 카드 표시: 위시에 있는데 아직 '보유'로 표시 안 한 카드 (완성 미리보기용) — 토글 가능
+        const isToBuy   = showToBuy && wished && owned !== true;
         const toBuyCls  = isToBuy ? ' p-tobuy' : '';
         const toBuyBadge = isToBuy ? '<div class="pocket-tobuy-badge">🛒 살 카드</div>' : '';
         const notOwnedOverlay = owned === false ? '<div class="pocket-notowned-overlay"></div>' : '';
@@ -3125,6 +3125,7 @@ let wishlistData   = [];  // [{key, pack_code, series, num, name, rarity, thumb,
 let ownedData      = {};  // ownedData[binderId_sp_side][idx] = null/true/false
 let cardMeta       = {};  // cardMeta[binderId_sp_side][idx]  = {pack_code, num} | null
 let wishBorderMode = false;
+let showToBuy      = true;  // 살 카드(🛒) 표시 on/off — 기본 켜짐
 
 function wishKey(packCode, num) { return packCode + '_' + String(num).padStart(3,'0'); }
 
@@ -5962,10 +5963,12 @@ document.querySelector('.login-btn-sm').addEventListener('click', function() {
     document.getElementById('bs-backdrop').addEventListener('click', closeBsModal);
     document.getElementById('btn-binder-search').addEventListener('click', openBsModal);
     document.getElementById('btn-wish-border').addEventListener('click', () => {
-        wishBorderMode = !wishBorderMode;
-        document.getElementById('btn-wish-border').classList.toggle('active', wishBorderMode);
+        showToBuy = !showToBuy;
+        document.getElementById('btn-wish-border').classList.toggle('active', showToBuy);
         refreshSpread();
     });
+    // 초기 활성 표시 (기본 켜짐)
+    document.getElementById('btn-wish-border').classList.toggle('active', showToBuy);
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
             if (dbModal.classList.contains('open')) return;
