@@ -3073,8 +3073,8 @@ window.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { 
 document.addEventListener('wheel', e => {
     // DB 모달 열려있으면 스크롤 그대로 허용
     if (dbModal && dbModal.classList.contains('open')) return;
-    // 가계부 탭 열려있으면 스크롤 허용
-    if (document.getElementById('tab-ledger')?.classList.contains('active')) return;
+    // 바인더 탭이 아니면(위시/판매/가계부) 일반 스크롤 허용 — 페이지 넘김 안 함
+    if (!document.getElementById('tab-binder')?.classList.contains('active')) return;
 
     e.preventDefault();
 
