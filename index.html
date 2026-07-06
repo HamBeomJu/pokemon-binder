@@ -2287,7 +2287,7 @@ function makePocket(binderId, sp, side, idx) {
         const ownedIcon = owned === true ? '✓' : (owned === false ? '✗' : '○');
         // 위시 상태 — URL로 단순 매칭 (수동 업로드 카드 포함)
         const wished    = wishlistData.some(w => w.full === src || w.thumb === src);
-        const wishedCls = wished ? ' p-wished' : '';
+        const wishedCls = (showToBuy && wished) ? ' p-wished' : '';
         const wishIcon  = wished ? '♥' : '♡';
         const wishCls   = (wishBorderMode && wished) ? ' wish-border' : '';
         // 살 카드 표시: 위시에 있는데 아직 '보유'로 표시 안 한 카드 (완성 미리보기용) — 토글 가능
